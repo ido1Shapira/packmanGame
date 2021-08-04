@@ -3,12 +3,14 @@ class Character{
         37 : false, //left
         38 : false, //up
         39 : false, //right
-        40 : false //down
+        40 : false, //down
+        32 : false //enter (stay)
     };
     scores = {
-        crushing : 0,
-        finish : 30,
-        step : -1
+        stay : -1,
+        step : -2,
+        collide : 0,
+        finish : 100,
     }
     constructor(tileFrom , tileTo, timeMoved, dimensions, position, delayMove) {
         this.tileFrom	= tileFrom;
@@ -17,17 +19,26 @@ class Character{
         this.dimensions	= dimensions;
         this.position	= position;
         this.delayMove	= delayMove;
-        this.score = 0;
+        this.score = 50;
     }
     placeAt(x,y) {
+        //calculate score
+        if(this.tileFrom[0] == x && this.tileFrom[1] == y) {
+            this.score = this.score + this.scores.stay;
+        }
+        else {
+            this.score = this.score + this.scores.step;
+        }
+
         this.tileFrom	= [x,y];
 	    this.tileTo		= [x,y];
 	    this.position	= [((tileW*x)+((tileW-this.dimensions[0])/2)),
 		    ((tileH*y)+((tileH-this.dimensions[1])/2))];
-        
-        this.score = this.score + this.scores.step;
     }
     processMovement(t) {
+        if(t-this.timeMoved == 16){
+            console.log(t-this.timeMoved);
+        }
         if(this.tileFrom[0]==this.tileTo[0] && this.tileFrom[1]==this.tileTo[1]) { return false; }
 
         if((t-this.timeMoved)>=this.delayMove)
@@ -62,7 +73,8 @@ class Character{
             37 : false, //left
             38 : false, //up
             39 : false, //right
-            40 : false //down
+            40 : false, //down
+            32 : false //stay
         };
     }
 }
