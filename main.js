@@ -30,7 +30,7 @@ var currentSecond = 0, frameCount = 0, framesLastSecond = 0, lastFrameTime = 0;
 var human_player = new Character([1,1], [1,1], 0, [30,30], [45,45], 700);
 
 var computer_player = new Character([7,7], [7,7], 0, [30,30], [285,285], 700);
-var computer_controller = new PlayerController(computer_player);
+var computer_controller = new PlayerController(computer_player, "random");
 
 function position(tile, dimensions)
 {
@@ -65,20 +65,60 @@ var validTiles = randomValidTiles(numOfAwards);
 for(var i=0; i<numOfAwards; i++) {
 	awards.push(new Award(validTiles[i], [15,15], position(validTiles[i], [15, 15]), 2));
 }
+var human_awards = [];
+var computer_awards = [];
 
 function toIndex(x, y)
 {
 	return((y * mapW) + x);
 }
 
+function zeros(dimensions) { // dimensions = [r,c] 
+    var array = [];
+    for (var i = 0; i < dimensions[0]; ++i) {
+        array.push(dimensions.length == 1 ? 0 : zeros(dimensions.slice(1)));
+    }
+    return array;
+}
+
+var prev_state = [[], zeros([mapW, mapH]), zeros([mapW, mapH]), [], [], []];
+prev_state[1][human_player.tileFrom[1]][human_player.tileFrom[0]] = 1;
+prev_state[2][computer_player.tileFrom[1]][computer_player.tileFrom[0]] = 1;
 function getBoardState() {
-	var boardState = gameMap.slice();
-	boardState[((human_player.tileFrom[1]*mapW)+human_player.tileFrom[0])] = 'h';
-	boardState[((computer_player.tileFrom[1]*mapW)+computer_player.tileFrom[0])] = 'c';
-	for(award of awards) {
-		boardState[((award.tile[1]*mapW)+award.tile[0])] = 'a';
+	var state = [
+			[], // the board
+			[], // human trace
+			[], // computer trace
+			zeros([mapW, mapH]), // awards collected by human
+			zeros([mapW, mapH]), // awards collected by computer
+			zeros([mapW, mapH]), // all awards
+			];
+	var board = gameMap.slice();
+	while(board.length) state[0].push(board.splice(0,10)); // reshape board
+	//human trace
+	for(var i=0; i<prev_state[1].length; i++) {
+		state[1].push(prev_state[1][i].map(x => Number((x * 0.9).toFixed(2))));
 	}
-	return boardState; 
+	state[1][human_player.tileFrom[1]][human_player.tileFrom[0]] = 1;
+	//computer trace 
+	for(var i=0; i<prev_state[2].length; i++) {
+		state[2].push(prev_state[2][i].map(x => Number((x * 0.9).toFixed(2))));
+	}
+	state[2][computer_player.tileFrom[1]][computer_player.tileFrom[0]] = 1;
+	//human collected awards
+	for(award of human_awards) {
+		state[3][award.tile[1]][award.tile[0]] = 1;
+	}
+	//computer collected awards
+	for(award of computer_awards) {
+		state[4][award.tile[1]][award.tile[0]] = 1;
+	}
+	//allawards
+	for(award of awards) {
+		state[5][award.tile[1]][award.tile[0]] = 1;
+	}
+	prev_state = state.slice();
+	return state;
 }
 
 var computerMove = null;
@@ -166,22 +206,29 @@ function drawGame()
 		if(computer_player.tileFrom[0]!=computer_player.tileTo[0] || computer_player.tileFrom[1]!=computer_player.tileTo[1])
 		{ computer_player.timeMoved = currentFrameTime; }
 	}
+
+	//check for eaten awards
 	for(var i=0; i<awards.length; i++) {
 		temp_award = awards[i];
 		if(temp_award.tile[0] == human_player.tileFrom[0] && temp_award.tile[1] == human_player.tileFrom[1]) {
+			awards.splice(i, 1);
 			human_player.score = human_player.score + temp_award.value;
 			if(human_player.tileFrom[0] == computer_player.tileFrom[0] && human_player.tileFrom[1] == computer_player.tileFrom[0]) {
 				computer_player.score = computer_player.score + award.value;
+				computer_awards.push(temp_award);
 			}
-			awards.splice(i, 1);
+			human_awards.push(temp_award);
 		}
 		if(temp_award.tile[0] == computer_player.tileFrom[0] && temp_award.tile[1] == computer_player.tileFrom[1]) {
+			awards.splice(i, 1);
 			computer_player.score = computer_player.score + temp_award.value;
 			if(human_player.tileFrom[0] == computer_player.tileFrom[0] && human_player.tileFrom[1] == computer_player.tileFrom[0]) {
 				// two player got to the award at the same time
 				human_player.score = human_player.score + award.value;
+				human_awards.push(temp_award);
 			}
-			awards.splice(i, 1);
+			computer_awards.push(temp_award);
+			
 		}
 	}
 
