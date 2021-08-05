@@ -22,13 +22,7 @@ class Character{
         this.score = 50;
     }
     placeAt(x,y) {
-        //calculate score
-        if(this.tileFrom[0] == x && this.tileFrom[1] == y) {
-            this.score = this.score + this.scores.stay;
-        }
-        else {
-            this.score = this.score + this.scores.step;
-        }
+        this.score = this.score + this.scores.step;
 
         this.tileFrom	= [x,y];
 	    this.tileTo		= [x,y];
@@ -36,9 +30,6 @@ class Character{
 		    ((tileH*y)+((tileH-this.dimensions[1])/2))];
     }
     processMovement(t) {
-        if(t-this.timeMoved == 16){
-            console.log(t-this.timeMoved);
-        }
         if(this.tileFrom[0]==this.tileTo[0] && this.tileFrom[1]==this.tileTo[1]) { return false; }
 
         if((t-this.timeMoved)>=this.delayMove)

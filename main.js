@@ -138,10 +138,18 @@ function drawGame()
 			human_player.tileTo[0]+= 1;
 			human_player_moves = true;
 		}
+		else if(human_player.keysDown[32] && (currentFrameTime-human_player.timeMoved>=human_player.delayMove)) {
+			human_player_moves = true;
+			human_player.timeMoved = currentFrameTime;
+			human_player.score = human_player.score + human_player.scores.stay;
+		}
 		if(human_player_moves) {
 			computer_player.resetKeyPress();
 			computerMove = computer_controller.move(getBoardState());
 			computer_player.keysDown[computerMove] = true;
+			if(computer_player.keysDown[32] && (currentFrameTime-computer_player.timeMoved>=computer_player.delayMove)) {
+				computer_player.score = computer_player.score + computer_player.scores.stay;
+			}
 		}
 
 		if(human_player.tileFrom[0]!=human_player.tileTo[0] || human_player.tileFrom[1]!=human_player.tileTo[1])
@@ -154,7 +162,7 @@ function drawGame()
 		else if(computer_player.keysDown[40] && computer_player.tileFrom[1]<(mapH-1) && gameMap[toIndex(computer_player.tileFrom[0], computer_player.tileFrom[1]+1)]==1) { computer_player.tileTo[1]+= 1; }
 		else if(computer_player.keysDown[37] && computer_player.tileFrom[0]>0 && gameMap[toIndex(computer_player.tileFrom[0]-1, computer_player.tileFrom[1])]==1) { computer_player.tileTo[0]-= 1; }
 		else if(computer_player.keysDown[39] && computer_player.tileFrom[0]<(mapW-1) && gameMap[toIndex(computer_player.tileFrom[0]+1, computer_player.tileFrom[1])]==1) { computer_player.tileTo[0]+= 1; }
-		
+
 		if(computer_player.tileFrom[0]!=computer_player.tileTo[0] || computer_player.tileFrom[1]!=computer_player.tileTo[1])
 		{ computer_player.timeMoved = currentFrameTime; }
 	}
