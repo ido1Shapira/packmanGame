@@ -30,7 +30,7 @@ var currentSecond = 0, frameCount = 0, framesLastSecond = 0, lastFrameTime = 0;
 var human_player = new Character([1,1], [1,1], 0, [30,30], [45,45], 700);
 
 var computer_player = new Character([7,7], [7,7], 0, [30,30], [285,285], 700);
-var computer_controller = new PlayerController(computer_player, "random");
+var computer_controller = new PlayerController(computer_player, "closest");
 
 function position(tile, dimensions)
 {
@@ -188,6 +188,7 @@ function drawGame()
 			computerMove = computer_controller.move(getBoardState());
 			computer_player.keysDown[computerMove] = true;
 			if(computer_player.keysDown[32] && (currentFrameTime-computer_player.timeMoved>=computer_player.delayMove)) {
+				// TODO: I think there is a problem with the stay score. it not always update the computer score
 				computer_player.score = computer_player.score + computer_player.scores.stay;
 			}
 		}

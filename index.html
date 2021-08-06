@@ -18,17 +18,53 @@ http://technologies4.me/articles/more-tile-types-map-a4/ -->
 
   <link rel="stylesheet" href="main.css">
 
+  <script src="Shortest-Path-2D-Matrix-With-Obstacles.js"></script>
+
   <!-- <script src="https://www.gstatic.com/firebasejs/8.2.10/firebase-app.js"></script> -->
   <!-- <script src="https://www.gstatic.com/firebasejs/8.2.10/firebase-database.js"></script> -->
   <script src="PlayerController.js"></script>
   <script src="Character.js"></script>
   <script src="Award.js"></script>
   <script src="main.js"></script>
-
 </head>
 
 <body>
-  <canvas id="game" width="400" height="400"></canvas>
+  <div id="container">
+    <div id="left">
+      <h1><u>Game instructions:</u></h1>
+      <h3><u>Control:</u></h3>
+      <ul>
+        <li>In this game you control the red player.</li>
+        <li>Use the arrow keys to move left, up, right and down.</li>
+        <li>Use spacebar to remain in place.</li>
+        <li>Both players moves synchronously; that is, each time you (the red player) make a move, the blue player will
+          make a move as well---at the same time.</li>
+      </ul>
+      <h3><u>Goal:</u></h3>
+      <p style="color: red;"> Check this with Amos!</p>
+      <p>Your goal is to collect all awards, in a minimum number of steps.</p>
+      <p>Note that blue player's goal is also to collect all awards, in a minimum number of
+        steps.</p>  
+      <h3><u>Score:</u></h3>
+      <ul>
+        <li>The score is being initial with 50.</li>
+        <li>The score will be calculated using the following:
+          <ul>
+            <li>Colliding with the blue ball = 0.</li>
+            <li>Each time you move = -2.</li>
+            <li>Remain in place = -1</li>
+            <li>Reaching an award = 2</li>
+            <li>Reaching the goal of the game = 100.</li>
+          </ul>
+        </li>
+      </ul>      
+      <p id=goodluck><i>Good luck!</i></p>
+    </div>
+    <div id="right">
+      <canvas id="game" width="400" height="400"></canvas>
+    </div>
+  </div>
+  
 </body>
 
 </html>
