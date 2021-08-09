@@ -30,7 +30,7 @@ var currentSecond = 0, frameCount = 0, framesLastSecond = 0, lastFrameTime = 0;
 var human_player = new Character([1,1], [1,1], 0, [30,30], [45,45], 700);
 
 var computer_player = new Character([7,7], [7,7], 0, [30,30], [285,285], 700);
-var computer_controller = new PlayerController(computer_player, "closest");
+var computer_controller = new PlayerController(computer_player, "farthest");
 
 function position(tile, dimensions)
 {
@@ -84,6 +84,7 @@ function zeros(dimensions) { // dimensions = [r,c]
 var prev_state = [[], zeros([mapW, mapH]), zeros([mapW, mapH]), [], [], []];
 prev_state[1][human_player.tileFrom[1]][human_player.tileFrom[0]] = 1;
 prev_state[2][computer_player.tileFrom[1]][computer_player.tileFrom[0]] = 1;
+
 function getBoardState() {
 	var state = [
 			[], // the board
@@ -93,6 +94,7 @@ function getBoardState() {
 			zeros([mapW, mapH]), // awards collected by computer
 			zeros([mapW, mapH]), // all awards
 			];
+			
 	var board = gameMap.slice();
 	while(board.length) state[0].push(board.splice(0,10)); // reshape board
 	//human trace
@@ -117,7 +119,7 @@ function getBoardState() {
 	for(award of awards) {
 		state[5][award.tile[1]][award.tile[0]] = 1;
 	}
-	prev_state = state.slice();
+	prev_state = state.slice();	
 	return state;
 }
 
@@ -132,6 +134,7 @@ var handleKeyUp = function(e) {
 		human_player.keysDown[e.keyCode] = false;
 		computer_player.keysDown[computerMove] = false;
 	}
+	// console.log(e.keyCode);
 }
 window.onload = function()
 {
@@ -163,29 +166,30 @@ function drawGame()
 	{
 		var human_player_moves = false;
 		if(human_player.keysDown[38] && human_player.tileFrom[1]>0 && gameMap[toIndex(human_player.tileFrom[0], human_player.tileFrom[1]-1)]==1) {
-			human_player.tileTo[1]-= 1;
+			human_player.tileTo[1]-= 1; //up
 			human_player_moves = true;
 		}
 		else if(human_player.keysDown[40] && human_player.tileFrom[1]<(mapH-1) && gameMap[toIndex(human_player.tileFrom[0], human_player.tileFrom[1]+1)]==1) {
-			human_player.tileTo[1]+= 1;
+			human_player.tileTo[1]+= 1; //down
 			human_player_moves = true;
 		}
 		else if(human_player.keysDown[37] && human_player.tileFrom[0]>0 && gameMap[toIndex(human_player.tileFrom[0]-1, human_player.tileFrom[1])]==1) {
-			human_player.tileTo[0]-= 1;
+			human_player.tileTo[0]-= 1; //left
 			human_player_moves = true;
 		}
 		else if(human_player.keysDown[39] && human_player.tileFrom[0]<(mapW-1) && gameMap[toIndex(human_player.tileFrom[0]+1, human_player.tileFrom[1])]==1) {
-			human_player.tileTo[0]+= 1;
+			human_player.tileTo[0]+= 1; //right
 			human_player_moves = true;
 		}
 		else if(human_player.keysDown[32] && (currentFrameTime-human_player.timeMoved>=human_player.delayMove)) {
-			human_player_moves = true;
+			human_player_moves = true; //stay
 			human_player.timeMoved = currentFrameTime;
 			human_player.score = human_player.score + human_player.scores.stay;
 		}
 		if(human_player_moves) {
 			computer_player.resetKeyPress();
 			computerMove = computer_controller.move(getBoardState());
+			console.log("computerMove: "+ computerMove);
 			computer_player.keysDown[computerMove] = true;
 			if(computer_player.keysDown[32] && (currentFrameTime-computer_player.timeMoved>=computer_player.delayMove)) {
 				// TODO: I think there is a problem with the stay score. it not always update the computer score

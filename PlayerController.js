@@ -37,21 +37,23 @@ class PlayerController{
             case "mix":
                 return this.mix(state);
             default:
-                console.log("im here");
+                throw "move(state): not a valid baseline"
         }
     }
 
     validAction(action, board) {
+        // console.log(action);
+        // console.log(this.player_controlled.tileFrom);
         switch(action) {
-            case 38: //left
-                return this.player_controlled.tileFrom[1]>0 && board[toIndex(this.player_controlled.tileFrom[0], this.player_controlled.tileFrom[1]-1)]!=0;
-            case 40: //up
-                return this.player_controlled.tileFrom[1]<(mapH-1) && board[toIndex(this.player_controlled.tileFrom[0], this.player_controlled.tileFrom[1]+1)]!=0;
-            case 37: //right
-                return this.player_controlled.tileFrom[0]>0 && board[toIndex(this.player_controlled.tileFrom[0]-1, this.player_controlled.tileFrom[1])]!=0;
-            case 39: //down
-                return this.player_controlled.tileFrom[0]<(mapW-1) && board[toIndex(this.player_controlled.tileFrom[0]+1, this.player_controlled.tileFrom[1])]!=0;
-            case 32:
+            case 38: //up
+                return this.player_controlled.tileFrom[1]>0 && board[this.player_controlled.tileFrom[1]-1][this.player_controlled.tileFrom[0]]==1;
+            case 40: //down
+                return this.player_controlled.tileFrom[1]<(mapH-1) && board[this.player_controlled.tileFrom[1]+1][this.player_controlled.tileFrom[0]]==1;
+            case 37: //left
+                return this.player_controlled.tileFrom[0]>0 && board[this.player_controlled.tileFrom[1]][this.player_controlled.tileFrom[0]-1]==1;
+            case 39: //right
+                return this.player_controlled.tileFrom[0]<(mapW-1) && board[this.player_controlled.tileFrom[1]][this.player_controlled.tileFrom[0]+1]==1;
+            case 32: //stay
                 return true;
             default:
                 return false;
@@ -62,7 +64,7 @@ class PlayerController{
         sub_state.filter(function(row, i){
             row.filter(function(row, j) {
                 if(row == 1) {
-                    indexs.push([i,j]);
+                    indexs.push([j,i]);
                 }
             });
         });
@@ -70,41 +72,46 @@ class PlayerController{
     }
     distance(from, to) {
         //number of moves to get from 'from' to 'to'
+        console.log("distance: " + (Math.abs(from[0] - to[0]) + Math.abs(from[1] - to[1])));
         return Math.abs(from[0] - to[0]) + Math.abs(from[1] - to[1]);
     }
     takeActionTo(from, to) {
+        // take a action that make it close to the award
+
         // maybe use here astar to find the shortest path:
         // https://github.com/bgrins/javascript-astar
         // or this:
         // https://github.com/rativardhan/Shortest-Path-2D-Matrix-With-Obstacles
-        console.log("from: "+ from);
-        console.log("to: "+ to);
-        
-        // need to check that the action is valid
-        if(from[0] < to[0]) {
-            return 37; //left
+        if(from[1] < to[1]) {
+            return 40 //down
+        }
+        else if(from[1] > to[1]){
+            return 38 //up
+        }
+        else if(from[0] < to[0]) {
+            return 39 //right
         }
         else if(from[0] > to[0]) {
-            return 39; //right
+            return 37 //left
         }
-        if(from[1] < to[1]) {
-            return 38; //up
-        }
-        else {
-            return 40; //down
-        }
-
+        throw "takeActionTo("+from +","+ to+ "): could not found the action";
     }
-    ////////////////////////////// All baselines ////////////////////////////////////////////////
-    random(state) {
-        console.log(state);
+    getValidActions(board) {
+        console.log(board);
         var actions = Object.keys(this.player_controlled.keysDown).map((i) => Number(i));
         var valid_actions = [];
         for(var i=0; i<actions.length; i++) {
-            if(this.validAction(actions[i], state[0])) {
+            if(this.validAction(actions[i], board)) {
                 valid_actions.push(actions[i]);
             }
         }
+        console.log("valid_actions: "+valid_actions)
+        return valid_actions;
+    }
+
+    ////////////////////////////// All baselines ////////////////////////////////////////////////
+    random(state) {
+        var valid_actions = this.getValidActions(state[0]);
         var randomAction = valid_actions[Math.floor(valid_actions.length * Math.random())];
         return randomAction;
     }
@@ -114,24 +121,59 @@ class PlayerController{
     closest(state) {
         var player_pos = this.player_controlled.tileFrom;
         var all_awards_positions = this.whereis(state[5]); // whereis all awards
-        var min_d = all_awards_positions[0];
-        for (var award_pos of all_awards_positions) {
-            var d = this.distance(player_pos, award_pos);
-            console.log("d: "+ d);
+        
+        const SPA = new ShortestPathAlgo(state[0]);
+        
+        SPA.run(player_pos, all_awards_positions[0]);
+        var min_d = SPA.getMinDistance();
+        var min_path = SPA.getSortestPath();
+        
+        for (var i=1; i<all_awards_positions.length; i++) {
+            var award_pos = all_awards_positions[i];
+            SPA.run(player_pos, award_pos);
+            var d = SPA.getMinDistance();
             // what happen when min_d == d ? maybe to consider the human player here
             // TODO: ask Amos
             if(d < min_d) {
                 min_d = d;
+                min_path = SPA.getSortestPath();
             }
         }
-        return this.takeActionTo(player_pos, min_d);
+        return this.takeActionTo(player_pos, min_path[1]);
     }
     farthest(state) {
-        // var award_map = 
-        // for()
+        var player_pos = this.player_controlled.tileFrom;
+        var all_awards_positions = this.whereis(state[5]); // whereis all awards
+        var human_pos = this.whereis(state[1])[0];
+        
+        const SPA = new ShortestPathAlgo(state[0]);
+
+        SPA.run(player_pos, all_awards_positions[0]);
+        var max_d = SPA.getMinDistance();
+        var max_path = SPA.getSortestPath();
+
+        for (var i=1; i<all_awards_positions.length; i++) {
+            var award_pos = all_awards_positions[i];
+            SPA.run(player_pos, award_pos);
+            var d_c = SPA.getMinDistance(); //computer distance
+            SPA.run(human_pos, award_pos);
+            var d_h = SPA.getMinDistance(); //human distance
+            if(d_c < d_h) {
+                //Check if the computer comes before the human 
+                if(d_c > max_d) {
+                    max_d = d_c;
+                    max_path = SPA.getSortestPath();
+                }
+            }
+        }
+        return this.takeActionTo(player_pos, max_path[1]);
         
     }
     TSP(state) {
+        var player_pos = this.player_controlled.tileFrom;
+        var all_awards_positions = this.whereis(state[5]);
+
+        
         
     }
     mix(state) {
