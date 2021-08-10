@@ -59,6 +59,19 @@ class PlayerController{
                 return false;
         }
     }
+    getValidActions(board) {
+        console.log(board);
+        var actions = Object.keys(this.player_controlled.keysDown).map((i) => Number(i));
+        var valid_actions = [];
+        for(var i=0; i<actions.length; i++) {
+            if(this.validAction(actions[i], board)) {
+                valid_actions.push(actions[i]);
+            }
+        }
+        console.log("valid_actions: "+valid_actions)
+        return valid_actions;
+    }
+
     whereis(sub_state) {
         var indexs = [];
         sub_state.filter(function(row, i){
@@ -72,7 +85,7 @@ class PlayerController{
     }
     distance(from, to) {
         //number of moves to get from 'from' to 'to'
-        console.log("distance: " + (Math.abs(from[0] - to[0]) + Math.abs(from[1] - to[1])));
+        // console.log("distance: " + (Math.abs(from[0] - to[0]) + Math.abs(from[1] - to[1])));
         return Math.abs(from[0] - to[0]) + Math.abs(from[1] - to[1]);
     }
     takeActionTo(from, to) {
@@ -95,18 +108,6 @@ class PlayerController{
             return 37 //left
         }
         throw "takeActionTo("+from +","+ to+ "): could not found the action";
-    }
-    getValidActions(board) {
-        console.log(board);
-        var actions = Object.keys(this.player_controlled.keysDown).map((i) => Number(i));
-        var valid_actions = [];
-        for(var i=0; i<actions.length; i++) {
-            if(this.validAction(actions[i], board)) {
-                valid_actions.push(actions[i]);
-            }
-        }
-        console.log("valid_actions: "+valid_actions)
-        return valid_actions;
     }
 
     ////////////////////////////// All baselines ////////////////////////////////////////////////
@@ -139,7 +140,7 @@ class PlayerController{
                 min_path = SPA.getSortestPath();
             }
         }
-        return this.takeActionTo(player_pos, min_path[1]);
+        return this.takeActionTo(min_path[0], min_path[1]);
     }
     farthest(state) {
         var player_pos = this.player_controlled.tileFrom;
@@ -166,15 +167,43 @@ class PlayerController{
                 }
             }
         }
-        return this.takeActionTo(player_pos, max_path[1]);
-        
+        return this.takeActionTo(max_path[0], max_path[1]);
     }
     TSP(state) {
         var player_pos = this.player_controlled.tileFrom;
         var all_awards_positions = this.whereis(state[5]);
-
-        
-        
+        all_awards_positions.unshift(player_pos);
+        var map_cost = new Map();
+        for(var point of all_awards_positions) {
+            map_cost.set(point, new Map());
+        }
+        var permutations = generateCityRoutes(all_awards_positions);
+        var min_cost = Number.POSITIVE_INFINITY;
+        var awards_order = [];
+        for(var path of permutations) {
+            // console.log(p);
+            var temp_cost = 0;
+            for(var i=0; i<path.length-1; i++) {
+                var point1 = path[i];
+                var point2 = path[i+1];
+                
+                var cost = map_cost.get(point1).get(point2);
+                if(cost === undefined) {
+                    //insert cost
+                    map_cost.get(point1).set(point2, this.distance(point1, point2));
+                    cost = map_cost.get(point1).get(point2);
+                }
+                temp_cost += cost;
+            }
+            if(temp_cost < min_cost) {
+                min_cost = temp_cost;
+                awards_order = path;
+            }
+        }
+        const SPA = new ShortestPathAlgo(state[0]);
+        SPA.run(awards_order[0], awards_order[1]);
+        var optimal_path = SPA.getSortestPath();
+        return this.takeActionTo(optimal_path[0], optimal_path[1]);
     }
     mix(state) {
         var baselines = Object.keys(this.TYPES);
@@ -183,6 +212,19 @@ class PlayerController{
             baselines.splice(index, 1);
         }
         console.log(baselines);
+        var random_baseline = baselines[Math.floor(baselines.length * Math.random())];
+        switch(random_baseline) {
+            case "random":
+                return this.random(state);
+            case "selfish":
+                return this.selfish(state);
+            case "closest":
+                return this.closest(state);
+            case "farthest":
+                return this.farthest(state);
+            case "TSP":
+                return this.TSP(state);
+        }
     }
     
 }

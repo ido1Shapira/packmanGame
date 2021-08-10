@@ -31,8 +31,3 @@ function generatePermutations(Arr){
     }
     return pems;
   }
-  
-  
-  console.log(generatePermutations([1,2,3]));
-  
-  console.log(generateCityRoutes([0,1,2,3]));
