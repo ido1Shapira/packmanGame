@@ -29,8 +29,11 @@ var currentSecond = 0, frameCount = 0, framesLastSecond = 0, lastFrameTime = 0;
                     // tileFrom , tileTo, timeMoved, dimensions, position, delayMove
 var human_player = new Character([1,1], [1,1], 0, [30,30], [45,45], 700);
 
+selectedBehavior = "farthest"
 var computer_player = new Character([7,7], [7,7], 0, [30,30], [285,285], 700);
-var computer_controller = new PlayerController(computer_player, "farthest");
+var computer_controller = new PlayerController(computer_player, selectedBehavior);
+
+initializeFirebase(selectedBehavior);
 
 function position(tile, dimensions)
 {
@@ -141,9 +144,6 @@ window.onload = function()
 	ctx = document.getElementById('game').getContext("2d");
 	requestAnimationFrame(drawGame);
 	ctx.font = "bold 10pt sans-serif";
-
-	window.addEventListener("keydown", handleKeyDown);
-	window.addEventListener("keyup", handleKeyUp);
 };
 
 function drawGame()
@@ -188,7 +188,9 @@ function drawGame()
 		}
 		if(human_player_moves) {
 			computer_player.resetKeyPress();
-			computerMove = computer_controller.move(getBoardState());
+			var state = getBoardState();
+			saveToFirebase(state);
+			computerMove = computer_controller.move(state);
 			console.log("computerMove: "+ computerMove);
 			computer_player.keysDown[computerMove] = true;
 			if(computer_player.keysDown[32] && (currentFrameTime-computer_player.timeMoved>=computer_player.delayMove)) {
@@ -252,6 +254,8 @@ function drawGame()
 		
 		window.removeEventListener("keydown", handleKeyDown);
 		window.removeEventListener("keyup", handleKeyUp);
+
+		finishGame();
 	}
 
 	for(var y = 0; y < mapH; ++y) // draw the board
@@ -277,6 +281,10 @@ function drawGame()
 	}
 	
 	ctx.fillStyle = "#0000ff"; // computer color: blue
+	// var image = new Image();
+	// image.src = 'images/blueCar.png';     // starts to load the image
+	// ctx.drawImage(image, computer_player.position[0], computer_player.position[1],
+	// 	computer_player.dimensions[0], computer_player.dimensions[1]);
 	ctx.fillRect(computer_player.position[0], computer_player.position[1],
 		computer_player.dimensions[0], computer_player.dimensions[1]);
 
