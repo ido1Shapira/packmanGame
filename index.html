@@ -36,29 +36,28 @@ http://technologies4.me/articles/more-tile-types-map-a4/ -->
   <div id="container">
     <div id="left">
       <h1><u>Game instructions:</u></h1>
+      <p>This ia a two player game. Both players moves synchronously; that is, each time you (the red player) make a move, the blue player will
+        make a move as well---at the same time.</p>
       <h3><u>Control:</u></h3>
       <ul>
         <li>In this game you control the red player.</li>
-        <li>Use the arrow keys to move left, up, right and down.</li>
+        <li>Use the arrow keys to move left, up, right and down. You cannot travel on the dark area.</li>
         <li>Use spacebar to remain in place.</li>
-        <li>Both players moves synchronously; that is, each time you (the red player) make a move, the blue player will
-          make a move as well---at the same time.</li>
       </ul>
       <h3><u>Goal:</u></h3>
-      <p style="color: red;"> Check this with Amos!</p>
-      <p>Your goal is to collect all awards, in a minimum number of steps.</p>
-      <p>Note that blue player's goal is also to collect all awards, in a minimum number of
-        steps.</p>  
+      <ul>
+        <li>The orange circles are dirt, which must be cleaned (either by you or by the second player). To clean a piece of dirt simply move towards it.</li>
+        <li>Cleaning a piece of dirt does not cost or provide any points (until all dirt is clean).</li>
+        <li>Note that blue player uses the same scoring schedule as you.</li>
+      </ul>
       <h3><u>Score:</u></h3>
       <ul>
-        <li>The score is being initial with 50.</li>
+        <li>You begin with 50 points. Your score may become negative; it will not affect the game-play.</li>
         <li>The score will be calculated using the following:
           <ul>
-            <li>Colliding with the blue ball = 0.</li>
-            <li>Each time you move = -2.</li>
-            <li>Remain in place = -1</li>
-            <li>Reaching an award = 2</li>
-            <li>Reaching the goal of the game = 100.</li>
+            <li>A move costs 2 points.</li>
+            <li>Remaining in place costs 1 point.</li>
+            <li>Once all dirt is cleaned both players will receive 100 points (regardless of how many dirt pieces each player has cleaned).</li>
           </ul>
         </li>
       </ul>      
@@ -77,44 +76,41 @@ http://technologies4.me/articles/more-tile-types-map-a4/ -->
             <h2>Please answer the following quiz:</h2>
             <div class="survey-body">
               <form>
-                <table class="rating-table">
-                  <p>1. How can you (the red circle) move on the board?</p>
-                  <input type="radio" id="1_1" name="q1" value="false"/>
-                  <label for="1_1">I can allways move up, down, left and right</label><br>
-                  <input type="radio" id="1_2" name="q1" value="false"/>
-                  <label for="1_2">In the upper slots I can't advance to the right</label><br>
-                  <input type="radio" id="1_3" name="q1" value="true"/>
-                  <label for="1_3">In the upper slots I can move down, right and stay and in the lower slots I can either move up or stay</label>
-  
-                  <br>
-                  <hr>
-  
-                  <p>2. What is your (the red circle's) goal?</p>
-                  <input type="radio" id="2_1" name="q2" value="false"/>
-                  <label for="2_1">The goal is to stay in place and not allow the blue circle to pass</label><br>
-                  <input type="radio" id="2_2" name="q2" value="true"/>
-                  <label for="2_2">The goal is to reach the right side without colliding with the blue circle, in a minimum number of steps</label><br>
-                  <input type="radio" id="2_3" name="q2" value="false"/>
-                  <label for="2_3">The goal is to collide with the blue circle</label>
-  
-                  <br>
-                  <hr>
-  
-                  <p>3. What is the blue circle goal?</p>
-                  <input type="radio" id="3_1" name="q3" value="false"/>
-                  <label for="3_1">Its goal is to stay in place and not allow me to pass</label><br>
-                  <input type="radio" id="3_2" name="q3" value="true"/>
-                  <label for="3_2">Its goal is to reach the left side without colliding with me, in a minimum number of steps </label><br>
-                  <input type="radio" id="3_3" name="q3" value="false"/>
-                  <label for="3_3">Its goal is to collide with me</label>
-  
-                  <br>
-                  <hr>
-  
-                  <input type="button" onclick="checkQuiz()" ; value="Submit"/>
-                  <p id="notFillAll1" style="color: red; display:none;">Did not submit, please fill all fields!</p>
-          </table>
-          </form>
+                <div>
+                  <div class="quiz_question">
+                    <p><b>1. Does it cost to clean the dirt?</b></p>
+                    <input type="radio" id="1_1" name="q1" value="false"/>
+                    <label for="1_1">It depandes on the location of the player.</label><br>
+                    <input type="radio" id="1_2" name="q1" value="true"/>
+                    <label for="1_2">Yes, it is cost to clean the dirt.</label><br>
+                    <input type="radio" id="1_3" name="q1" value="false"/>
+                    <label for="1_3">No, it is not cost to clean the dirt.</label>
+                  </div>
+
+                  <div class="quiz_question">
+                    <p><b>2. How the game ends?</b></p>
+                    <input type="radio" id="2_1" name="q2" value="false"/>
+                    <label for="2_1">When the two players reach the other end of the board.</label><br>
+                    <input type="radio" id="2_2" name="q2" value="true"/>
+                    <label for="2_2">When there is no more dirt left.</label><br>
+                    <input type="radio" id="2_3" name="q2" value="false"/>
+                    <label for="2_3">When the two players collide.</label>
+                  </div>
+
+                  <div class="quiz_question">
+                    <p><b>3. Do actions encure costs?</b></p>
+                    <input type="radio" id="3_1" name="q3" value="true"/>
+                    <label for="3_1">Yes, moving costs 2 points and remaining in place costs 1 point.</label><br>
+                    <input type="radio" id="3_2" name="q3" value="false"/>
+                    <label for="3_2">Yes, moving costs 1 points and remaining in place costs 2 point.</label><br>
+                    <input type="radio" id="3_3" name="q3" value="false"/>
+                    <label for="3_3">No, actions do not encure costs.</label>
+                  </div>
+                  
+                </div>
+                <input type="button" onclick="checkQuiz()" ; value="Submit"/>
+                <p id="notFillAll1" style="color: red; display:none;">Did not submit, please fill all fields!</p>
+              </form>
             </div>
             <div class="survey-footer">
               <h3>After answering all questions correctly you will be able to play the game.</h3>
@@ -147,7 +143,6 @@ http://technologies4.me/articles/more-tile-types-map-a4/ -->
     <!-- Survey content -->
     <div class="survey-content">
       <div class="survey-header">
-        <span class="close">&times;</span>
         <h2 id="survey_title">Please fill the following survey:</h2>
         <div class="survey-body">
           <form id="contactForm">
@@ -155,7 +150,7 @@ http://technologies4.me/articles/more-tile-types-map-a4/ -->
             <div class="grid-container">
               <div>
                 <label for="yBirth">Year of Birth:</label><br>
-                <input type="number" id="yBirth" name="birthyear" min="1920" max="2021" step="1" />
+                <input type="number" id="yBirth" name="birthyear" min="1930" max="2022" step="1" />
               </div>
 
               <div>
@@ -179,18 +174,9 @@ http://technologies4.me/articles/more-tile-types-map-a4/ -->
                 </select>
               </div>
 
-              <div>
-                <label for="drivinglicense">Driving License status:</label><br>
-                <select id="drivinglicense" name="drivinglicense">
-                  <option selected disabled hidden style='display: none' value=''></option>
-                  <option value="valid">Valid driver's license</option>
-                  <option value="invalid">Expired driver's license</option>
-                  <option value="none">No driver's license at all</option>
-                </select>
-              </div>
             </div>
-
             <p>To what extent do you agree with the following statments?</p>
+
             <table class="rating-table">
               <tr>
                 <td></td>
@@ -204,31 +190,31 @@ http://technologies4.me/articles/more-tile-types-map-a4/ -->
               </tr>
               <tr>
                 <td class="td-title">
-                  <p>The blue circle played aggressively</p>
+                  <p>The blue player played selfishly</p>
                 </td>
-                <td><input type="radio" name="aggressively_rating" value="7" id="q7" title="strongly agree" /></td>
-                <td><input type="radio" name="aggressively_rating" value="6" id="q6" title="agree" /></td>
-                <td><input type="radio" name="aggressively_rating" value="5" id="q5" title="slightly agree" /></td>
-                <td><input type="radio" name="aggressively_rating" value="4" id="q4" title="neutral" /></td>
-                <td><input type="radio" name="aggressively_rating" value="3" id="q3" title="slightly disagree" /></td>
-                <td><input type="radio" name="aggressively_rating" value="2" id="q2" title="disagree" /></td>
-                <td><input type="radio" name="aggressively_rating" value="1" id="q1" title="strongly disagree" /></td>
+                <td><input type="radio" name="selfishly_rating" value="7" id="q7" title="strongly agree" /></td>
+                <td><input type="radio" name="selfishly_rating" value="6" id="q6" title="agree" /></td>
+                <td><input type="radio" name="selfishly_rating" value="5" id="q5" title="slightly agree" /></td>
+                <td><input type="radio" name="selfishly_rating" value="4" id="q4" title="neutral" /></td>
+                <td><input type="radio" name="selfishly_rating" value="3" id="q3" title="slightly disagree" /></td>
+                <td><input type="radio" name="selfishly_rating" value="2" id="q2" title="disagree" /></td>
+                <td><input type="radio" name="selfishly_rating" value="1" id="q1" title="strongly disagree" /></td>
               </tr>
               <tr>
                 <td class="td-title">
-                  <p>The blue circle played generously</p>
+                  <p>The blue player was collaborative</p>
                 </td>
-                <td><input type="radio" name="generously_rating" value="7" id="q7" title="strongly agree" /></td>
-                <td><input type="radio" name="generously_rating" value="6" id="q6" title="agree" /></td>
-                <td><input type="radio" name="generously_rating" value="5" id="q5" title="slightly agree" /></td>
-                <td><input type="radio" name="generously_rating" value="4" id="q4" title="neutral" /></td>
-                <td><input type="radio" name="generously_rating" value="3" id="q3" title="slightly disagree" /></td>
-                <td><input type="radio" name="generously_rating" value="2" id="q2" title="disagree" /></td>
-                <td><input type="radio" name="generously_rating" value="1" id="q1" title="strongly disagree" /></td>
+                <td><input type="radio" name="collaborative_rating" value="7" id="q7" title="strongly agree" /></td>
+                <td><input type="radio" name="collaborative_rating" value="6" id="q6" title="agree" /></td>
+                <td><input type="radio" name="collaborative_rating" value="5" id="q5" title="slightly agree" /></td>
+                <td><input type="radio" name="collaborative_rating" value="4" id="q4" title="neutral" /></td>
+                <td><input type="radio" name="collaborative_rating" value="3" id="q3" title="slightly disagree" /></td>
+                <td><input type="radio" name="collaborative_rating" value="2" id="q2" title="disagree" /></td>
+                <td><input type="radio" name="collaborative_rating" value="1" id="q1" title="strongly disagree" /></td>
               </tr>
               <tr>
                 <td class="td-title">
-                  <p>The blue circle played wisely</p>
+                  <p>The blue player played wisely</p>
                 </td>
                 <td><input type="radio" name="wisely_rating" value="7" id="q7" title="strongly agree" /></td>
                 <td><input type="radio" name="wisely_rating" value="6" id="q6" title="agree" /></td>
@@ -240,7 +226,7 @@ http://technologies4.me/articles/more-tile-types-map-a4/ -->
               </tr>
               <tr>
                 <td class="td-title">
-                  <p>The blue circle was predictable</p>
+                  <p>The blue player was predictable</p>
                 </td>
                 <td><input type="radio" name="predictable_rating" value="7" id="q7" title="strongly agree" /></td>
                 <td><input type="radio" name="predictable_rating" value="6" id="q6" title="agree" /></td>
@@ -252,7 +238,7 @@ http://technologies4.me/articles/more-tile-types-map-a4/ -->
               </tr>
               <tr>
                 <td class="td-title">
-                  <p>I felt the blue circle was a computer</p>
+                  <p>I felt the blue player was a computer</p>
                 </td>
                 <td><input type="radio" name="computer_rating" value="7" id="q7" title="strongly agree" /></td>
                 <td><input type="radio" name="computer_rating" value="6" id="q6" title="agree" /></td>
@@ -265,7 +251,7 @@ http://technologies4.me/articles/more-tile-types-map-a4/ -->
             </table>
             <label for="additionalcomments">Additional Comments:</label>
             <textarea id="additionalcomments" name="additionalcomments"
-              placeholder="Write any additional comments if you like..." style="height:100px"></textarea>
+              placeholder="Write any additional comments if you like..."></textarea>
 
             <input id="submit" type="button" onclick="submitSurvey()" ; value="Submit">
             <p id="notFillAll2" style="color: red; display:none;">Did not submit, please fill all fields!</p>

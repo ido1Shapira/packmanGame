@@ -143,6 +143,7 @@ class PlayerController{
         return this.takeActionTo(min_path[0], min_path[1]);
     }
     farthest(state) {
+        console.log(state);
         var player_pos = this.player_controlled.tileFrom;
         var all_awards_positions = this.whereis(state[5]); // whereis all awards
         var human_pos = this.whereis(state[1])[0];
