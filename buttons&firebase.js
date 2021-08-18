@@ -33,7 +33,7 @@ function checkQuiz() {
 	        window.addEventListener("keyup", handleKeyUp);
             getDOM("quiz").style.display = "none";
             getDOM("showgameButton").style.display = "none";
-
+            getDOM("showgameLabel").style.display = "none";
         }
         else {
             getDOM("notFillAll1").innerHTML = "At least one answer is incorrect, please read the instructions again."
@@ -131,9 +131,17 @@ function finishGame(state) { //update database
 }
 
 function saveToFirebase(state) {
-    firebase.database().ref("all-games/"+postID+"/states/"+steps).set({
+    firebase.database().ref("all-games/"+postID+"/log/"+steps).set({
         state
     });
+    // firebase.database().ref("all-games/"+postID+"/log/"+steps).set({
+    //     "board": state[0],
+    //     "human_trace": state[1],
+    //     "computer_trace": state[2],
+    //     "human_rewards": state[3],
+    //     "computer_rewards": state[4],
+    //     "all_rewards": state[5]
+    // });
     steps++;
 }
 
