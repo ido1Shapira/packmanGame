@@ -150,7 +150,7 @@ var handleKeyDown = function(e) {
 var handleKeyUp = function(e) {
 	if((e.keyCode>=37 && e.keyCode<=40) || e.keyCode==32) {
 		human_player.keysDown[e.keyCode] = false;
-		computer_player.keysDown[computerMove] = false;
+		computer_player.resetKeyPress();
 	}
 	// console.log(e.keyCode);
 	
@@ -205,27 +205,21 @@ function drawGame()
 			human_player.tileTo[0]+= 1; //right
 			human_player_moves = true;
 		}
-		else if(human_player.keysDown[32] && (currentFrameTime-human_player.timeMoved>=human_player.delayMove)) {
+		else if(human_player.keysDown[32]) {
 			human_player_moves = true; //stay
-			human_player.timeMoved = currentFrameTime;
-			human_player.score = human_player.score + human_player.scores.stay;
 		}
+		if(human_player.tileFrom[0]!=human_player.tileTo[0] || human_player.tileFrom[1]!=human_player.tileTo[1])
+		{ human_player.timeMoved = currentFrameTime; }
+
 		if(human_player_moves) {
-			computer_player.resetKeyPress();
 			var state = getBoardState();
 			saveToFirebase(state);
 			computerMove = computer_controller.move(state);
 			console.log("computerMove: "+ computerMove);
 			computer_player.keysDown[computerMove] = true;
-			if(computer_player.keysDown[32] && (currentFrameTime-computer_player.timeMoved>=computer_player.delayMove)) {
-				// TODO: I think there is a problem with the stay score. it not always update the computer score
-				computer_player.score = computer_player.score + computer_player.scores.stay;
-			}
 		}
-
-		if(human_player.tileFrom[0]!=human_player.tileTo[0] || human_player.tileFrom[1]!=human_player.tileTo[1])
-		{ human_player.timeMoved = currentFrameTime; }
 	}
+	
 
 	if(!computer_player.processMovement(currentFrameTime)) //move computer player on board
 	{

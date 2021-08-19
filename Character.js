@@ -30,7 +30,18 @@ class Character{
 		    ((tileH*y)+((tileH-this.dimensions[1])/2))];
     }
     processMovement(t) {
+        if(this.keysDown[32]) {
+            if((t-this.timeMoved)<this.delayMove)
+            {
+                return true;
+            }
+            else {
+                this.score = this.score + this.scores.stay;
+                this.timeMoved = t;
+            }
+        }
         if(this.tileFrom[0]==this.tileTo[0] && this.tileFrom[1]==this.tileTo[1]) { return false; }
+
 
         if((t-this.timeMoved)>=this.delayMove)
         {
