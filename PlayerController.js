@@ -18,10 +18,15 @@ class PlayerController{
         // 6. mix of all controllers
         
         // this.players_controlled.push(player);
+        if(type == -1) {
+            var baselines = Object.keys(this.TYPES);
+            type = baselines[Math.floor(baselines.length * Math.random())];
+        }
         this.TYPES[type] = true;
         this.type = type;
         this.player_controlled = player;
     }
+    getType() { return this.type; }
     move(state) {
         switch(this.type) {
             case "random":
@@ -81,11 +86,6 @@ class PlayerController{
         });
         return indexs;
     }
-    distance(from, to) {
-        //number of moves to get from 'from' to 'to'
-        // console.log("distance: " + (Math.abs(from[0] - to[0]) + Math.abs(from[1] - to[1])));
-        return Math.abs(from[0] - to[0]) + Math.abs(from[1] - to[1]);
-    }
     takeActionTo(from, to) {
         // take a action that make it close to the award
 
@@ -141,30 +141,30 @@ class PlayerController{
         return this.takeActionTo(min_path[0], min_path[1]);
     }
     farthest(state) {
-        console.log(state);
         var player_pos = this.player_controlled.tileFrom;
         var all_awards_positions = this.whereis(state[5]); // whereis all awards
         var human_pos = this.whereis(state[1])[0];
         
         const SPA = new ShortestPathAlgo(state[0]);
+        var max_d = Number.NEGATIVE_INFINITY;
+        var max_path = null;
 
-        SPA.run(player_pos, all_awards_positions[0]);
-        var max_d = SPA.getMinDistance();
-        var max_path = SPA.getSortestPath();
-
-        for (var i=1; i<all_awards_positions.length; i++) {
+        for (var i=0; i<all_awards_positions.length; i++) {
             var award_pos = all_awards_positions[i];
-            SPA.run(player_pos, award_pos);
-            var d_c = SPA.getMinDistance(); //computer distance
             SPA.run(human_pos, award_pos);
             var d_h = SPA.getMinDistance(); //human distance
-            if(d_c < d_h) {
-                //Check if the computer comes before the human 
+            SPA.run(player_pos, award_pos);
+            var d_c = SPA.getMinDistance(); //computer distance
+            if(d_c <= d_h) {
+                //Check if the computer comes before the human
                 if(d_c > max_d) {
                     max_d = d_c;
                     max_path = SPA.getSortestPath();
                 }
             }
+        }
+        if(max_path == null) {
+            return 32;
         }
         return this.takeActionTo(max_path[0], max_path[1]);
     }
@@ -176,6 +176,7 @@ class PlayerController{
         for(var point of all_awards_positions) {
             map_cost.set(point, new Map());
         }
+        const SPA = new ShortestPathAlgo(state[0]);
         var permutations = generateCityRoutes(all_awards_positions);
         var min_cost = Number.POSITIVE_INFINITY;
         var awards_order = [];
@@ -189,7 +190,9 @@ class PlayerController{
                 var cost = map_cost.get(point1).get(point2);
                 if(cost === undefined) {
                     //insert cost
-                    map_cost.get(point1).set(point2, this.distance(point1, point2));
+                    SPA.run(point1, point2);
+                    var d = SPA.getMinDistance(); //computer distance
+                    map_cost.get(point1).set(point2, d);
                     cost = map_cost.get(point1).get(point2);
                 }
                 temp_cost += cost;
@@ -199,7 +202,6 @@ class PlayerController{
                 awards_order = path;
             }
         }
-        const SPA = new ShortestPathAlgo(state[0]);
         SPA.run(awards_order[0], awards_order[1]);
         var optimal_path = SPA.getSortestPath();
         return this.takeActionTo(optimal_path[0], optimal_path[1]);
@@ -210,7 +212,6 @@ class PlayerController{
         if (index > -1) {
             baselines.splice(index, 1);
         }
-        console.log(baselines);
         var random_baseline = baselines[Math.floor(baselines.length * Math.random())];
         switch(random_baseline) {
             case "random":

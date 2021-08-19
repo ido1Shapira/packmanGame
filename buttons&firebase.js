@@ -118,8 +118,8 @@ function getRating(s_rating) {
 let postID;
 let steps = 1;
 
-function finishGame(state) { //update database
-    saveToFirebase(state); //saving the last state
+function finishGame(state, action) { //update database
+    saveToFirebase(state, action); //saving the last state
 
     firebase.database().ref("all-games/"+postID+"/human_score").set(human_player.score);
     firebase.database().ref("all-games/"+postID+"/computer_score").set(computer_player.score);
@@ -129,15 +129,20 @@ function finishGame(state) { //update database
     keyEnable = false;
 }
 
-function saveToFirebase(state) {
+function saveToFirebase(state, humanMove) {
     // var url=canvas.toDataURL("image/png").replace("image/png", "image/octet-stream")
 	// var img=new Image();
 	// img.src=url
     // firebase.database().ref("all-games/"+postID+"/img/"+steps).set({
     //     img
     // });
-    firebase.database().ref("all-games/"+postID+"/log/"+steps).set({
-        state
+
+    // firebase.database().ref("all-games/"+postID+"/log/"+steps).set({
+    //     state
+    // });
+    firebase.database().ref("humanModel/"+postID+"/"+steps).set({
+        state: state,
+        action: humanMove
     });
     // firebase.database().ref("all-games/"+postID+"/log/"+steps).set({
     //     "board": state[0],

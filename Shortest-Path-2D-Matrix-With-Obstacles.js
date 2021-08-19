@@ -1,8 +1,10 @@
 // https://github.com/rativardhan/Shortest-Path-2D-Matrix-With-Obstacles
 
 class ShortestPathAlgo {
-	constructor(board) {
-		this.boardWithoutTarget = board.slice();
+	constructor(b) {
+		this.boardWithoutTarget = b.map(function(arr) {
+			return arr.slice();
+		});
 	}
 	getMinDistance() {
 		return this.shortestPathLength - 1;
@@ -14,7 +16,9 @@ class ShortestPathAlgo {
 		this.board[x_target][y_target] = 9;
 	}
 	clear() {
-		this.board = this.boardWithoutTarget.slice();
+		this.board = this.boardWithoutTarget.map(function(arr) {
+			return arr.slice();
+		});
 		this.allObstacle2DMatrix = []; // All Possible path in 2D Matrix Form
 		this.duplicateVirtualPath = []; // A virtual 2D matrix path to find the shortest path
 		this.allObstacleXY = []; // A coordinates XY path collections  for all possible obstacle Path
