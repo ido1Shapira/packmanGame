@@ -3,6 +3,7 @@
 // date: 03/08/2021
 //
 var ctx = null;
+var canvas = null;
 var gameMap = [
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 	0, 1, 1, 1, 1, 1, 1, 1, 1, 0,
@@ -152,12 +153,21 @@ var handleKeyUp = function(e) {
 		computer_player.keysDown[computerMove] = false;
 	}
 	// console.log(e.keyCode);
+	
+	// var link = document.getElementById('link');
+	// link.setAttribute('download', 'MintyPaper.png');
+	// link.setAttribute('href', canvas.toDataURL("image/png").replace("image/png", "image/octet-stream"));
+	// link.click();
 }
 window.onload = function()
 {
-	ctx = document.getElementById('game').getContext("2d");
+	canvas = document.getElementById('game');
+	ctx = canvas.getContext("2d");
 	requestAnimationFrame(drawGame);
 	ctx.font = "bold 10pt sans-serif";
+
+	window.addEventListener("keydown", handleKeyDown);
+	window.addEventListener("keyup", handleKeyUp);
 };
 
 function drawGame()
@@ -305,7 +315,7 @@ function drawGame()
 	ctx.fillRect(human_player.position[0], human_player.position[1],
 		human_player.dimensions[0], human_player.dimensions[1]);
 
-	ctx.fillStyle = "#000000"; // title color: black
+	ctx.fillStyle = "#FFFFFF"; // title color: white
 	// ctx.fillText("FPS: " + framesLastSecond, 10, 20);
     ctx.fillText("Red score: " + human_player.score, 110, 20);
 	ctx.fillText("Blue score: " + computer_player.score, 210, 20);

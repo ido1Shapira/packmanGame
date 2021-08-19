@@ -131,6 +131,12 @@ function finishGame(state) { //update database
 }
 
 function saveToFirebase(state) {
+    // var url=canvas.toDataURL("image/png").replace("image/png", "image/octet-stream")
+	// var img=new Image();
+	// img.src=url
+    // firebase.database().ref("all-games/"+postID+"/img/"+steps).set({
+    //     img
+    // });
     firebase.database().ref("all-games/"+postID+"/log/"+steps).set({
         state
     });
