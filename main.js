@@ -141,23 +141,60 @@ function getBoardState() {
 	return state;
 }
 
+var humanMove = null;
 var computerMove = null;
-var handleKeyDown = function(e) {
-	if((e.keyCode>=37 && e.keyCode<=40) || e.keyCode==32) { //move players on key press
-		human_player.keysDown[e.keyCode] = true;
-	}
-}
 var handleKeyUp = function(e) {
 	if((e.keyCode>=37 && e.keyCode<=40) || e.keyCode==32) {
-		human_player.keysDown[e.keyCode] = false;
-		// computer_player.keysDown[computerMove] = false;
+		var currentFrameTime = Date.now();
+		if((currentFrameTime-human_player.timeMoved>=human_player.delayMove)) {
+			var validHumanAction = false;
+			switch(e.keyCode) {
+				case 32:
+						//stay
+						validHumanAction = true;
+						humanMove = e.keyCode;
+					break;
+				case 37:
+					if(human_player.tileFrom[0]>0 && gameMap[toIndex(human_player.tileFrom[0]-1, human_player.tileFrom[1])]==1) {
+						human_player.tileTo[0]-= 1; //left
+						validHumanAction = true;
+						humanMove = e.keyCode;
+					}
+					break;
+				case 38:
+					if(human_player.tileFrom[1]>0 && gameMap[toIndex(human_player.tileFrom[0], human_player.tileFrom[1]-1)]==1) {
+						human_player.tileTo[1]-= 1; //up
+						validHumanAction = true;
+						humanMove = e.keyCode;
+					}
+					break;
+				case 39:
+					if(human_player.tileFrom[0]<(mapW-1) && gameMap[toIndex(human_player.tileFrom[0]+1, human_player.tileFrom[1])]==1) {
+						human_player.tileTo[0]+= 1; //right
+						validHumanAction = true;
+						humanMove = e.keyCode;
+					}
+					break;
+				case 40:
+					if(human_player.tileFrom[1]<(mapH-1) && gameMap[toIndex(human_player.tileFrom[0], human_player.tileFrom[1]+1)]==1) {
+						human_player.tileTo[1]+= 1; //down
+						validHumanAction = true;
+						humanMove = e.keyCode;
+					}
+					break;
+			}
+			human_player.timeMoved = currentFrameTime;
+			human_player.keysDown[e.keyCode] = true;
+
+			if(validHumanAction) {
+				//blue player move
+				var state = getBoardState();
+				saveToFirebase(state);
+				computerMove = computer_controller.move(state);
+				computer_player.keysDown[computerMove] = true;
+			}
+		}
 	}
-	// console.log(e.keyCode);
-	
-	// var link = document.getElementById('link');
-	// link.setAttribute('download', 'MintyPaper.png');
-	// link.setAttribute('href', canvas.toDataURL("image/png").replace("image/png", "image/octet-stream"));
-	// link.click();
 }
 window.onload = function()
 {
@@ -166,7 +203,6 @@ window.onload = function()
 	requestAnimationFrame(drawGame);
 	ctx.font = "bold 10pt sans-serif";
 
-	window.addEventListener("keydown", handleKeyDown);
 	window.addEventListener("keyup", handleKeyUp);
 };
 
@@ -188,36 +224,10 @@ function drawGame()
 
 	if(!human_player.processMovement(currentFrameTime)) //move human player on board
 	{
-		var human_player_moves = false;
-		if(human_player.keysDown[38] && human_player.tileFrom[1]>0 && gameMap[toIndex(human_player.tileFrom[0], human_player.tileFrom[1]-1)]==1) {
-			human_player.tileTo[1]-= 1; //up
-			human_player_moves = true;
-		}
-		else if(human_player.keysDown[40] && human_player.tileFrom[1]<(mapH-1) && gameMap[toIndex(human_player.tileFrom[0], human_player.tileFrom[1]+1)]==1) {
-			human_player.tileTo[1]+= 1; //down
-			human_player_moves = true;
-		}
-		else if(human_player.keysDown[37] && human_player.tileFrom[0]>0 && gameMap[toIndex(human_player.tileFrom[0]-1, human_player.tileFrom[1])]==1) {
-			human_player.tileTo[0]-= 1; //left
-			human_player_moves = true;
-		}
-		else if(human_player.keysDown[39] && human_player.tileFrom[0]<(mapW-1) && gameMap[toIndex(human_player.tileFrom[0]+1, human_player.tileFrom[1])]==1) {
-			human_player.tileTo[0]+= 1; //right
-			human_player_moves = true;
-		}
-		else if(human_player.keysDown[32]) {
-			human_player_moves = true; //stay
-		}
-		if(human_player.tileFrom[0]!=human_player.tileTo[0] || human_player.tileFrom[1]!=human_player.tileTo[1])
-		{ human_player.timeMoved = currentFrameTime; human_player.resetKeyPress(); }
+		human_player.keysDown[humanMove] = false;
 
-		if(human_player_moves) {
-			var state = getBoardState();
-			saveToFirebase(state);
-			computerMove = computer_controller.move(state);
-			console.log("computerMove: "+ computerMove);
-			computer_player.keysDown[computerMove] = true;
-		}
+		if(human_player.tileFrom[0]!=human_player.tileTo[0] || human_player.tileFrom[1]!=human_player.tileTo[1])
+		{ human_player.timeMoved = currentFrameTime; }
 	}
 	
 
@@ -227,9 +237,10 @@ function drawGame()
 		else if(computer_player.keysDown[40] && computer_player.tileFrom[1]<(mapH-1) && gameMap[toIndex(computer_player.tileFrom[0], computer_player.tileFrom[1]+1)]==1) { computer_player.tileTo[1]+= 1; }
 		else if(computer_player.keysDown[37] && computer_player.tileFrom[0]>0 && gameMap[toIndex(computer_player.tileFrom[0]-1, computer_player.tileFrom[1])]==1) { computer_player.tileTo[0]-= 1; }
 		else if(computer_player.keysDown[39] && computer_player.tileFrom[0]<(mapW-1) && gameMap[toIndex(computer_player.tileFrom[0]+1, computer_player.tileFrom[1])]==1) { computer_player.tileTo[0]+= 1; }
-		else if(human_player.keysDown[32]) { }
+		else if(human_player.keysDown[32] && (currentFrameTime-computer_player.timeMoved>=computer_player.delayMove)) { }
+		computer_player.resetKeyPress();
 		if(computer_player.tileFrom[0]!=computer_player.tileTo[0] || computer_player.tileFrom[1]!=computer_player.tileTo[1])
-		{ computer_player.timeMoved = currentFrameTime; computer_player.resetKeyPress(); }
+		{ computer_player.timeMoved = currentFrameTime; }
 	}
 
 	//check for eaten awards
@@ -313,6 +324,9 @@ function drawGame()
 	// ctx.fillText("FPS: " + framesLastSecond, 10, 20);
     ctx.fillText("Red score: " + human_player.score, 110, 20);
 	ctx.fillText("Blue score: " + computer_player.score, 210, 20);
+
+	ctx.fillText("Red action: " + human_player.codeToAction[humanMove], 20, 385);
+    ctx.fillText("Blue action: " + computer_player.codeToAction[computerMove], 280, 385);
 
 	lastFrameTime = currentFrameTime;
 	requestAnimationFrame(drawGame);

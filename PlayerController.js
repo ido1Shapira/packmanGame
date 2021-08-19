@@ -60,7 +60,6 @@ class PlayerController{
         }
     }
     getValidActions(board) {
-        console.log(board);
         var actions = Object.keys(this.player_controlled.keysDown).map((i) => Number(i));
         var valid_actions = [];
         for(var i=0; i<actions.length; i++) {
@@ -68,7 +67,6 @@ class PlayerController{
                 valid_actions.push(actions[i]);
             }
         }
-        console.log("valid_actions: "+valid_actions)
         return valid_actions;
     }
 

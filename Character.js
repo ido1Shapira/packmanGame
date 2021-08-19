@@ -1,4 +1,12 @@
 class Character{
+    codeToAction = {
+        null : "",
+        37 : "left",
+        38 : "up",
+        39 : "right",
+        40 : "down",
+        32 : "stay"
+    };
     keysDown = {
         37 : false, //left
         38 : false, //up
@@ -33,11 +41,11 @@ class Character{
         if(this.keysDown[32]) {
             if((t-this.timeMoved)<this.delayMove)
             {
+                // this.keysDown[32] = false;
                 return true;
             }
             else {
                 this.score = this.score + this.scores.stay;
-                this.timeMoved = t;
             }
         }
         if(this.tileFrom[0]==this.tileTo[0] && this.tileFrom[1]==this.tileTo[1]) { return false; }

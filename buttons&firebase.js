@@ -29,7 +29,6 @@ function checkQuiz() {
     }
     else {
         if(q1 == "true" && q2 == "true" && q3 == "true") {
-            window.addEventListener("keydown", handleKeyDown);
 	        window.addEventListener("keyup", handleKeyUp);
             getDOM("quiz").style.display = "none";
             getDOM("showgameButton").style.display = "none";
