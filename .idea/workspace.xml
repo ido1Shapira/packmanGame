@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="5da9cc16-feac-4089-bc13-2086f468d499" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.ipynb_checkpoints/Statistics-checkpoint.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/.ipynb_checkpoints/Statistics-checkpoint.ipynb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/OpenAI-Reinforcement-Learning-with-Custom-Environment" beforeDir="false" afterPath="$PROJECT_DIR$/OpenAI-Reinforcement-Learning-with-Custom-Environment" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/OpenAI-Reinforcement-Learning-with-Custom-Environment/OpenAI Custom Environment Reinforcement Learning.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/OpenAI-Reinforcement-Learning-with-Custom-Environment/OpenAI Custom Environment Reinforcement Learning.ipynb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Statistics.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/Statistics.ipynb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/imagesDatabase/37/-MhURGqHFd3RAOdztBo3_5.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/imagesDatabase/37/-MhURGqHFd3RAOdztBo3_6.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/imagesDatabase/38/-MhURGqHFd3RAOdztBo3_4.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/imagesDatabase/39/-MhURGqHFd3RAOdztBo3_2.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/imagesDatabase/40/-MhURGqHFd3RAOdztBo3_1.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/imagesDatabase/40/-MhURGqHFd3RAOdztBo3_10.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/imagesDatabase/40/-MhURGqHFd3RAOdztBo3_3.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/imagesDatabase/40/-MhURGqHFd3RAOdztBo3_7.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/imagesDatabase/40/-MhURGqHFd3RAOdztBo3_8.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/imagesDatabase/40/-MhURGqHFd3RAOdztBo3_9.png" beforeDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="ProjectId" id="1wzXHEuSeLmeWy2Z3Hiuxoft4fF" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="5da9cc16-feac-4089-bc13-2086f468d499" name="Changes" comment="" />
+      <created>1629462300938</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1629462300938</updated>
+    </task>
+    <servers />
+  </component>
+</project>
