@@ -3,5 +3,6 @@
   <component name="VcsDirectoryMappings">
     <mapping directory="$PROJECT_DIR$" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/OpenAI-Reinforcement-Learning-with-Custom-Environment" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/python_code/OpenAI-Reinforcement-Learning-with-Custom-Environment" vcs="Git" />
   </component>
 </project>

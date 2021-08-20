@@ -2,20 +2,195 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="5da9cc16-feac-4089-bc13-2086f468d499" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.ipynb_checkpoints/Statistics-checkpoint.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/.ipynb_checkpoints/Statistics-checkpoint.ipynb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/OpenAI-Reinforcement-Learning-with-Custom-Environment" beforeDir="false" afterPath="$PROJECT_DIR$/OpenAI-Reinforcement-Learning-with-Custom-Environment" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/OpenAI-Reinforcement-Learning-with-Custom-Environment/OpenAI Custom Environment Reinforcement Learning.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/OpenAI-Reinforcement-Learning-with-Custom-Environment/OpenAI Custom Environment Reinforcement Learning.ipynb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Statistics.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/Statistics.ipynb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/imagesDatabase/37/-MhURGqHFd3RAOdztBo3_5.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/imagesDatabase/37/-MhURGqHFd3RAOdztBo3_6.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/imagesDatabase/38/-MhURGqHFd3RAOdztBo3_4.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/imagesDatabase/39/-MhURGqHFd3RAOdztBo3_2.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/imagesDatabase/40/-MhURGqHFd3RAOdztBo3_1.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/imagesDatabase/40/-MhURGqHFd3RAOdztBo3_10.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/imagesDatabase/40/-MhURGqHFd3RAOdztBo3_3.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/imagesDatabase/40/-MhURGqHFd3RAOdztBo3_7.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/imagesDatabase/40/-MhURGqHFd3RAOdztBo3_8.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/imagesDatabase/40/-MhURGqHFd3RAOdztBo3_9.png" beforeDir="false" />
+      <change afterPath="$PROJECT_DIR$/python_code/OpenAI-Reinforcement-Learning-with-Custom-Environment/.ipynb_checkpoints/OpenAI Custom Environment Reinforcement Learning-checkpoint.ipynb" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/python_code/OpenAI-Reinforcement-Learning-with-Custom-Environment/checkpoint" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/python_code/OpenAI-Reinforcement-Learning-with-Custom-Environment/dqn_weights.h5f.data-00000-of-00001" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/python_code/OpenAI-Reinforcement-Learning-with-Custom-Environment/dqn_weights.h5f.index" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/python_code/data/humanModel/imagesDatabase/37/-MhURGqHFd3RAOdztBo3_5.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/python_code/data/humanModel/imagesDatabase/37/-MhURGqHFd3RAOdztBo3_6.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/python_code/data/humanModel/imagesDatabase/37/-MhURVgvZlyZ9kyZJd51_2.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/python_code/data/humanModel/imagesDatabase/37/-MhUR_hORqFZDHLqxzMH_10.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/python_code/data/humanModel/imagesDatabase/37/-MhUR_hORqFZDHLqxzMH_11.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/python_code/data/humanModel/imagesDatabase/37/-MhUR_hORqFZDHLqxzMH_2.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/python_code/data/humanModel/imagesDatabase/37/-MhURlKtwsvE1dpvBhmC_2.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/python_code/data/humanModel/imagesDatabase/38/-MhURGqHFd3RAOdztBo3_4.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/python_code/data/humanModel/imagesDatabase/38/-MhUR_hORqFZDHLqxzMH_1.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/python_code/data/humanModel/imagesDatabase/38/-MhUR_hORqFZDHLqxzMH_12.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/python_code/data/humanModel/imagesDatabase/38/-MhUR_hORqFZDHLqxzMH_13.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/python_code/data/humanModel/imagesDatabase/38/-MhUR_hORqFZDHLqxzMH_14.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/python_code/data/humanModel/imagesDatabase/39/-MhURGqHFd3RAOdztBo3_2.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/python_code/data/humanModel/imagesDatabase/39/-MhURVgvZlyZ9kyZJd51_10.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/python_code/data/humanModel/imagesDatabase/39/-MhURVgvZlyZ9kyZJd51_6.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/python_code/data/humanModel/imagesDatabase/39/-MhURVgvZlyZ9kyZJd51_7.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/python_code/data/humanModel/imagesDatabase/39/-MhURVgvZlyZ9kyZJd51_8.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/python_code/data/humanModel/imagesDatabase/39/-MhURVgvZlyZ9kyZJd51_9.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/python_code/data/humanModel/imagesDatabase/39/-MhUR_hORqFZDHLqxzMH_3.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/python_code/data/humanModel/imagesDatabase/39/-MhUR_hORqFZDHLqxzMH_6.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/python_code/data/humanModel/imagesDatabase/39/-MhURlKtwsvE1dpvBhmC_8.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/python_code/data/humanModel/imagesDatabase/39/-MhURlKtwsvE1dpvBhmC_9.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/python_code/data/humanModel/imagesDatabase/40/-MhURGqHFd3RAOdztBo3_1.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/python_code/data/humanModel/imagesDatabase/40/-MhURGqHFd3RAOdztBo3_10.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/python_code/data/humanModel/imagesDatabase/40/-MhURGqHFd3RAOdztBo3_3.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/python_code/data/humanModel/imagesDatabase/40/-MhURGqHFd3RAOdztBo3_7.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/python_code/data/humanModel/imagesDatabase/40/-MhURGqHFd3RAOdztBo3_8.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/python_code/data/humanModel/imagesDatabase/40/-MhURGqHFd3RAOdztBo3_9.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/python_code/data/humanModel/imagesDatabase/40/-MhURVgvZlyZ9kyZJd51_1.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/python_code/data/humanModel/imagesDatabase/40/-MhURVgvZlyZ9kyZJd51_3.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/python_code/data/humanModel/imagesDatabase/40/-MhURVgvZlyZ9kyZJd51_4.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/python_code/data/humanModel/imagesDatabase/40/-MhURVgvZlyZ9kyZJd51_5.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/python_code/data/humanModel/imagesDatabase/40/-MhUR_hORqFZDHLqxzMH_4.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/python_code/data/humanModel/imagesDatabase/40/-MhUR_hORqFZDHLqxzMH_5.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/python_code/data/humanModel/imagesDatabase/40/-MhUR_hORqFZDHLqxzMH_7.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/python_code/data/humanModel/imagesDatabase/40/-MhUR_hORqFZDHLqxzMH_8.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/python_code/data/humanModel/imagesDatabase/40/-MhUR_hORqFZDHLqxzMH_9.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/python_code/data/humanModel/imagesDatabase/40/-MhURlKtwsvE1dpvBhmC_1.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/python_code/data/humanModel/imagesDatabase/40/-MhURlKtwsvE1dpvBhmC_3.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/python_code/data/humanModel/imagesDatabase/40/-MhURlKtwsvE1dpvBhmC_4.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/python_code/data/humanModel/imagesDatabase/40/-MhURlKtwsvE1dpvBhmC_5.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/python_code/data/humanModel/imagesDatabase/40/-MhURlKtwsvE1dpvBhmC_6.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/python_code/data/humanModel/imagesDatabase/40/-MhURlKtwsvE1dpvBhmC_7.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/python_code/data/humanModel/imagesDatabase_split/train/37/-MhURGqHFd3RAOdztBo3_5.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/python_code/data/humanModel/imagesDatabase_split/train/37/-MhUR_hORqFZDHLqxzMH_10.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/python_code/data/humanModel/imagesDatabase_split/train/37/-MhUR_hORqFZDHLqxzMH_11.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/python_code/data/humanModel/imagesDatabase_split/train/37/-MhURlKtwsvE1dpvBhmC_2.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/python_code/data/humanModel/imagesDatabase_split/train/38/-MhUR_hORqFZDHLqxzMH_1.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/python_code/data/humanModel/imagesDatabase_split/train/38/-MhUR_hORqFZDHLqxzMH_12.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/python_code/data/humanModel/imagesDatabase_split/train/38/-MhUR_hORqFZDHLqxzMH_14.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/python_code/data/humanModel/imagesDatabase_split/train/39/-MhURGqHFd3RAOdztBo3_2.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/python_code/data/humanModel/imagesDatabase_split/train/39/-MhURVgvZlyZ9kyZJd51_6.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/python_code/data/humanModel/imagesDatabase_split/train/39/-MhURVgvZlyZ9kyZJd51_7.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/python_code/data/humanModel/imagesDatabase_split/train/39/-MhUR_hORqFZDHLqxzMH_3.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/python_code/data/humanModel/imagesDatabase_split/train/39/-MhUR_hORqFZDHLqxzMH_6.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/python_code/data/humanModel/imagesDatabase_split/train/39/-MhURlKtwsvE1dpvBhmC_8.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/python_code/data/humanModel/imagesDatabase_split/train/39/-MhURlKtwsvE1dpvBhmC_9.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/python_code/data/humanModel/imagesDatabase_split/train/40/-MhURGqHFd3RAOdztBo3_10.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/python_code/data/humanModel/imagesDatabase_split/train/40/-MhURGqHFd3RAOdztBo3_3.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/python_code/data/humanModel/imagesDatabase_split/train/40/-MhURGqHFd3RAOdztBo3_7.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/python_code/data/humanModel/imagesDatabase_split/train/40/-MhURGqHFd3RAOdztBo3_8.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/python_code/data/humanModel/imagesDatabase_split/train/40/-MhURVgvZlyZ9kyZJd51_3.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/python_code/data/humanModel/imagesDatabase_split/train/40/-MhURVgvZlyZ9kyZJd51_5.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/python_code/data/humanModel/imagesDatabase_split/train/40/-MhUR_hORqFZDHLqxzMH_4.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/python_code/data/humanModel/imagesDatabase_split/train/40/-MhUR_hORqFZDHLqxzMH_5.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/python_code/data/humanModel/imagesDatabase_split/train/40/-MhUR_hORqFZDHLqxzMH_7.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/python_code/data/humanModel/imagesDatabase_split/train/40/-MhUR_hORqFZDHLqxzMH_8.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/python_code/data/humanModel/imagesDatabase_split/train/40/-MhUR_hORqFZDHLqxzMH_9.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/python_code/data/humanModel/imagesDatabase_split/train/40/-MhURlKtwsvE1dpvBhmC_4.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/python_code/data/humanModel/imagesDatabase_split/train/40/-MhURlKtwsvE1dpvBhmC_5.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/python_code/data/humanModel/imagesDatabase_split/train/40/-MhURlKtwsvE1dpvBhmC_6.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/python_code/data/humanModel/imagesDatabase_split/val/37/-MhURGqHFd3RAOdztBo3_6.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/python_code/data/humanModel/imagesDatabase_split/val/37/-MhURVgvZlyZ9kyZJd51_2.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/python_code/data/humanModel/imagesDatabase_split/val/37/-MhUR_hORqFZDHLqxzMH_2.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/python_code/data/humanModel/imagesDatabase_split/val/38/-MhURGqHFd3RAOdztBo3_4.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/python_code/data/humanModel/imagesDatabase_split/val/38/-MhUR_hORqFZDHLqxzMH_13.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/python_code/data/humanModel/imagesDatabase_split/val/39/-MhURVgvZlyZ9kyZJd51_10.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/python_code/data/humanModel/imagesDatabase_split/val/39/-MhURVgvZlyZ9kyZJd51_8.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/python_code/data/humanModel/imagesDatabase_split/val/39/-MhURVgvZlyZ9kyZJd51_9.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/python_code/data/humanModel/imagesDatabase_split/val/40/-MhURGqHFd3RAOdztBo3_1.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/python_code/data/humanModel/imagesDatabase_split/val/40/-MhURGqHFd3RAOdztBo3_9.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/python_code/data/humanModel/imagesDatabase_split/val/40/-MhURVgvZlyZ9kyZJd51_1.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/python_code/data/humanModel/imagesDatabase_split/val/40/-MhURVgvZlyZ9kyZJd51_4.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/python_code/data/humanModel/imagesDatabase_split/val/40/-MhURlKtwsvE1dpvBhmC_1.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/python_code/data/humanModel/imagesDatabase_split/val/40/-MhURlKtwsvE1dpvBhmC_3.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/python_code/data/humanModel/imagesDatabase_split/val/40/-MhURlKtwsvE1dpvBhmC_7.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/python_code/data/humanModel/mode_v0/saved_model.pb" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/python_code/data/humanModel/mode_v0/variables/variables.data-00000-of-00001" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/python_code/data/humanModel/mode_v0/variables/variables.index" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/python_code/data/packman-game-default-rtdb-export.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/humanModel/imagesDatabase/37/-MhURGqHFd3RAOdztBo3_5.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/humanModel/imagesDatabase/37/-MhURGqHFd3RAOdztBo3_6.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/humanModel/imagesDatabase/37/-MhURVgvZlyZ9kyZJd51_2.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/humanModel/imagesDatabase/37/-MhUR_hORqFZDHLqxzMH_10.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/humanModel/imagesDatabase/37/-MhUR_hORqFZDHLqxzMH_11.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/humanModel/imagesDatabase/37/-MhUR_hORqFZDHLqxzMH_2.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/humanModel/imagesDatabase/37/-MhURlKtwsvE1dpvBhmC_2.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/humanModel/imagesDatabase/38/-MhURGqHFd3RAOdztBo3_4.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/humanModel/imagesDatabase/38/-MhUR_hORqFZDHLqxzMH_1.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/humanModel/imagesDatabase/38/-MhUR_hORqFZDHLqxzMH_12.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/humanModel/imagesDatabase/38/-MhUR_hORqFZDHLqxzMH_13.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/humanModel/imagesDatabase/38/-MhUR_hORqFZDHLqxzMH_14.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/humanModel/imagesDatabase/39/-MhURGqHFd3RAOdztBo3_2.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/humanModel/imagesDatabase/39/-MhURVgvZlyZ9kyZJd51_10.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/humanModel/imagesDatabase/39/-MhURVgvZlyZ9kyZJd51_6.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/humanModel/imagesDatabase/39/-MhURVgvZlyZ9kyZJd51_7.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/humanModel/imagesDatabase/39/-MhURVgvZlyZ9kyZJd51_8.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/humanModel/imagesDatabase/39/-MhURVgvZlyZ9kyZJd51_9.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/humanModel/imagesDatabase/39/-MhUR_hORqFZDHLqxzMH_3.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/humanModel/imagesDatabase/39/-MhUR_hORqFZDHLqxzMH_6.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/humanModel/imagesDatabase/39/-MhURlKtwsvE1dpvBhmC_8.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/humanModel/imagesDatabase/39/-MhURlKtwsvE1dpvBhmC_9.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/humanModel/imagesDatabase/40/-MhURGqHFd3RAOdztBo3_1.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/humanModel/imagesDatabase/40/-MhURGqHFd3RAOdztBo3_10.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/humanModel/imagesDatabase/40/-MhURGqHFd3RAOdztBo3_3.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/humanModel/imagesDatabase/40/-MhURGqHFd3RAOdztBo3_7.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/humanModel/imagesDatabase/40/-MhURGqHFd3RAOdztBo3_8.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/humanModel/imagesDatabase/40/-MhURGqHFd3RAOdztBo3_9.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/humanModel/imagesDatabase/40/-MhURVgvZlyZ9kyZJd51_1.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/humanModel/imagesDatabase/40/-MhURVgvZlyZ9kyZJd51_3.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/humanModel/imagesDatabase/40/-MhURVgvZlyZ9kyZJd51_4.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/humanModel/imagesDatabase/40/-MhURVgvZlyZ9kyZJd51_5.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/humanModel/imagesDatabase/40/-MhUR_hORqFZDHLqxzMH_4.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/humanModel/imagesDatabase/40/-MhUR_hORqFZDHLqxzMH_5.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/humanModel/imagesDatabase/40/-MhUR_hORqFZDHLqxzMH_7.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/humanModel/imagesDatabase/40/-MhUR_hORqFZDHLqxzMH_8.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/humanModel/imagesDatabase/40/-MhUR_hORqFZDHLqxzMH_9.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/humanModel/imagesDatabase/40/-MhURlKtwsvE1dpvBhmC_1.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/humanModel/imagesDatabase/40/-MhURlKtwsvE1dpvBhmC_3.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/humanModel/imagesDatabase/40/-MhURlKtwsvE1dpvBhmC_4.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/humanModel/imagesDatabase/40/-MhURlKtwsvE1dpvBhmC_5.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/humanModel/imagesDatabase/40/-MhURlKtwsvE1dpvBhmC_6.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/humanModel/imagesDatabase/40/-MhURlKtwsvE1dpvBhmC_7.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/humanModel/imagesDatabase_split/train/37/-MhURGqHFd3RAOdztBo3_5.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/humanModel/imagesDatabase_split/train/37/-MhUR_hORqFZDHLqxzMH_10.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/humanModel/imagesDatabase_split/train/37/-MhUR_hORqFZDHLqxzMH_11.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/humanModel/imagesDatabase_split/train/37/-MhURlKtwsvE1dpvBhmC_2.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/humanModel/imagesDatabase_split/train/38/-MhUR_hORqFZDHLqxzMH_1.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/humanModel/imagesDatabase_split/train/38/-MhUR_hORqFZDHLqxzMH_12.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/humanModel/imagesDatabase_split/train/38/-MhUR_hORqFZDHLqxzMH_14.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/humanModel/imagesDatabase_split/train/39/-MhURGqHFd3RAOdztBo3_2.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/humanModel/imagesDatabase_split/train/39/-MhURVgvZlyZ9kyZJd51_6.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/humanModel/imagesDatabase_split/train/39/-MhURVgvZlyZ9kyZJd51_7.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/humanModel/imagesDatabase_split/train/39/-MhUR_hORqFZDHLqxzMH_3.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/humanModel/imagesDatabase_split/train/39/-MhUR_hORqFZDHLqxzMH_6.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/humanModel/imagesDatabase_split/train/39/-MhURlKtwsvE1dpvBhmC_8.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/humanModel/imagesDatabase_split/train/39/-MhURlKtwsvE1dpvBhmC_9.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/humanModel/imagesDatabase_split/train/40/-MhURGqHFd3RAOdztBo3_10.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/humanModel/imagesDatabase_split/train/40/-MhURGqHFd3RAOdztBo3_3.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/humanModel/imagesDatabase_split/train/40/-MhURGqHFd3RAOdztBo3_7.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/humanModel/imagesDatabase_split/train/40/-MhURGqHFd3RAOdztBo3_8.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/humanModel/imagesDatabase_split/train/40/-MhURVgvZlyZ9kyZJd51_3.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/humanModel/imagesDatabase_split/train/40/-MhURVgvZlyZ9kyZJd51_5.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/humanModel/imagesDatabase_split/train/40/-MhUR_hORqFZDHLqxzMH_4.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/humanModel/imagesDatabase_split/train/40/-MhUR_hORqFZDHLqxzMH_5.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/humanModel/imagesDatabase_split/train/40/-MhUR_hORqFZDHLqxzMH_7.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/humanModel/imagesDatabase_split/train/40/-MhUR_hORqFZDHLqxzMH_8.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/humanModel/imagesDatabase_split/train/40/-MhUR_hORqFZDHLqxzMH_9.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/humanModel/imagesDatabase_split/train/40/-MhURlKtwsvE1dpvBhmC_4.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/humanModel/imagesDatabase_split/train/40/-MhURlKtwsvE1dpvBhmC_5.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/humanModel/imagesDatabase_split/train/40/-MhURlKtwsvE1dpvBhmC_6.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/humanModel/imagesDatabase_split/val/37/-MhURGqHFd3RAOdztBo3_6.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/humanModel/imagesDatabase_split/val/37/-MhURVgvZlyZ9kyZJd51_2.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/humanModel/imagesDatabase_split/val/37/-MhUR_hORqFZDHLqxzMH_2.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/humanModel/imagesDatabase_split/val/38/-MhURGqHFd3RAOdztBo3_4.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/humanModel/imagesDatabase_split/val/38/-MhUR_hORqFZDHLqxzMH_13.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/humanModel/imagesDatabase_split/val/39/-MhURVgvZlyZ9kyZJd51_10.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/humanModel/imagesDatabase_split/val/39/-MhURVgvZlyZ9kyZJd51_8.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/humanModel/imagesDatabase_split/val/39/-MhURVgvZlyZ9kyZJd51_9.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/humanModel/imagesDatabase_split/val/40/-MhURGqHFd3RAOdztBo3_1.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/humanModel/imagesDatabase_split/val/40/-MhURGqHFd3RAOdztBo3_9.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/humanModel/imagesDatabase_split/val/40/-MhURVgvZlyZ9kyZJd51_1.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/humanModel/imagesDatabase_split/val/40/-MhURVgvZlyZ9kyZJd51_4.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/humanModel/imagesDatabase_split/val/40/-MhURlKtwsvE1dpvBhmC_1.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/humanModel/imagesDatabase_split/val/40/-MhURlKtwsvE1dpvBhmC_3.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/humanModel/imagesDatabase_split/val/40/-MhURlKtwsvE1dpvBhmC_7.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/humanModel/mode_v0/saved_model.pb" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/humanModel/mode_v0/variables/variables.data-00000-of-00001" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/humanModel/mode_v0/variables/variables.index" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/packman-game-default-rtdb-export.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/python_code/OpenAI-Reinforcement-Learning-with-Custom-Environment" beforeDir="false" afterPath="$PROJECT_DIR$/python_code/OpenAI-Reinforcement-Learning-with-Custom-Environment" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/python_code/OpenAI-Reinforcement-Learning-with-Custom-Environment/OpenAI Custom Environment Reinforcement Learning.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/python_code/OpenAI-Reinforcement-Learning-with-Custom-Environment/OpenAI Custom Environment Reinforcement Learning.ipynb" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -34,6 +209,65 @@
   <component name="PropertiesComponent">
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/python_code/train_human_model.py" />
+  </component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\USER\Desktop\Ariel University\תזה\packmanGame\python_code" />
+    </key>
+  </component>
+  <component name="RunManager" selected="Python.chopper_gym">
+    <configuration name="chopper_gym" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="packmanGame" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/python_code" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/python_code/chopper_gym.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="train_human_model" type="PythonConfigurationType" factoryName="Python" nameIsGenerated="true">
+      <module name="packmanGame" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="C:\Users\USER\anaconda3\python.exe" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/python_code" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/python_code/train_human_model.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <list>
+      <item itemvalue="Python.train_human_model" />
+      <item itemvalue="Python.chopper_gym" />
+    </list>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Python.chopper_gym" />
+      </list>
+    </recent_temporary>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
