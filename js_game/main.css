@@ -6,6 +6,7 @@
 body {
   background-color:#DADAD8;
   text-align: center;
+  overflow: hidden;
 }
 
 input[type=button] {
@@ -47,7 +48,7 @@ h1 { text-align: center;}
   margin-bottom: 5%;
 }
 #up {height: 40%;}
-#down {height: 50%;}
+#down {height: 40%;}
 
 #goodluck { margin-top: 5%; text-align: center;}
 
