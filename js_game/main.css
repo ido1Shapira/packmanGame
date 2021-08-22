@@ -44,10 +44,10 @@ h1 { text-align: center;}
 #up, #down {
   font-size: 14pt;
   text-align: left;
-  margin-bottom: 10%;
+  margin-bottom: 5%;
 }
 #up {height: 40%;}
-#down {height: 40%;}
+#down {height: 50%;}
 
 #goodluck { margin-top: 5%; text-align: center;}
 
