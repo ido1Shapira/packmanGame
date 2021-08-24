@@ -34,7 +34,7 @@ h1 { text-align: center;}
 #left, #right {
   display: inline-block;
   font-size: 14pt;
-  margin-top: 5%;
+  margin-top: 3%;
   text-align: left;
   margin-left: 5%;
   margin-right: 5%;
@@ -45,12 +45,12 @@ h1 { text-align: center;}
 #up, #down {
   font-size: 14pt;
   text-align: left;
-  margin-bottom: 5%;
+  margin-bottom: 2%;
 }
 #up {height: 40%;}
 #down {height: 40%;}
 
-#goodluck { margin-top: 5%; text-align: center;}
+#goodluck { margin-top: 2%; text-align: center;}
 
 
 .grid-container {
