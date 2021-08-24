@@ -20,14 +20,16 @@ class Character{
         collide : 0,
         finish : 100,
     }
-    constructor(tileFrom , tileTo, timeMoved, dimensions, position, delayMove) {
+    constructor(tileFrom , tileTo, timeMoved, dimensions, dimensions_at_stay, position, delayMove) {
         this.tileFrom	= tileFrom;
         this.tileTo		= tileTo;
         this.timeMoved	= timeMoved;
         this.dimensions	= dimensions;
+        this.dimensions_at_stay = dimensions_at_stay;
         this.position	= position;
         this.delayMove	= delayMove;
         this.score = 50;
+        this.first_stay = true;
     }
     placeAt(x,y) {
         this.score = this.score + this.scores.step;
@@ -41,7 +43,6 @@ class Character{
         if(this.keysDown[32]) {
             if((t-this.timeMoved)<this.delayMove)
             {
-                // this.keysDown[32] = false;
                 return true;
             }
             else {

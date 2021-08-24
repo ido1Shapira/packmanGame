@@ -27,11 +27,11 @@ var tileW = 40, tileH = 40;
 var mapW = 10, mapH = 10;
 var currentSecond = 0, frameCount = 0, framesLastSecond = 0, lastFrameTime = 0;
 
-                    // tileFrom , tileTo, timeMoved, dimensions, position, delayMove
-var human_player = new Character([2,2], [2,2], 0, [30,30], [85,85], 300);
+                    // tileFrom , tileTo, timeMoved, dimensions, dimensions_at_stay, position, delayMove
+var human_player = new Character([2,2], [2,2], 0, [30,30], [20, 20], [85,85], 300);
 
 initializeFirebase();
-var computer_player = new Character([7,7], [7,7], 0, [30,30], [285,285], 300);
+var computer_player = new Character([7,7], [7,7], 0, [30,30], [20, 20], [285,285], 300);
 var computer_controller;
 firebase.database().ref("chosen-controller").once('value',
     (snap) => {
@@ -203,7 +203,7 @@ window.onload = function()
 	requestAnimationFrame(drawGame);
 	ctx.font = "bold 10pt sans-serif";
 
-	// window.addEventListener("keyup", handleKeyUp);
+	window.addEventListener("keyup", handleKeyUp);
 };
 
 function drawGame()
@@ -237,8 +237,10 @@ function drawGame()
 		else if(computer_player.keysDown[40] && computer_player.tileFrom[1]<(mapH-1) && gameMap[toIndex(computer_player.tileFrom[0], computer_player.tileFrom[1]+1)]==1) { computer_player.tileTo[1]+= 1; }
 		else if(computer_player.keysDown[37] && computer_player.tileFrom[0]>0 && gameMap[toIndex(computer_player.tileFrom[0]-1, computer_player.tileFrom[1])]==1) { computer_player.tileTo[0]-= 1; }
 		else if(computer_player.keysDown[39] && computer_player.tileFrom[0]<(mapW-1) && gameMap[toIndex(computer_player.tileFrom[0]+1, computer_player.tileFrom[1])]==1) { computer_player.tileTo[0]+= 1; }
-		else if(human_player.keysDown[32] && (currentFrameTime-computer_player.timeMoved>=computer_player.delayMove)) { }
-		computer_player.resetKeyPress();
+		else if(human_player.keysDown[32]) { }
+		// computer_player.resetKeyPress();
+		computer_player.keysDown[computerMove] = false;
+
 		if(computer_player.tileFrom[0]!=computer_player.tileTo[0] || computer_player.tileFrom[1]!=computer_player.tileTo[1])
 		{ computer_player.timeMoved = currentFrameTime; }
 	}
@@ -312,12 +314,24 @@ function drawGame()
 	}
 	
 	ctx.fillStyle = "#0000ff"; // computer color: blue
-	ctx.fillRect(computer_player.position[0], computer_player.position[1],
-		computer_player.dimensions[0], computer_player.dimensions[1]);
-
+	if(computerMove == 32 && human_player.keysDown[humanMove]) {
+		ctx.fillRect(computer_player.position[0], computer_player.position[1],
+			computer_player.dimensions_at_stay[0], computer_player.dimensions_at_stay[1]);
+	}
+	else {
+		ctx.fillRect(computer_player.position[0], computer_player.position[1],
+			computer_player.dimensions[0], computer_player.dimensions[1]);
+	}
+	
 	ctx.fillStyle = "#FF5050"; // human color: red
-	ctx.fillRect(human_player.position[0], human_player.position[1],
-		human_player.dimensions[0], human_player.dimensions[1]);
+	if (humanMove == 32 && 	human_player.keysDown[humanMove]) {
+		ctx.fillRect(human_player.position[0], human_player.position[1],
+			human_player.dimensions_at_stay[0], human_player.dimensions_at_stay[1]);
+	}
+	else {
+		ctx.fillRect(human_player.position[0], human_player.position[1],
+			human_player.dimensions[0], human_player.dimensions[1]);
+	}
 
 	ctx.fillStyle = "#FFFFFF"; // title color: white
 	// ctx.fillText("FPS: " + framesLastSecond, 10, 20);
