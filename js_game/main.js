@@ -28,10 +28,10 @@ var mapW = 10, mapH = 10;
 var currentSecond = 0, frameCount = 0, framesLastSecond = 0, lastFrameTime = 0;
 
                     // tileFrom , tileTo, timeMoved, dimensions, position, delayMove
-var human_player = new Character([2,2], [2,2], 0, [30,30], [85,85], 200);
+var human_player = new Character([2,2], [2,2], 0, [30,30], [85,85], 300);
 
 initializeFirebase();
-var computer_player = new Character([7,7], [7,7], 0, [30,30], [285,285], 200);
+var computer_player = new Character([7,7], [7,7], 0, [30,30], [285,285], 300);
 var computer_controller;
 firebase.database().ref("chosen-controller").once('value',
     (snap) => {
