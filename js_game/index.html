@@ -48,7 +48,7 @@ http://technologies4.me/articles/more-tile-types-map-a4/ -->
       <ul>
         <li>The orange circles are dirt, which must be cleaned (either by you or by the second player). To clean a piece of dirt simply move towards it.</li>
         <li>Cleaning a piece of dirt does not cost or provide any points (until all dirt is clean).</li>
-        <li>Note that blue player uses the same scoring schedule as you.</li>
+        <li>Note that the blue player uses the same scoring schedule as you do.</li>
       </ul>
       <h3><u>Score:</u></h3>
       <ul>
@@ -58,9 +58,10 @@ http://technologies4.me/articles/more-tile-types-map-a4/ -->
             <li>A move costs 2 points.</li>
             <li>Remaining in place costs 1 point.</li>
             <li>Once all dirt is cleaned both players will receive 100 points (regardless of how many dirt pieces each player has cleaned).</li>
+            <li>Cleaning dirt does not cost anything.</li>
           </ul>
         </li>
-      </ul>      
+      </ul>   
       <p id=goodluck><i>Good luck!</i></p>
     </div>
     <div id="right">
@@ -79,34 +80,45 @@ http://technologies4.me/articles/more-tile-types-map-a4/ -->
             <div class="survey-body">
               <form>
                 <div>
+        
                   <div class="quiz_question">
-                    <p><b>1. Does it cost to clean the dirt?</b></p>
-                    <input type="radio" id="1_1" name="q1" value="false"/>
-                    <label for="1_1">It depandes on the location of the player.</label><br>
-                    <input type="radio" id="1_2" name="q1" value="true"/>
-                    <label for="1_2">Yes, it is cost to clean the dirt.</label><br>
-                    <input type="radio" id="1_3" name="q1" value="false"/>
-                    <label for="1_3">No, it is not cost to clean the dirt.</label>
-                  </div>
-
-                  <div class="quiz_question">
-                    <p><b>2. How the game ends?</b></p>
-                    <input type="radio" id="2_1" name="q2" value="false"/>
-                    <label for="2_1">When the two players reach the other end of the board.</label><br>
-                    <input type="radio" id="2_2" name="q2" value="true"/>
-                    <label for="2_2">When there is no more dirt left.</label><br>
-                    <input type="radio" id="2_3" name="q2" value="false"/>
-                    <label for="2_3">When the two players collide.</label>
-                  </div>
-
-                  <div class="quiz_question">
-                    <p><b>3. Do actions encure costs?</b></p>
+                    <p><b>1. Do actions encure costs?</b></p>
                     <input type="radio" id="3_1" name="q3" value="true"/>
                     <label for="3_1">Yes, moving costs 2 points and remaining in place costs 1 point.</label><br>
                     <input type="radio" id="3_2" name="q3" value="false"/>
                     <label for="3_2">Yes, moving costs 1 points and remaining in place costs 2 point.</label><br>
                     <input type="radio" id="3_3" name="q3" value="false"/>
                     <label for="3_3">No, actions do not encure costs.</label>
+                  </div>
+<!-- 
+                  <div class="quiz_question">
+                    <p><b>2. Does it cost to clean the dirt?</b></p>
+                    <input type="radio" id="1_1" name="q1" value="false"/>
+                    <label for="1_1">Yes, its costs 1 point.</label><br>
+                    <input type="radio" id="1_2" name="q1" value="false"/>
+                    <label for="1_2">Yes, its costs 2 point.</label><br>
+                    <input type="radio" id="1_3" name="q1" value="true"/>
+                    <label for="1_3">No, it does not cost anything.</label>
+                  </div> -->
+
+                  <div class="quiz_question">
+                    <p><b>2. How can you remain in place?</b></p>
+                    <input type="radio" id="1_1" name="q1" value="false"/>
+                    <label for="1_1">It not posible to remain in place.</label><br>
+                    <input type="radio" id="1_2" name="q1" value="false"/>
+                    <label for="1_2">By pressing the enter key.</label><br>
+                    <input type="radio" id="1_3" name="q1" value="true"/>
+                    <label for="1_3">By pressing the space-bar.</label>
+                  </div>
+
+                  <div class="quiz_question">
+                    <p><b>3. How does the game end?</b></p>
+                    <input type="radio" id="2_1" name="q2" value="false"/>
+                    <label for="2_1">When the two players reach the other end of the board.</label><br>
+                    <input type="radio" id="2_2" name="q2" value="true"/>
+                    <label for="2_2">When there is no more dirt left.</label><br>
+                    <input type="radio" id="2_3" name="q2" value="false"/>
+                    <label for="2_3">When the two players collide.</label>
                   </div>
                   
                 </div>

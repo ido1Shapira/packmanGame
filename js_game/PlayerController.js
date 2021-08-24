@@ -5,7 +5,7 @@ class PlayerController{
         "farthest": false,
         "closest": false,
         "TSP": false,
-        "mix": false
+        // "mix": false
     }
     // players_controlled = []; // option for more than one agent
     constructor(player, type) {
@@ -39,8 +39,8 @@ class PlayerController{
                 return this.farthest(state);
             case "TSP":
                 return this.TSP(state);
-            case "mix":
-                return this.mix(state);
+            // case "mix":
+            //     return this.mix(state);
             default:
                 throw "move(state): not a valid baseline"
         }
@@ -206,25 +206,25 @@ class PlayerController{
         var optimal_path = SPA.getSortestPath();
         return this.takeActionTo(optimal_path[0], optimal_path[1]);
     }
-    mix(state) {
-        var baselines = Object.keys(this.TYPES);
-        const index = baselines.indexOf("mix");
-        if (index > -1) {
-            baselines.splice(index, 1);
-        }
-        var random_baseline = baselines[Math.floor(baselines.length * Math.random())];
-        switch(random_baseline) {
-            case "random":
-                return this.random(state);
-            case "selfish":
-                return this.selfish(state);
-            case "closest":
-                return this.closest(state);
-            case "farthest":
-                return this.farthest(state);
-            case "TSP":
-                return this.TSP(state);
-        }
-    }
+    // mix(state) {
+    //     var baselines = Object.keys(this.TYPES);
+    //     const index = baselines.indexOf("mix");
+    //     if (index > -1) {
+    //         baselines.splice(index, 1);
+    //     }
+    //     var random_baseline = baselines[Math.floor(baselines.length * Math.random())];
+    //     switch(random_baseline) {
+    //         case "random":
+    //             return this.random(state);
+    //         case "selfish":
+    //             return this.selfish(state);
+    //         case "closest":
+    //             return this.closest(state);
+    //         case "farthest":
+    //             return this.farthest(state);
+    //         case "TSP":
+    //             return this.TSP(state);
+    //     }
+    // }
     
 }
