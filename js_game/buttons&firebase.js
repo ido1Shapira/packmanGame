@@ -13,7 +13,11 @@ function showQuiz() {
     span.onclick = function() {
         quiz.style.display = "none";
         getDOM("showgameButton").style.display = "";
-        keyEnable = false;
+    }
+    var returnToInstructions = getDOM("returnToInstructions");
+    returnToInstructions.onclick = function() {
+        quiz.style.display = "none";
+        getDOM("showgameButton").style.display = "";
     }
     getDOM("quiz").style.display = "";
 }
