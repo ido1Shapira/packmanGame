@@ -1,0 +1,6 @@
+setup.py
+gym_packman.egg-info/PKG-INFO
+gym_packman.egg-info/SOURCES.txt
+gym_packman.egg-info/dependency_links.txt
+gym_packman.egg-info/requires.txt
+gym_packman.egg-info/top_level.txt
