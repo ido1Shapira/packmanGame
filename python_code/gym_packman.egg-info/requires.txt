@@ -1,3 +1,4 @@
 gym
 tensorflow==2.6
-numpy
+matplotlib
+IPython
