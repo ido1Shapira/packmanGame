@@ -6,14 +6,8 @@
 from gym import Env
 from gym.spaces import Discrete, Box
 from gym.utils import seeding
-
 import numpy as np
-
-import matplotlib.pyplot as plt
-from IPython import display
-
 import tensorflow as tf
-# from tensorflow import keras
 
 class PackmanEnv(Env):
 
@@ -76,11 +70,11 @@ class PackmanEnv(Env):
 
         # when human model is ready uncomment this line
         #         human_action = self.predict_action(self.canvas)
-        human_action = self.get_random_valid_action(human_pos)
+        human_action = self.get_random_valid_action('human')
 
-        assert self.valid_action(action, computer_pos), "Computer preformed invalid action: " + str(
+        assert self.valid_action(action, 'computer'), "Computer preformed invalid action: " + str(
             action) + " at pos: " + str(computer_pos)
-        assert self.valid_action(human_action, human_pos), "Human preformed invalid action: " + str(
+        assert self.valid_action(human_action, 'human'), "Human preformed invalid action: " + str(
             human_action) + " at pos: " + str(computer_pos)
 
         self.move(human_action, 'human')  # assume human action is valid
@@ -128,26 +122,57 @@ class PackmanEnv(Env):
         return self.canvas, computer_reward, done, info
 
     def render(self, mode='human'):
+        screen_width = 600
+        screen_height = 400
+
+        tileW = 40
+        tileH = 40
+
         # Implement viz
         self.canvas = self.convertToImage(self.dict_state)
-        # Render the environment to the screen
-        if mode == 'human':
-            if self.call_once:
-                self.call_once = False
-                plt.figure(figsize=(8, 8))
-                self.img = plt.imshow(self.canvas)  # only call this once
 
-            self.img.set_data(self.canvas)  # just update the data
-            plt.axis('off')
-            info = {
-                'ep_return': self.ep_return,
-                'human_return': self.ep_human_reward,
-            }
-            plt.title(f'info: {info}')
-            display.display(plt.gcf())
-            display.clear_output(wait=True)
-        elif mode == 'rgb_array':
-            return self.canvas
+        if self.viewer is None:
+            from gym.envs.classic_control import rendering
+
+            self.viewer = rendering.Viewer(screen_width, screen_height)
+            # self.viewer = rendering.SimpleImageViewer(maxwidth=screen_width)
+            # self.viewer.imshow(self.canvas[:, :, ::-1])
+
+            board = self.dict_state['Board']
+            for i in range(board.shape[0]):
+                for j in range(board.shape[1]):
+                    if board[i][j] == 0:
+                        tile = rendering.FilledPolygon([(i*tileW, i*tileH), (j*tileW, j*tileH), (tileW, tileW), (tileH, tileH)])
+                        # ctx.fillRect( x*tileW, y*tileH, tileW, tileH);
+                        self.viewer.add_geom(tile)
+                    else:
+                        tile = rendering.FilledPolygon([(i*tileW, i*tileH), (j*tileW, j*tileH), (tileW, tileW), (tileH, tileH)])
+                        tile.set_color(0.8, 0.6, 0.4)
+                        self.viewer.add_geom(tile)
+            
+
+        if self.canvas is None:
+            return None
+        
+        return self.viewer.render(return_rgb_array=mode == "rgb_array")
+        # # Render the environment to the screen
+        # if mode == 'human':
+        #     if self.call_once:
+        #         self.call_once = False
+        #         plt.figure(figsize=(8, 8))
+        #         self.img = plt.imshow(self.canvas)  # only call this once
+
+        #     self.img.set_data(self.canvas)  # just update the data
+        #     plt.axis('off')
+        #     info = {
+        #         'ep_return': self.ep_return,
+        #         'human_return': self.ep_human_reward,
+        #     }
+        #     plt.title(f'info: {info}')
+        #     display.display(plt.gcf())
+        #     display.clear_output(wait=True)
+        # elif mode == 'rgb_array':
+        #     return self.canvas
 
     def reset(self):
         self.call_once = True
@@ -158,7 +183,7 @@ class PackmanEnv(Env):
         self.ep_return = self.rewards['Start']
         self.ep_human_reward = self.rewards['Start']
 
-        return self.canvas, self.ep_return
+        return self.canvas
 
     def seed(self, seed=None):
         self.np_random, seed = seeding.np_random(seed)
@@ -211,13 +236,17 @@ class PackmanEnv(Env):
             'All awards': all_awards,
         }
 
-    def get_random_valid_action(self, pos):
+    def get_random_valid_action(self, who):
         random_action = self.action_space.sample()
-        while not self.valid_action(random_action, pos):
+        while not self.valid_action(random_action, who):
             random_action = self.action_space.sample()
         return random_action
 
-    def valid_action(self, action, pos):
+    def valid_action(self, action, who):
+        if who == 'human':
+            pos = np.where(self.dict_state['Human trace'] == 1)
+        else:
+            pos = np.where(self.dict_state['Computer trace'] == 1)
         next_pos = self.new_pos(pos, action)
         if self.dict_state['Board'][next_pos] == 0:
             return False
