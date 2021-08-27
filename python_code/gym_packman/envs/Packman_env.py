@@ -11,6 +11,8 @@ import tensorflow as tf
 
 import matplotlib.pyplot as plt
 from IPython import display
+import cv2
+
 
 class PackmanEnv(Env):
 
@@ -74,8 +76,8 @@ class PackmanEnv(Env):
         # predict next human action
 
         # when human model is ready uncomment this line
-        #         human_action = self.predict_action(self.canvas)
-        human_action = self.get_random_valid_action('human')
+        human_action = self.predict_action(self.canvas)
+        # human_action = self.get_random_valid_action('human')
 
         assert self.valid_action(action, 'computer'), "Computer preformed invalid action: " + str(
             action) + " at pos: " + str(computer_pos)
@@ -129,53 +131,53 @@ class PackmanEnv(Env):
     def render(self, mode='human'):
         screen_width = 600
         screen_height = 400
-
-        tileW = 40
-        tileH = 40
-
         # Implement viz
         self.canvas = self.convertToImage(self.dict_state)
 
         # if self.viewer is None:
-        #     from gym.envs.classic_control import rendering
+            # from gym.envs.classic_control import rendering
 
-        #     self.viewer = rendering.Viewer(screen_width, screen_height)
-        #     # self.viewer = rendering.SimpleImageViewer(maxwidth=screen_width)
-        #     # self.viewer.imshow(self.canvas[:, :, ::-1])
+            # self.viewer = rendering.Viewer(screen_width, screen_height)
+            # self.viewer = rendering.SimpleImageViewer()
+            # self.viewer.imshow(toDisplay)
 
-        #     board = self.dict_state['Board']
-        #     for i in range(board.shape[0]):
-        #         for j in range(board.shape[1]):
-        #             if board[i][j] == 0:
-        #                 tile = rendering.FilledPolygon([(i*tileW, i*tileH), (j*tileW, j*tileH), (tileW, tileW), (tileH, tileH)])
-        #                 # ctx.fillRect( x*tileW, y*tileH, tileW, tileH);
-        #                 self.viewer.add_geom(tile)
-        #             else:
-        #                 tile = rendering.FilledPolygon([(i*tileW, i*tileH), (j*tileW, j*tileH), (tileW, tileW), (tileH, tileH)])
-        #                 tile.set_color(0.8, 0.6, 0.4)
-        #                 self.viewer.add_geom(tile)
+            # board = self.dict_state['Board']
+            # for i in range(board.shape[0]):
+            #     for j in range(board.shape[1]):
+            #         if board[i][j] == 0:
+            #             tile = rendering.FilledPolygon([(i*tileW, i*tileH), (j*tileW, j*tileH), (tileW, tileW), (tileH, tileH)])
+            #             # ctx.fillRect( x*tileW, y*tileH, tileW, tileH);
+            #             self.viewer.add_geom(tile)
+            #         else:
+            #             tile = rendering.FilledPolygon([(i*tileW, i*tileH), (j*tileW, j*tileH), (tileW, tileW), (tileH, tileH)])
+            #             tile.set_color(0.8, 0.6, 0.4)
+            #             self.viewer.add_geom(tile)
             
         if self.canvas is None:
             return None
-        
+
         # return self.viewer.render(return_rgb_array=mode == "rgb_array")
 
         # Render the environment to the screen
         if mode == 'human':
-            if self.call_once:
-                self.call_once = False
-                plt.figure(figsize=(8, 8))
-                self.img = plt.imshow(self.canvas)  # only call this once
+            cv2.imshow('Packman-v0',cv2.resize(self.canvas, (screen_width, screen_height)))
+            cv2.waitKey(1)
 
-            self.img.set_data(self.canvas)  # just update the data
-            plt.axis('off')
-            info = {
-                'ep_return': self.ep_return,
-                'human_return': self.ep_human_reward,
-            }
-            plt.title(f'info: {info}')
-            display.display(plt.gcf())
-            display.clear_output(wait=True)
+            # ## Display for jupyter notebook
+            # if self.call_once:
+            #     self.call_once = False
+            #     plt.figure(figsize=(8, 8))
+            #     self.img = plt.imshow(self.canvas)  # only call this once
+
+            # self.img.set_data(self.canvas)  # just update the data
+            # plt.axis('off')
+            # info = {
+            #     'ep_return': self.ep_return,
+            #     'human_return': self.ep_human_reward,
+            # }
+            # plt.title(f'info: {info}')
+            # display.display(plt.gcf())
+            # display.clear_output(wait=True)
         elif mode == 'rgb_array':
             return self.canvas
 
@@ -292,15 +294,17 @@ class PackmanEnv(Env):
     def predict_action(self, img):
         img_array = tf.keras.preprocessing.image.img_to_array(img)
         img_array = tf.expand_dims(img_array, 0)  # Create a batch
-
         predictions = self.human_model.predict(img_array)
         score = tf.nn.softmax(predictions[0])
-
         action = np.argmax(score)
         #         print(
         #             "This image most likely belongs to {} with a {:.2f} percent confidence."
         #             .format(action, 100 * np.max(score))
         #         )
+        while(not self.valid_action(action, 'human')):
+            score = np.delete(score, action)
+            action = np.argmax(score)
+
         return action
 
     def convertToImage(self, state):

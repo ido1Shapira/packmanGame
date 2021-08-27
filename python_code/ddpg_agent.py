@@ -197,15 +197,18 @@ exploration.
 def policy(state, epsilon, episode):
     sampled_actions = tf.squeeze(actor_model(state)).numpy()
 
+    print('sampled_actions: ', sampled_actions)
+
     # exploration using epsilon greedy which decay over time:
     t = np.max([episode ,env.step_num])
     if epsilon/(t**0.5) >= random.uniform(0, 1):
-            print("Exploration!")
+            print(f"Exploration!")
             action = env.get_random_valid_action('computer')
     else:
         action = np.argmax(sampled_actions)
         # We make sure action is within bounds
         while(not env.valid_action(action, 'computer')):
+            print(f'best action not valid ====> {action}')
             sampled_actions = np.delete(sampled_actions, action)
             action = np.argmax(sampled_actions)
             
@@ -272,7 +275,7 @@ for ep in range(1,total_episodes+1):
     while True:
         # Uncomment this to see the Actor in action
         # But not in a python notebook.
-        # env.render()
+        env.render()
 
         tf_prev_state = tf.expand_dims(tf.convert_to_tensor(prev_state), 0)
 
