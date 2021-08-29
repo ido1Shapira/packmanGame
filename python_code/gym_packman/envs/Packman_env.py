@@ -76,8 +76,8 @@ class PackmanEnv(Env):
         # predict next human action
 
         # when human model is ready uncomment this line
-        human_action = self.predict_action(self.canvas)
-        # human_action = self.get_random_valid_action('human')
+        # human_action = self.predict_action(self.canvas)
+        human_action = self.get_random_valid_action('human')
 
         assert self.valid_action(action, 'computer'), "Computer preformed invalid action: " + str(
             action) + " at pos: " + str(computer_pos)
@@ -129,38 +129,18 @@ class PackmanEnv(Env):
         return self.canvas, computer_reward, done, info
 
     def render(self, mode='human'):
-        screen_width = 600
+        screen_width = 400
         screen_height = 400
         # Implement viz
         self.canvas = self.convertToImage(self.dict_state)
-
-        # if self.viewer is None:
-            # from gym.envs.classic_control import rendering
-
-            # self.viewer = rendering.Viewer(screen_width, screen_height)
-            # self.viewer = rendering.SimpleImageViewer()
-            # self.viewer.imshow(toDisplay)
-
-            # board = self.dict_state['Board']
-            # for i in range(board.shape[0]):
-            #     for j in range(board.shape[1]):
-            #         if board[i][j] == 0:
-            #             tile = rendering.FilledPolygon([(i*tileW, i*tileH), (j*tileW, j*tileH), (tileW, tileW), (tileH, tileH)])
-            #             # ctx.fillRect( x*tileW, y*tileH, tileW, tileH);
-            #             self.viewer.add_geom(tile)
-            #         else:
-            #             tile = rendering.FilledPolygon([(i*tileW, i*tileH), (j*tileW, j*tileH), (tileW, tileW), (tileH, tileH)])
-            #             tile.set_color(0.8, 0.6, 0.4)
-            #             self.viewer.add_geom(tile)
-            
         if self.canvas is None:
             return None
 
-        # return self.viewer.render(return_rgb_array=mode == "rgb_array")
-
         # Render the environment to the screen
         if mode == 'human':
-            cv2.imshow('Packman-v0',cv2.resize(self.canvas, (screen_width, screen_height)))
+            cv2.namedWindow('Packman-v0', cv2.WINDOW_NORMAL)
+            cv2.resizeWindow('Packman-v0', screen_width, screen_height)
+            cv2.imshow('Packman-v0',self.canvas)
             cv2.waitKey(1)
 
             # ## Display for jupyter notebook
@@ -232,6 +212,7 @@ class PackmanEnv(Env):
         all_awards = np.zeros(board.shape)
         idx = np.random.choice(np.count_nonzero(board), 5)
         all_awards[tuple(map(lambda x: x[idx], np.where(board)))] = 1
+
         board[2][2] = 1  # locate human player
         board[7][7] = 1  # locate computer player
 
@@ -255,7 +236,10 @@ class PackmanEnv(Env):
             pos = np.where(self.dict_state['Human trace'] == 1)
         else:
             pos = np.where(self.dict_state['Computer trace'] == 1)
+        # print('who: ', who)
         next_pos = self.new_pos(pos, action)
+        # print('current_pos: ', pos)
+        # print('next_pos: ', next_pos)
         if self.dict_state['Board'][next_pos] == 0:
             return False
         else:
@@ -273,8 +257,7 @@ class PackmanEnv(Env):
         elif action == 4:  # down
             return (current_pos[0] + 1, current_pos[1])
         else:  # default case if action is not found
-            assert True, "action: " + str(action) + " is not vallid at agent pos: " + str(
-                current_pos)
+            assert True, "action: " + str(action) + " is not a valid action at agent pos: " + str(current_pos)
 
     def move(self, action, agent):
         # assume action is valid
@@ -311,15 +294,5 @@ class PackmanEnv(Env):
         r = state['Human awards'] / 2 + state['Human trace']
         g = state['Board'] / 3 + state['All awards']
         b = state['Computer awards'] / 2 + state['Computer trace']
-        rgb = np.dstack((r, g, b))
+        rgb = np.dstack((b, g, r))
         return (rgb - np.min(rgb)) / (np.max(rgb) - np.min(rgb))  # NormalizeImage
-
-
-
-# test env
-
-# from stable_baselines.common.env_checker import check_env
-
-# env = PackmanEnv()
-# # It will check your custom environment and output additional warnings if needed
-# check_env(env)

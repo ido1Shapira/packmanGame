@@ -16,7 +16,9 @@ warnings.filterwarnings('ignore')
 import tensorflow as tf
 # tf.compat.v1.enable_eager_execution()
 
-from tensorflow.keras import layers
+from tensorflow.keras import layers, regularizers
+from tensorflow.keras.models import Sequential
+
 import matplotlib.pyplot as plt
 
 # ## added this lines to solve GPU errors!
@@ -139,16 +141,16 @@ as we use the `tanh` activation.
 """
 
 
-def get_actor(): 
-
+def get_actor():
     # Initialize weights between -3e-3 and 3-e3
     last_init = tf.random_uniform_initializer(minval=-0.0003, maxval=0.0003)
 
     inputs = layers.Input(shape=num_states)
 
-    out = layers.Conv2D(filters=6, kernel_size=(3,3),input_shape=num_states, activation='relu',kernel_initializer=last_init)(inputs)
-    out = layers.Conv2D(filters=4, kernel_size=(2,2),input_shape=num_states, activation='relu',kernel_initializer=last_init)(out)
-    out = layers.MaxPool2D(pool_size=2, strides=2)(out)
+    out = layers.Conv2D(filters=16, kernel_size=(3,3),input_shape=num_states, activation='relu',kernel_initializer=last_init)(inputs)
+    out = layers.Conv2D(filters=32, kernel_size=(3,3),input_shape=num_states, activation='relu',kernel_initializer=last_init)(out)
+    out = layers.MaxPool2D()(out)
+    out = layers.Dropout(rate=0.5)(out)
 
     out = tf.keras.layers.Flatten()(out)
 
@@ -157,6 +159,22 @@ def get_actor():
 
     outputs = layers.Dense(num_actions, activation="relu")(outputs)
     model = tf.keras.Model(inputs, outputs)
+
+    # model = Sequential([
+    #     layers.experimental.preprocessing.Rescaling(1./255, input_shape=num_states),
+    #     layers.Conv2D(16, 3, padding='same', activation='elu', kernel_regularizer=regularizers.l2(0.001)),
+    #     layers.Conv2D(32, 3, padding='same', activation='elu', kernel_regularizer=regularizers.l2(0.001)),
+    #     layers.MaxPooling2D(),
+    #     layers.Conv2D(32, 3, padding='same', activation='elu', kernel_regularizer=regularizers.l2(0.001)),
+    #     layers.MaxPooling2D(),
+    #     layers.Conv2D(32, 3, padding='same', activation='elu', kernel_regularizer=regularizers.l2(0.001)),
+    #     # layers.MaxPooling2D(),
+    #     layers.Dropout(0.5),
+    #     layers.Flatten(),
+    #     layers.Dense(128, activation='elu', kernel_regularizer=regularizers.l2(0.01)),
+    #     layers.Dense(32, activation='elu', kernel_regularizer=regularizers.l2(0.01)),
+    #     layers.Dense(num_actions)
+    #     ])
     
     return model
 
@@ -165,8 +183,9 @@ def get_critic():
     # State as input
     state_input = layers.Input(shape=num_states)
 
-    state_out = layers.Conv2D(filters=6, kernel_size=(3,3),input_shape=num_states, activation='relu')(state_input)    
-    state_out = layers.Conv2D(filters=4, kernel_size=(2,2), activation='relu')(state_out)
+    state_out = layers.Conv2D(filters=16, kernel_size=(3,3),input_shape=num_states, activation='relu')(state_input)    
+    state_out = layers.Conv2D(filters=32, kernel_size=(3,3), activation='relu')(state_out)
+    state_out = layers.MaxPool2D()(state_out)
     state_out = layers.Dropout(rate=0.5)(state_out)
     
     state_out = tf.keras.layers.Flatten()(state_out)
@@ -182,7 +201,6 @@ def get_critic():
     concat = layers.Concatenate()([state_out, action_out])
 
     out = layers.Dense(10, activation="relu")(concat)
-    out = layers.Dense(4, activation="relu")(out)
     outputs = layers.Dense(1)(out)
     # Outputs single value for give state-action
     model = tf.keras.Model([state_input, action_input], outputs)
@@ -195,23 +213,24 @@ exploration.
 """
 
 def policy(state, epsilon, episode):
-    sampled_actions = tf.squeeze(actor_model(state)).numpy()
-
-    print('sampled_actions: ', sampled_actions)
-
+    
     # exploration using epsilon greedy which decay over time:
     t = np.max([episode ,env.step_num])
+    t = 1000000
     if epsilon/(t**0.5) >= random.uniform(0, 1):
-            print(f"Exploration!")
+            print(f"{episode}) Exploration!")
             action = env.get_random_valid_action('computer')
     else:
+        sampled_actions = tf.squeeze(actor_model(state)).numpy()
+        print(f'{episode}) sampled_actions: {sampled_actions}')
+
         action = np.argmax(sampled_actions)
         # We make sure action is within bounds
         while(not env.valid_action(action, 'computer')):
-            print(f'best action not valid ====> {action}')
+            print(f'{episode}) best action not valid ====> {action}')
             sampled_actions = np.delete(sampled_actions, action)
             action = np.argmax(sampled_actions)
-            
+    
     return action
 
 """
@@ -280,10 +299,11 @@ for ep in range(1,total_episodes+1):
         tf_prev_state = tf.expand_dims(tf.convert_to_tensor(prev_state), 0)
 
         action = policy(tf_prev_state, epsilon, ep)
-        print(f"action: {action}")
+        print(f"{ep}) action: {action}")
 
         # Recieve state and reward from environment.
         state, reward, done, info = env.step(action)
+        print(f"{ep}) reward: {reward}")
         buffer.record((prev_state, action, reward, state))
         episodic_reward += reward
 
@@ -296,6 +316,7 @@ for ep in range(1,total_episodes+1):
             break
 
         prev_state = state
+        # raise ValueError()
 
     ep_reward_list.append(episodic_reward)
 
