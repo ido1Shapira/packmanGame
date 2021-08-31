@@ -7,24 +7,17 @@ import random
 # ignore warnings:
 import os
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
-
 # os.environ['TF_FORCE_GPU_ALLOW_GROWTH'] = 'true'
 
 import warnings
 warnings.filterwarnings('ignore')
 
 import tensorflow as tf
-# tf.compat.v1.enable_eager_execution()
-
 from tensorflow.keras import layers, regularizers
 from tensorflow.keras.models import Sequential
 
 import matplotlib.pyplot as plt
 
-# ## added this lines to solve GPU errors!
-# gpu_devices = tf.config.experimental.list_physical_devices('GPU')
-# for device in gpu_devices:
-#     tf.config.experimental.set_memory_growth(device, True)
 
 sim = 'gym_packman:Packman-v0'
 env = gym.make(sim)
@@ -58,11 +51,9 @@ class Buffer:
         # replacing old records
         index = self.buffer_counter % self.buffer_capacity
 
-        # self.state_buffer[index] = tf.expand_dims(obs_tuple[0],-1)
         self.state_buffer[index] = obs_tuple[0]
         self.action_buffer[index] = obs_tuple[1]
         self.reward_buffer[index] = obs_tuple[2]
-        # self.next_state_buffer[index] = tf.expand_dims(obs_tuple[3],-1)
         self.next_state_buffer[index] = obs_tuple[3]
         
 
@@ -216,7 +207,6 @@ def policy(state, epsilon, episode):
     
     # exploration using epsilon greedy which decay over time:
     t = np.max([episode ,env.step_num])
-    t = 1000000
     if epsilon/(t**0.5) >= random.uniform(0, 1):
             print(f"{episode}) Exploration!")
             action = env.get_random_valid_action('computer')
@@ -247,8 +237,8 @@ target_critic = get_critic()
 
 # try to load weights if weights file exist (for continous training):
 try:
-    actor_model.load_weights('./weights/packman_actor.h5')
-    critic_model.load_weights('./weights/packman_critic.h5')
+    actor_model.load_weights('data/weights/packman_actor.h5')
+    critic_model.load_weights('data/weights/packman_critic.h5')
 except:
     print("-------------- no weights loaded! -------------------")
 
@@ -282,7 +272,7 @@ ep_reward_list = []
 
 # try to load rewards history if rewards file exist (for continous training):
 try:
-    ep_reward_list = np.load('./weights/rewards.npy')
+    ep_reward_list = np.load('data/weights/rewards.npy')
     ep_reward_list = ep_reward_list.tolist()
 except:
     print("-------------- no rewards history loaded! -------------------")
@@ -326,15 +316,15 @@ for ep in range(1,total_episodes+1):
     # # Save the weights after 10 steps:
     # if ep % 10 == 0:
     #     print("Weights saved")
-    #     actor_model.save_weights("./weights/lgsvl_actor.h5")
-    #     critic_model.save_weights("./weights/lgsvl_critic.h5")
+    #     actor_model.save_weights("data/weights/lgsvl_actor.h5")
+    #     critic_model.save_weights("data/weights/lgsvl_critic.h5")
 
-    #     target_actor.save_weights("./weights/lgsvl_target_actor.h5")
-    #     target_critic.save_weights("./weights/lgsvl_target_critic.h5")
+    #     target_actor.save_weights("data/weights/lgsvl_target_actor.h5")
+    #     target_critic.save_weights("data/weights/lgsvl_target_critic.h5")
 
     #     # Ido: Heavy operation, need to think something else
     #     # Save all rewards for next run
-    #     np.save('./weights/rewards.npy', ep_reward_list)
+    #     np.save('data/weights/rewards.npy', ep_reward_list)
 
 
 

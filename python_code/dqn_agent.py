@@ -12,9 +12,11 @@ from tensorflow.keras.models import Sequential, Model
 from tensorflow.keras.layers import Dense, Flatten, Conv2D, MaxPool2D
 from tensorflow.keras.optimizers import Adam
 
+import matplotlib.pyplot as plt
+
 class Agent():
     def __init__(self, state_size, action_size, env):
-        self.weight_backup      = "cartpole_weight.h5"
+        self.weight_backup      = "data/weights/dqn_weight.h5"
         self.state_size         = state_size
         self.action_size        = action_size
         self.memory             = deque(maxlen=2000)
@@ -29,15 +31,18 @@ class Agent():
     def _build_model(self):
         # Neural Net for Deep-Q learning Model
         model = Sequential()
-        model.add(Conv2D(filters=6, kernel_size=(3,3),input_shape=self.state_size, activation='relu'))
+        model.add(Conv2D(filters=16, kernel_size=(3,3), padding='same', input_shape=self.state_size, activation='elu'))
+        model.add(Conv2D(filters=32, kernel_size=(3,3), padding='same', input_shape=self.state_size, activation='elu'))
+        model.add(MaxPool2D())
+        model.add(Conv2D(filters=32, kernel_size=(3,3), padding='same', activation='elu'))
         model.add(Flatten())
-        model.add(Dense(24, input_dim=self.state_size, activation='relu'))
-        model.add(Dense(24, activation='relu'))
+        model.add(Dense(256, input_dim=self.state_size, activation='relu'))
+        model.add(Dense(64, activation='relu'))
         model.add(Dense(self.action_size, activation='linear'))
         model.compile(loss='mse', optimizer=Adam(learning_rate=self.learning_rate))
-        # if os.path.isfile(self.weight_backup):
-        #             model.load_weights(self.weight_backup)
-        #             self.exploration_rate = self.exploration_min
+        if os.path.isfile(self.weight_backup):
+                    model.load_weights(self.weight_backup)
+                    self.exploration_rate = self.exploration_min
         return model
 
     def save_model(self):
@@ -46,6 +51,7 @@ class Agent():
     def act(self, state):
         if np.random.rand() <= self.exploration_rate:
             return self.env.get_random_valid_action('computer')
+        
         act_values = self.brain.predict(state)
         act_values = np.squeeze(act_values, axis=0)
         action = np.argmax(act_values)
@@ -72,40 +78,40 @@ class Agent():
             self.exploration_rate *= self.exploration_decay
 
 
-class CartPole:
-    def __init__(self):
-        self.sample_batch_size = 32
-        self.episodes          = 10000
-        self.env_name = 'gym_packman:Packman-v0'
-        # self.env_name = 'CartPole-v1'
-        self.env               = gym.make(self.env_name)
-        self.state_size        = self.env.observation_space.shape
-        self.action_size       = self.env.action_space.n
-        self.agent             = Agent(self.state_size, self.action_size, self.env)
-    
-    def run(self):
-        try:
-            for index_episode in range(self.episodes):
-                state = self.env.reset()
-                state = np.expand_dims(state, axis=0)
-                done = False
-                index = 0
-                while not done:
-                    self.env.render()
-                    action = self.agent.act(state)
-                    next_state, reward, done, _ = self.env.step(action)
-                    next_state = np.expand_dims(next_state, axis=0)
-                    self.agent.remember(state, action, reward, next_state, done)
-                    state = next_state
-                    index += 1
-                print("Episode {}# Score: {}".format(index_episode, index + 1))
-                self.agent.replay(self.sample_batch_size)
-        finally:
-            self.agent.save_model()
+sample_batch_size = 32
+episodes = 1000
+env_name = 'gym_packman:Packman-v0'
+env = gym.make(env_name)
+state_size = env.observation_space.shape
+action_size = env.action_space.n
+agent = Agent(state_size, action_size, env)
 
-if __name__ == "__main__":
-    cartpole = CartPole()
-    cartpole.run()
+ep_reward_list = []
+
+for index_episode in range(episodes):
+    state = env.reset()
+    state = np.expand_dims(state, axis=0)
+    done = False
+    ep_reward = 0
+    while not done:
+        # env.render()
+        action = agent.act(state)
+        next_state, reward, done, _ = env.step(action)
+        next_state = np.expand_dims(next_state, axis=0)
+        agent.remember(state, action, reward, next_state, done)
+        state = next_state
+        ep_reward += reward
+    print("Episode {}# Score: {}".format(index_episode, ep_reward))
+    agent.replay(sample_batch_size)
+    ep_reward_list.append(ep_reward)
+
+agent.save_model()
+# Plotting graph
+# Episodes versus Avg. Rewards
+plt.plot(ep_reward_list)
+plt.xlabel("Episode")
+plt.ylabel("Reward")
+plt.savefig('data/images/dqn_performance.png')
 
 
 # import numpy as np
@@ -124,11 +130,7 @@ if __name__ == "__main__":
 # np.random.seed(123)
 # env.seed(123)
 # num_states = env.observation_space.shape
-# # num_states = (1,1,10,10,3)
 # num_actions = env.action_space.n
-
-# print(env.reset().shape)
-# print(env.step(0)[0].shape)
 
 # def build_model(num_states, num_actions):
 #     model = Sequential()
@@ -136,11 +138,14 @@ if __name__ == "__main__":
 #     last_init = tf.random_uniform_initializer(minval=-0.003, maxval=0.003)
 #     model.add(Input(shape=(1,) + num_states))
                 
-#     model.add(Conv2D(filters=6, kernel_size=(3,3), activation='relu', padding="same"))                
-#     model.add(Conv2D(filters=4, kernel_size=(3,3), activation='relu', padding="same"))
-#     model.add(MaxPool2D(pool_size=2, strides=1))
+#     model.add(Conv2D(filters=16, kernel_size=(3,3), activation='relu', padding="same"))                
+#     model.add(Conv2D(filters=32, kernel_size=(3,3), activation='relu', padding="same"))
+#     model.add(Conv2D(filters=64, kernel_size=(3,3), activation='relu', padding="same"))
+#     # model.add(MaxPool2D())
 
 #     model.add(Flatten())
+#     model.add(Dense(516, activation="elu", kernel_initializer=last_init))
+#     model.add(Dense(64, activation="elu", kernel_initializer=last_init))
 #     model.add(Dense(num_actions, activation="softmax", kernel_initializer=last_init))
 #     return model
 

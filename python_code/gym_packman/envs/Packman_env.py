@@ -291,8 +291,8 @@ class PackmanEnv(Env):
         return action
 
     def convertToImage(self, state):
-        r = state['Human awards'] / 2 + state['Human trace']
+        r = state['Human awards'] / 2 + state['Human trace'] + state['All awards']
         g = state['Board'] / 3 + state['All awards']
-        b = state['Computer awards'] / 2 + state['Computer trace']
+        b = state['Computer awards'] / 2 + state['Computer trace'] + state['All awards']
         rgb = np.dstack((b, g, r))
         return (rgb - np.min(rgb)) / (np.max(rgb) - np.min(rgb))  # NormalizeImage
