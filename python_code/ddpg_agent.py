@@ -13,14 +13,13 @@ import warnings
 warnings.filterwarnings('ignore')
 
 import tensorflow as tf
-from tensorflow.keras import layers, regularizers
-from tensorflow.keras.models import Sequential
+from tensorflow.keras import layers
 
 import matplotlib.pyplot as plt
 
 
-sim = 'gym_packman:Packman-v0'
-env = gym.make(sim)
+env_name = 'gym_packman:Packman-v0'
+env = gym.make(env_name)
 
 num_states = env.observation_space.shape
 print("Size of State Space ->  {}".format(num_states))
@@ -67,7 +66,6 @@ class Buffer:
         self, state_batch, action_batch, reward_batch, next_state_batch,
     ):
         # Training and updating Actor & Critic networks.
-        # See Pseudo Code.
         with tf.GradientTape() as tape:
             target_actions = target_actor(next_state_batch, training=True)
             y = reward_batch + gamma * target_critic(
@@ -106,11 +104,6 @@ class Buffer:
         reward_batch = tf.cast(reward_batch, dtype=tf.float32)
         next_state_batch = tf.convert_to_tensor(self.next_state_buffer[batch_indices])
 
-        # print("state_batch: ", state_batch.shape)
-        # print("action_batch: ", action_batch.shape)
-        # print("reward_batch: ", reward_batch.shape)
-        # print("next_state_batch: ", next_state_batch.shape)
-
         self.update(state_batch, action_batch, reward_batch, next_state_batch)
 
 
@@ -138,34 +131,16 @@ def get_actor():
 
     inputs = layers.Input(shape=num_states)
 
-    out = layers.Conv2D(filters=16, kernel_size=(3,3),input_shape=num_states, activation='relu',kernel_initializer=last_init)(inputs)
-    out = layers.Conv2D(filters=32, kernel_size=(3,3),input_shape=num_states, activation='relu',kernel_initializer=last_init)(out)
+    out = layers.Conv2D(filters=16, kernel_size=(3,3),input_shape=num_states, activation='relu')(inputs)
+    out = layers.Conv2D(filters=32, kernel_size=(3,3),input_shape=num_states, activation='relu')(out)
     out = layers.MaxPool2D()(out)
     out = layers.Dropout(rate=0.5)(out)
-
     out = tf.keras.layers.Flatten()(out)
+    out = layers.Dense(32, activation="relu")(out)
+    out = layers.Dense(10, activation="relu")(out)
 
-    outputs = layers.Dense(32, activation="relu",kernel_initializer=last_init)(out)
-    outputs = layers.Dense(10, activation="relu",kernel_initializer=last_init)(outputs)
-
-    outputs = layers.Dense(num_actions, activation="relu")(outputs)
+    outputs = layers.Dense(num_actions, activation="sigmoid", kernel_initializer=last_init)(out)
     model = tf.keras.Model(inputs, outputs)
-
-    # model = Sequential([
-    #     layers.experimental.preprocessing.Rescaling(1./255, input_shape=num_states),
-    #     layers.Conv2D(16, 3, padding='same', activation='elu', kernel_regularizer=regularizers.l2(0.001)),
-    #     layers.Conv2D(32, 3, padding='same', activation='elu', kernel_regularizer=regularizers.l2(0.001)),
-    #     layers.MaxPooling2D(),
-    #     layers.Conv2D(32, 3, padding='same', activation='elu', kernel_regularizer=regularizers.l2(0.001)),
-    #     layers.MaxPooling2D(),
-    #     layers.Conv2D(32, 3, padding='same', activation='elu', kernel_regularizer=regularizers.l2(0.001)),
-    #     # layers.MaxPooling2D(),
-    #     layers.Dropout(0.5),
-    #     layers.Flatten(),
-    #     layers.Dense(128, activation='elu', kernel_regularizer=regularizers.l2(0.01)),
-    #     layers.Dense(32, activation='elu', kernel_regularizer=regularizers.l2(0.01)),
-    #     layers.Dense(num_actions)
-    #     ])
     
     return model
 
@@ -208,16 +183,16 @@ def policy(state, epsilon, episode):
     # exploration using epsilon greedy which decay over time:
     t = np.max([episode ,env.step_num])
     if epsilon/(t**0.5) >= random.uniform(0, 1):
-            print(f"{episode}) Exploration!")
+            # print(f"{episode}) Exploration!")
             action = env.get_random_valid_action('computer')
     else:
-        sampled_actions = tf.squeeze(actor_model(state)).numpy()
-        print(f'{episode}) sampled_actions: {sampled_actions}')
+        sampled_actions = tf.squeeze(actor_model(state))
+        # print(f'{episode}) sampled_actions: {sampled_actions}')
 
         action = np.argmax(sampled_actions)
         # We make sure action is within bounds
         while(not env.valid_action(action, 'computer')):
-            print(f'{episode}) best action not valid ====> {action}')
+            # print(f'{episode}) best action not valid ====> {action}')
             sampled_actions = np.delete(sampled_actions, action)
             action = np.argmax(sampled_actions)
     
@@ -253,7 +228,7 @@ actor_lr = 0.001
 critic_optimizer = tf.keras.optimizers.Adam(critic_lr)
 actor_optimizer = tf.keras.optimizers.Adam(actor_lr)
 
-total_episodes = 4
+total_episodes = 1000
 # Discount factor for future rewards
 gamma = 0.995
 # Used to update target networks
@@ -270,30 +245,26 @@ along with updating the Target networks at a rate `tau`.
 # To store reward history of each episode
 ep_reward_list = []
 
-# try to load rewards history if rewards file exist (for continous training):
-try:
-    ep_reward_list = np.load('data/weights/rewards.npy')
-    ep_reward_list = ep_reward_list.tolist()
-except:
-    print("-------------- no rewards history loaded! -------------------")
+# # try to load rewards history if rewards file exist (for continous training):
+# try:
+#     ep_reward_list = np.load('data/weights/rewards.npy')
+#     ep_reward_list = ep_reward_list.tolist()
+# except:
+#     print("-------------- no rewards history loaded! -------------------")
 
 for ep in range(1,total_episodes+1):
 
     prev_state = env.reset() 
     episodic_reward = 0
     while True:
-        # Uncomment this to see the Actor in action
-        # But not in a python notebook.
-        env.render()
+        # env.render()
 
         tf_prev_state = tf.expand_dims(tf.convert_to_tensor(prev_state), 0)
 
         action = policy(tf_prev_state, epsilon, ep)
-        print(f"{ep}) action: {action}")
-
         # Recieve state and reward from environment.
         state, reward, done, info = env.step(action)
-        print(f"{ep}) reward: {reward}")
+        
         buffer.record((prev_state, action, reward, state))
         episodic_reward += reward
 
@@ -301,43 +272,28 @@ for ep in range(1,total_episodes+1):
         update_target(target_actor.variables, actor_model.variables, tau)
         update_target(target_critic.variables, critic_model.variables, tau)
 
+        # print(f"{ep}) action: {action}")
+        # print(f"{ep}) reward: {reward}")
+
         # End this episode when `done` is True
         if done:
             break
 
         prev_state = state
-        # raise ValueError()
 
     ep_reward_list.append(episodic_reward)
-
     # Reward of last episode
     print("Episode * {} * Reward is ==> {}".format(ep, episodic_reward))
 
-    # # Save the weights after 10 steps:
-    # if ep % 10 == 0:
-    #     print("Weights saved")
-    #     actor_model.save_weights("data/weights/lgsvl_actor.h5")
-    #     critic_model.save_weights("data/weights/lgsvl_critic.h5")
 
-    #     target_actor.save_weights("data/weights/lgsvl_target_actor.h5")
-    #     target_critic.save_weights("data/weights/lgsvl_target_critic.h5")
+actor_model.save_weights("data/weights/ddpg_actor.h5")
+critic_model.save_weights("data/weights/ddpg_critic.h5")
 
-    #     # Ido: Heavy operation, need to think something else
-    #     # Save all rewards for next run
-    #     np.save('data/weights/rewards.npy', ep_reward_list)
-
-
-
+target_actor.save_weights("data/weights/ddpg_target_actor.h5")
+target_critic.save_weights("data/weights/ddpg_target_critic.h5")
 # Plotting graph
 # Episodes versus Avg. Rewards
-    plt.plot(ep_reward_list)
-    plt.xlabel("Episode")
-    plt.ylabel("Reward")
-    # plt.savefig('./images/performance.png')
-plt.show()
-
-"""
-If training proceeds correctly, the average episodic reward will increase with time.
-Feel free to try different learning rates, `tau` values, and architectures for the
-Actor and Critic networks.
-"""
+plt.plot(ep_reward_list)
+plt.xlabel("Episode")
+plt.ylabel("Reward")
+plt.savefig('data/images/ddpg_performance.png')
