@@ -21,10 +21,10 @@ class Agent():
         self.action_size        = action_size
         self.memory             = deque(maxlen=2000)
         self.learning_rate      = 0.001
-        self.gamma              = 0.95
+        self.gamma              = 0.9999
         self.exploration_rate   = 1.0
         self.exploration_min    = 0.01
-        self.exploration_decay  = 0.995
+        self.exploration_decay  = 0.9999
         self.brain              = self._build_model()
         self.env = env
 
@@ -73,7 +73,7 @@ class Agent():
               target = reward + self.gamma * np.amax(self.brain.predict(next_state)[0])
             target_f = self.brain.predict(state)
             target_f[0][action] = target
-            self.brain.fit(state, target_f, epochs=1, verbose=0)
+            self.brain.fit(state, target_f, epochs=10, verbose=0)
         if self.exploration_rate > self.exploration_min:
             self.exploration_rate *= self.exploration_decay
 
@@ -94,24 +94,28 @@ for index_episode in range(episodes):
     done = False
     ep_reward = 0
     while not done:
-        # env.render()
+        env.render()
+        
         action = agent.act(state)
         next_state, reward, done, _ = env.step(action)
         next_state = np.expand_dims(next_state, axis=0)
         agent.remember(state, action, reward, next_state, done)
         state = next_state
         ep_reward += reward
+    
+
     print("Episode {}# Score: {}".format(index_episode, ep_reward))
     agent.replay(sample_batch_size)
     ep_reward_list.append(ep_reward)
 
-agent.save_model()
-# Plotting graph
-# Episodes versus Avg. Rewards
-plt.plot(ep_reward_list)
-plt.xlabel("Episode")
-plt.ylabel("Reward")
-plt.savefig('data/images/dqn_performance.png')
+    agent.save_model()
+    # Plotting graph
+    # Episodes versus Avg. Rewards
+    plt.plot(ep_reward_list)
+    plt.xlabel("Episode")
+    plt.ylabel("Reward")
+    plt.savefig('data/images/dqn_performance.png')
+    plt.show()
 
 
 # import numpy as np

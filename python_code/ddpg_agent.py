@@ -230,7 +230,7 @@ actor_optimizer = tf.keras.optimizers.Adam(actor_lr)
 
 total_episodes = 1000
 # Discount factor for future rewards
-gamma = 0.995
+gamma = 0.9999
 # Used to update target networks
 tau = 0.005
 

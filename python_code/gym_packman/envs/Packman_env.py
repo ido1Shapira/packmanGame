@@ -77,7 +77,8 @@ class PackmanEnv(Env):
 
         # when human model is ready uncomment this line
         # human_action = self.predict_action(self.canvas)
-        human_action = self.get_random_valid_action('human')
+        # human_action = self.get_random_valid_action('human')
+        human_action = 0
 
         assert self.valid_action(action, 'computer'), "Computer preformed invalid action: " + str(
             action) + " at pos: " + str(computer_pos)
