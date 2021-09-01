@@ -21,10 +21,10 @@ class Agent():
         self.action_size        = action_size
         self.memory             = deque(maxlen=2000)
         self.learning_rate      = 0.001
-        self.gamma              = 0.9999
+        self.gamma              = 0.999
         self.exploration_rate   = 1.0
         self.exploration_min    = 0.01
-        self.exploration_decay  = 0.9999
+        self.exploration_decay  = 0.99
         self.brain              = self._build_model()
         self.env = env
 
@@ -78,7 +78,7 @@ class Agent():
             self.exploration_rate *= self.exploration_decay
 
 
-sample_batch_size = 32
+sample_batch_size = 64
 episodes = 1000
 env_name = 'gym_packman:Packman-v0'
 env = gym.make(env_name)
@@ -97,25 +97,25 @@ for index_episode in range(episodes):
         env.render()
         
         action = agent.act(state)
-        next_state, reward, done, _ = env.step(action)
+        next_state, reward, done, info = env.step(action)
         next_state = np.expand_dims(next_state, axis=0)
         agent.remember(state, action, reward, next_state, done)
         state = next_state
         ep_reward += reward
+        # print(info)
     
 
     print("Episode {}# Score: {}".format(index_episode, ep_reward))
     agent.replay(sample_batch_size)
     ep_reward_list.append(ep_reward)
 
-    agent.save_model()
-    # Plotting graph
-    # Episodes versus Avg. Rewards
-    plt.plot(ep_reward_list)
-    plt.xlabel("Episode")
-    plt.ylabel("Reward")
-    plt.savefig('data/images/dqn_performance.png')
-    plt.show()
+# Plotting graph
+# Episodes versus Avg. Rewards
+plt.plot(ep_reward_list)
+plt.xlabel("Episode")
+plt.ylabel("Reward")
+plt.savefig('data/images/dqn_performance.png')
+agent.save_model()
 
 
 # import numpy as np

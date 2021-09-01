@@ -8,11 +8,7 @@ from gym.spaces import Discrete, Box
 from gym.utils import seeding
 import numpy as np
 import tensorflow as tf
-
-import matplotlib.pyplot as plt
-from IPython import display
 import cv2
-
 
 class PackmanEnv(Env):
 
@@ -20,20 +16,22 @@ class PackmanEnv(Env):
     
     rewards = {
         'Start': 50,
-        0: -1,
-        1: -2,
-        2: -2,
-        3: -2,
-        4: -2,
+        0: -1, #stay
+        1: -2, #left
+        2: -2, #up
+        3: -2, #right
+        4: -2, #down
         'CollectDirt': 2,  # (-2 + 2 = 0)
         'EndGame': 100
     }
-    actions = {
-        0: "Stay",
-        1: "Left",
-        2: "Up",
-        3: "Right",
-        4: "Down"
+
+    toIndex = {
+        'Board': 0,
+        'Human trace': 1,
+        'Computer trace': 2,
+        'Human awards': 3,
+        'Computer awards': 4,
+        'All awards': 5,
     }
 
     def __init__(self):
@@ -42,16 +40,16 @@ class PackmanEnv(Env):
         self.action_space = Discrete(5)
 
         # Define a 2-D observation space
-        self.observation_shape = (10, 10, 3)
+        self.observation_shape = (10, 10, 6)
         self.observation_space = Box(low=np.zeros(self.observation_shape),
                                      high=np.ones(self.observation_shape),
                                      dtype=np.float32)
         self.seed()
-        self.viewer = None
+        # self.viewer = None
 
         # Set start state
-        self.dict_state = None
         self.canvas = None
+        self.state = None
 
         # Load human model from the computer
         self.human_model = tf.keras.models.load_model('./data/humanModel/mode_v0')
@@ -71,8 +69,8 @@ class PackmanEnv(Env):
         # Assert that it is a valid action 
         assert self.action_space.contains(action), "Invalid Action"
 
-        human_pos = np.where(self.dict_state['Human trace'] == 1)
-        computer_pos = np.where(self.dict_state['Computer trace'] == 1)
+        human_pos = np.where(self.state[::, ::, self.toIndex['Human trace']] == 1)
+        computer_pos = np.where(self.state[::, ::, self.toIndex['Computer trace']] == 1)
         # predict next human action
 
         # when human model is ready uncomment this line
@@ -90,22 +88,22 @@ class PackmanEnv(Env):
         self.move(action, 'computer')
 
         # check for clean dirt for both agents
-        dirts_pos = np.where(self.dict_state['All awards'] == 1)
+        dirts_pos = np.where(self.state[::, ::, self.toIndex['All awards']] == 1)
         for dirt_pos_i, dirt_pos_j in zip(dirts_pos[0], dirts_pos[1]):
             if human_pos[0][0] == dirt_pos_i and human_pos[1][0] == dirt_pos_j:
-                self.dict_state['All awards'][human_pos] = 0
-                self.dict_state['Human awards'][human_pos] = 1
+                self.state[::, ::, self.toIndex['All awards']][human_pos] = 0
+                self.state[::, ::, self.toIndex['Human awards']][human_pos] = 1
                 human_reward += self.rewards['CollectDirt']
             if computer_pos[0][0] == dirt_pos_i and computer_pos[1][0] == dirt_pos_j:
-                self.dict_state['All awards'][computer_pos] = 0
-                self.dict_state['Computer awards'][computer_pos] = 1
+                self.state[::, ::, self.toIndex['All awards']][computer_pos] = 0
+                self.state[::, ::, self.toIndex['Computer awards']][computer_pos] = 1
                 computer_reward += self.rewards['CollectDirt']
 
         # Reward for executing an action.
         computer_reward = self.rewards[action]
         human_reward = self.rewards[human_action]
 
-        if not np.any(self.dict_state['All awards']):  # game ended when there is no dirt to clean
+        if not np.any(self.state[::, ::, self.toIndex['All awards']]):  # game ended when there is no dirt to clean
             computer_reward += self.rewards['EndGame']
             human_reward += self.rewards['EndGame']
             done = True
@@ -116,8 +114,6 @@ class PackmanEnv(Env):
         self.ep_return += computer_reward
         self.ep_human_reward += human_reward
 
-        self.canvas = self.convertToImage(self.dict_state)
-
         # Set placeholder for info
         info = {
             'done': done,
@@ -127,15 +123,17 @@ class PackmanEnv(Env):
         }
 
         # Return step information
-        return self.canvas, computer_reward, done, info
+        return self.state, computer_reward, done, info
 
     def render(self, mode='human'):
         screen_width = 400
         screen_height = 400
         # Implement viz
-        self.canvas = self.convertToImage(self.dict_state)
-        if self.canvas is None:
-            return None
+        r = self.state[::, ::, self.toIndex['Human awards']] / 2 + self.state[::, ::, self.toIndex['Human trace']] + self.state[::, ::, self.toIndex['All awards']]
+        g = self.state[::, ::, self.toIndex['Board']] / 3 + self.state[::, ::, self.toIndex['All awards']]
+        b = self.state[::, ::, self.toIndex['Computer awards']] / 2 + self.state[::, ::, self.toIndex['Computer trace']] + self.state[::, ::, self.toIndex['All awards']]
+        rgb = np.dstack((b, g, r))
+        self.canvas = (rgb - np.min(rgb)) / (np.max(rgb) - np.min(rgb))  # NormalizeImage
 
         # Render the environment to the screen
         if mode == 'human':
@@ -166,22 +164,20 @@ class PackmanEnv(Env):
         self.call_once = True
         self.step_num = 1
         # Reset board game
-        self.dict_state = self.init_state()
-        self.canvas = self.convertToImage(self.dict_state)
+        self.state = self.init_state()
         # Reset the reward
         self.ep_return = self.rewards['Start']
         self.ep_human_reward = self.rewards['Start']
 
-        return self.canvas
+        return self.state
 
     def seed(self, seed=None):
         self.np_random, seed = seeding.np_random(seed)
         return [seed]
 
     def close(self):
-        if self.viewer:
-            self.viewer.close()
-            self.viewer = None
+        if self.canvas != None:
+            cv2.destroyAllWindows()
             
     #################### Helper functions ########################
 
@@ -199,6 +195,7 @@ class PackmanEnv(Env):
             [0, 1, 1, 1, 0, 1, 1, 1, 1, 0],
             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         ])
+        
         human_trace = np.zeros(board.shape)
         human_trace[2][2] = 1  # locate human player
         board[2][2] = 0  # locate human player
@@ -217,15 +214,10 @@ class PackmanEnv(Env):
         board[2][2] = 1  # locate human player
         board[7][7] = 1  # locate computer player
 
-        return {
-            'Board': board,
-            'Human trace': human_trace,
-            'Computer trace': computer_trace,
-            'Human awards': human_awards,
-            'Computer awards': computer_awards,
-            'All awards': all_awards,
-        }
-
+        return np.concatenate([np.expand_dims(board, axis=2), np.expand_dims(human_trace, axis=2),
+         np.expand_dims(computer_trace, axis=2), np.expand_dims(human_awards, axis=2),
+         np.expand_dims(computer_awards, axis=2), np.expand_dims(all_awards, axis=2)], axis=2)
+        
     def get_random_valid_action(self, who):
         random_action = self.action_space.sample()
         while not self.valid_action(random_action, who):
@@ -234,14 +226,11 @@ class PackmanEnv(Env):
 
     def valid_action(self, action, who):
         if who == 'human':
-            pos = np.where(self.dict_state['Human trace'] == 1)
+            pos = np.where(self.state[::, ::, self.toIndex['Human trace']] == 1)
         else:
-            pos = np.where(self.dict_state['Computer trace'] == 1)
-        # print('who: ', who)
+            pos = np.where(self.state[::, ::, self.toIndex['Computer trace']] == 1)
         next_pos = self.new_pos(pos, action)
-        # print('current_pos: ', pos)
-        # print('next_pos: ', next_pos)
-        if self.dict_state['Board'][next_pos] == 0:
+        if self.state[next_pos[0], next_pos[1], self.toIndex['Board']] == 0:
             return False
         else:
             return True
@@ -263,15 +252,15 @@ class PackmanEnv(Env):
     def move(self, action, agent):
         # assume action is valid
         if agent == 'human':
-            current_pos = np.where(self.dict_state['Human trace'] == 1)
-            self.dict_state['Human trace'] = self.dict_state['Human trace'] * 0.9
+            current_pos = np.where(self.state[::, ::, self.toIndex['Human trace']] == 1)
+            self.state[::, ::, self.toIndex['Human trace']] = self.state[::, ::, self.toIndex['Human trace']] * 0.9
             next_pos = self.new_pos(current_pos, action)
-            self.dict_state['Human trace'][next_pos] = 1
+            self.state[next_pos[0], next_pos[1], self.toIndex['Human trace']] = 1
         elif agent == 'computer':
-            current_pos = np.where(self.dict_state['Computer trace'] == 1)
-            self.dict_state['Computer trace'] = self.dict_state['Computer trace'] * 0.9
+            current_pos = np.where(self.state[::, ::, self.toIndex['Computer trace']] == 1)
+            self.state[::, ::, self.toIndex['Computer trace']] = self.state[::, ::, self.toIndex['Computer trace']] * 0.9
             next_pos = self.new_pos(current_pos, action)
-            self.dict_state['Computer trace'][next_pos] = 1
+            self.state[next_pos[0], next_pos[1], self.toIndex['Computer trace']] = 1
         else:
             assert True, "agent not define:" + str(agent)
 
@@ -290,10 +279,3 @@ class PackmanEnv(Env):
             action = np.argmax(score)
 
         return action
-
-    def convertToImage(self, state):
-        r = state['Human awards'] / 2 + state['Human trace'] + state['All awards']
-        g = state['Board'] / 3 + state['All awards']
-        b = state['Computer awards'] / 2 + state['Computer trace'] + state['All awards']
-        rgb = np.dstack((b, g, r))
-        return (rgb - np.min(rgb)) / (np.max(rgb) - np.min(rgb))  # NormalizeImage
