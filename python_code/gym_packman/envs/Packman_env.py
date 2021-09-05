@@ -17,12 +17,12 @@ class PackmanEnv(Env):
     rewards = {
         'Start': 50,
         0: -1, #stay
-        1: -2, #left
-        2: -2, #up
-        3: -2, #right
-        4: -2, #down
-        'CollectDirt': 2,  # (-2 + 2 = 0)
-        'EndGame': 100
+        1: -1, #left
+        2: -1, #up
+        3: -1, #right
+        4: -1, #down
+        'CollectDirt': 21,  # (-2 + 2 = 0)
+        'EndGame': 0
     }
 
     toIndex = {

@@ -31,14 +31,14 @@ class Agent():
     def _build_model(self):
         # Neural Net for Deep-Q learning Model
         model = Sequential()
-        model.add(Conv2D(filters=16, kernel_size=(3,3), padding='same', input_shape=self.state_size, activation='elu'))
-        model.add(Conv2D(filters=32, kernel_size=(3,3), padding='same', input_shape=self.state_size, activation='elu'))
+        model.add(Conv2D(filters=16, kernel_size=(3,3), padding='same', activation='elu'))
+        model.add(Conv2D(filters=32, kernel_size=(3,3), padding='same', activation='elu'))
         model.add(MaxPool2D())
         model.add(Conv2D(filters=32, kernel_size=(3,3), padding='same', activation='elu'))
         model.add(Flatten())
-        model.add(Dense(256, input_dim=self.state_size, activation='relu'))
-        model.add(Dense(64, activation='relu'))
-        model.add(Dense(self.action_size, activation='linear'))
+        model.add(Dense(256, activation='elu'))
+        model.add(Dense(64, activation='elu'))
+        model.add(Dense(self.action_size, activation='softmax'))
         model.compile(loss='mse', optimizer=Adam(learning_rate=self.learning_rate))
         if os.path.isfile(self.weight_backup):
                     model.load_weights(self.weight_backup)
@@ -94,7 +94,7 @@ for index_episode in range(episodes):
     done = False
     ep_reward = 0
     while not done:
-        env.render()
+        # env.render()
         
         action = agent.act(state)
         next_state, reward, done, info = env.step(action)
@@ -104,9 +104,8 @@ for index_episode in range(episodes):
         ep_reward += reward
         # print(info)
     
-
-    print("Episode {}# Score: {}".format(index_episode, ep_reward))
     agent.replay(sample_batch_size)
+    print("Episode {}# Score: {}".format(index_episode, ep_reward))
     ep_reward_list.append(ep_reward)
 
 # Plotting graph

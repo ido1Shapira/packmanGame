@@ -1,0 +1,20 @@
+////////// Install cuda ///////////////////////////////
+see:
+https://github.com/tensorflow/tensorflow/issues/45930
+
+///////// Update bashrc //////////////////////////
+nano ~/.bashrc
+and enter:
+export LD_LIBRARY_PATH=/usr/local/cuda-11.0/lib64
+
+////////// Create Your Conda Environment //////////////
+conda create --name tf-gpu --yes python=3.7.4
+conda activate tf-gpu
+
+///////// Install tensorflow //////////////////////////
+pip install -e .
+(pip install --upgrade tensorflow)
+
+///////// Install libcusolver //////////////////////////
+sudo apt-get install libcusolver-11-0
+sudo ln libcusolver.so.10 libcusolver.so.11 # hard link
