@@ -7,10 +7,11 @@ from collections import deque
 import numpy as np
 import random
 import gym
+import pylab
 
 from tensorflow.keras.models import Sequential, Model
 from tensorflow.keras.layers import Dense, Flatten, Conv2D, MaxPool2D
-from tensorflow.keras.optimizers import Adam
+from tensorflow.keras.optimizers import Adam, RMSprop
 
 import matplotlib.pyplot as plt
 
@@ -19,14 +20,16 @@ class Agent():
         self.weight_backup      = "data/weights/dqn_weight.h5"
         self.state_size         = state_size
         self.action_size        = action_size
-        self.memory             = deque(maxlen=2000)
-        self.learning_rate      = 0.001
+        self.memory             = deque(maxlen=20000)
+        self.learning_rate      = 0.0001
         self.gamma              = 0.999
         self.exploration_rate   = 1.0
         self.exploration_min    = 0.01
-        self.exploration_decay  = 0.99
+        self.exploration_decay  = 0.999
         self.brain              = self._build_model()
         self.env = env
+
+        self.scores, self.episodes, self.average = [], [], []
 
     def _build_model(self):
         # Neural Net for Deep-Q learning Model
@@ -39,7 +42,7 @@ class Agent():
         model.add(Dense(256, activation='elu'))
         model.add(Dense(64, activation='elu'))
         model.add(Dense(self.action_size, activation='softmax'))
-        model.compile(loss='mse', optimizer=Adam(learning_rate=self.learning_rate))
+        model.compile(loss="mean_squared_error", optimizer=RMSprop(lr=self.learning_rate, rho=0.95, epsilon=0.01), metrics=["accuracy"])
         if os.path.isfile(self.weight_backup):
                     model.load_weights(self.weight_backup)
                     self.exploration_rate = self.exploration_min
@@ -78,6 +81,23 @@ class Agent():
             self.exploration_rate *= self.exploration_decay
 
 
+    pylab.figure(figsize=(18, 9))
+    def PlotModel(self, score, episode):
+        self.scores.append(score)
+        self.episodes.append(episode)
+        self.average.append(sum(self.scores) / len(self.scores))
+        pylab.plot(self.episodes, self.average, 'r')
+        pylab.plot(self.episodes, self.scores, 'b')
+        pylab.ylabel('Score', fontsize=18)
+        pylab.xlabel('Episode', fontsize=18)
+        try:
+            pylab.savefig("data/images/dqn_performance.png")
+        except OSError:
+            pass
+
+        return str(self.average[-1])[:5]
+
+
 sample_batch_size = 64
 episodes = 1000
 env_name = 'gym_packman:Packman-v0'
@@ -88,11 +108,12 @@ agent = Agent(state_size, action_size, env)
 
 ep_reward_list = []
 
-for index_episode in range(episodes):
+for e in range(episodes):
     state = env.reset()
     state = np.expand_dims(state, axis=0)
     done = False
     ep_reward = 0
+    i = 0
     while not done:
         # env.render()
         
@@ -102,18 +123,14 @@ for index_episode in range(episodes):
         agent.remember(state, action, reward, next_state, done)
         state = next_state
         ep_reward += reward
+        i += 1
         # print(info)
-    
+
+    average = agent.PlotModel(ep_reward, e)
     agent.replay(sample_batch_size)
-    print("Episode {}# Score: {}".format(index_episode, ep_reward))
+    print("episode: {}/{}, steps: {}, score: {}, e: {:.2}, average: {}".format(e, episodes, i, ep_reward, agent.exploration_rate, average))
     ep_reward_list.append(ep_reward)
 
-# Plotting graph
-# Episodes versus Avg. Rewards
-plt.plot(ep_reward_list)
-plt.xlabel("Episode")
-plt.ylabel("Reward")
-plt.savefig('data/images/dqn_performance.png')
 agent.save_model()
 
 

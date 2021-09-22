@@ -1,5 +1,6 @@
 # Tutorial by www.pylessons.com
 # Tutorial written for - Tensorflow 2.3.1
+# https://pylessons.com/CartPole-DDQN/
 
 import os
 import random
@@ -16,9 +17,11 @@ def OurModel(input_shape, action_space):
     X_input = Input(shape=input_shape)
     X = X_input
     X = Conv2D(filters=16, kernel_size=(3,3), padding='same', activation='relu', input_shape=input_shape, kernel_initializer='he_uniform')(X)
-    X = Conv2D(filters=32, kernel_size=(3,3), padding='same', activation='relu', kernel_initializer='he_uniform')(X)
+    X = MaxPool2D()(X)
+    X = Conv2D(filters=32, kernel_size=(5,5), padding='same', activation='relu', kernel_initializer='he_uniform')(X)
     X = MaxPool2D()(X)
     X = Conv2D(filters=32, kernel_size=(3,3), padding='same', activation='relu', kernel_initializer='he_uniform')(X)
+    X = MaxPool2D()(X)
     X = Flatten()(X)
     X = Dense(512, activation='relu', kernel_initializer='he_uniform')(X)
     X = Dense(256, activation='relu', kernel_initializer='he_uniform')(X)
@@ -27,7 +30,7 @@ def OurModel(input_shape, action_space):
     X = Dense(action_space, activation="linear", kernel_initializer='he_uniform')(X)
 
     model = Model(inputs = X_input, outputs = X)
-    model.compile(loss="mean_squared_error", optimizer=RMSprop(lr=0.00025, rho=0.95, epsilon=0.01), metrics=["accuracy"])
+    model.compile(loss="mean_squared_error", optimizer=RMSprop(learning_rate=0.00025, rho=0.95, epsilon=0.01), metrics=["accuracy"])
 
     model.summary()
     return model
@@ -36,9 +39,7 @@ class DQNAgent:
     def __init__(self, env_name):
         self.env_name = env_name       
         self.env = gym.make(env_name)
-        self.env.seed(0)  
-        # by default, CartPole-v1 has max episode steps = 500
-        self.env._max_episode_steps = 4000
+        self.env.seed(0)
         self.state_size = self.env.observation_space.shape
         self.action_size = self.env.action_space.n
 
@@ -48,7 +49,7 @@ class DQNAgent:
         self.gamma = 0.999    # discount rate
         self.epsilon = 1.0  # exploration rate
         self.epsilon_min = 0.01
-        self.epsilon_decay = 0.99
+        self.epsilon_decay = 0.999
         self.batch_size = 64
         self.train_start = 1000
 
@@ -89,22 +90,21 @@ class DQNAgent:
 
     def remember(self, state, action, reward, next_state, done):
         self.memory.append((state, action, reward, next_state, done))
-        if len(self.memory) > self.train_start:
-            if self.epsilon > self.epsilon_min:
-                self.epsilon *= self.epsilon_decay
+
 
     def act(self, state):
         if np.random.random() <= self.epsilon:
-            return self.env.get_random_valid_action('computer')
+            return random.randrange(self.action_size)
+            # return self.env.get_random_valid_action('computer')
         else:
-            # return np.argmax(self.model.predict(state))
-            act_values = self.model.predict(state)
-            act_values = np.squeeze(act_values, axis=0)
-            action = np.argmax(act_values)
-            while(not self.env.valid_action(action, 'computer')):
-                act_values = np.delete(act_values, action)
-                action = np.argmax(act_values)
-            return action
+            return np.argmax(self.model.predict(state))
+            # act_values = self.model.predict(state)
+            # act_values = np.squeeze(act_values, axis=0)
+            # action = np.argmax(act_values)
+            # while(not self.env.valid_action(action, 'computer')):
+            #     act_values = np.delete(act_values, action)
+            #     action = np.argmax(act_values)
+            # return action
 
     def replay(self):
         if len(self.memory) < self.train_start:
@@ -156,6 +156,10 @@ class DQNAgent:
     def load(self, name):
         self.model = load_model(name)
 
+    def updateEpsilon(self):
+        if self.epsilon > self.epsilon_min:
+            self.epsilon *= self.epsilon_decay
+
     def save(self, name):
         self.model.save(name)
 
@@ -175,7 +179,7 @@ class DQNAgent:
         if self.Soft_Update:
             softupdate = '_soft'
         try:
-            pylab.savefig(dqn+self.env_name+softupdate+".png")
+            pylab.savefig("data/images/"+dqn+self.env_name+softupdate+".png")
         except OSError:
             pass
 
@@ -193,10 +197,6 @@ class DQNAgent:
                 action = self.act(state)
                 next_state, reward, done, _ = self.env.step(action)
                 next_state = np.expand_dims(next_state, axis=0)
-                # if not done or i == self.env._max_episode_steps-1:
-                #     reward = reward
-                # else:
-                #     reward = -100
                 self.remember(state, action, reward, next_state, done)
                 state = next_state
                 i += 1
@@ -204,16 +204,15 @@ class DQNAgent:
                 if done:
                     # every step update target model
                     self.update_target_model()
-                    
                     # every episode, plot the result
                     average = self.PlotModel(ep_rewards, e)
-                     
                     print("episode: {}/{}, steps: {}, score: {}, e: {:.2}, average: {}".format(e, self.EPISODES, i, ep_rewards, self.epsilon, average))
-                    if i == self.env._max_episode_steps:
-                        print("Saving trained model as ddqn_agent.h5")
-                        self.save("weights/ddqn_agent.h5")
-                        break
+                    # decay epsilon
+                    self.updateEpsilon()
+                    
                 self.replay()
+        print("Saving trained model as ddqn_agent.h5")
+        self.save("weights/ddqn_agent.h5")
 
     def test(self):
         self.load("ddqn_agent.h5")
@@ -235,7 +234,8 @@ class DQNAgent:
                     break
 
 if __name__ == "__main__":
-    env_name = 'gym_packman:Packman-v0'
+    # env_name = 'gym_packman:Packman-v0'
+    env_name = 'Breakout-v0'
     agent = DQNAgent(env_name)
     agent.run()
     agent.test()
