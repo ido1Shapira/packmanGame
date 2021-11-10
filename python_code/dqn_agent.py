@@ -1,189 +1,267 @@
-import os
-os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'  # or any {'0', '1', '2'}
-import warnings
-warnings.filterwarnings('ignore')
+# Tutorial by www.pylessons.com
+# Tutorial written for - Tensorflow 2.3.1
+# https://pylessons.com/CartPole-DDQN/
 
-from collections import deque
-import numpy as np
+import os
 import random
 import gym
-import pylab
-
-from tensorflow.keras.models import Sequential, Model
-from tensorflow.keras.layers import Dense, Flatten, Conv2D, MaxPool2D
+# import pylab
+import matplotlib.pyplot as plt
+import numpy as np
+from collections import deque
+from tensorflow.keras.models import Model, load_model
+from tensorflow.keras.layers import Input, Dense, Conv2D, MaxPool2D, Flatten
 from tensorflow.keras.optimizers import Adam, RMSprop
 
-import matplotlib.pyplot as plt
 
-class Agent():
-    def __init__(self, state_size, action_size, env):
-        self.weight_backup      = "data/weights/dqn_weight.h5"
-        self.state_size         = state_size
-        self.action_size        = action_size
-        self.memory             = deque(maxlen=20000)
-        self.learning_rate      = 0.0001
-        self.gamma              = 0.999
-        self.exploration_rate   = 1.0
-        self.exploration_min    = 0.01
-        self.exploration_decay  = 0.999
-        self.brain              = self._build_model()
-        self.env = env
+def OurModel(input_shape, action_space):
+    X_input = Input(shape=input_shape)
+    X = X_input
+    X = Conv2D(filters=4, kernel_size=(4,4), padding='same', activation='relu')(X)
+    X = Conv2D(filters=8, kernel_size=(3,3), padding='same', activation='relu')(X)
+    # X = MaxPool2D()(X)
+    X = Conv2D(filters=8, kernel_size=(3,3), padding='same', activation='relu')(X)
+    X = Flatten()(X)
+    X = Dense(256, activation='relu')(X)
+    X = Dense(32, activation='relu')(X)
+    # Output Layer with # of actions: 5 nodes (left, right, up, down, stay)
+    X = Dense(action_space, activation="linear")(X)
 
-        self.scores, self.episodes, self.average = [], [], []
+    model = Model(inputs = X_input, outputs = X)
+    model.compile(loss="mean_squared_error", optimizer=Adam(learning_rate=0.0002), metrics=["accuracy"])
 
-    def _build_model(self):
-        # Neural Net for Deep-Q learning Model
-        model = Sequential()
-        model.add(Conv2D(filters=16, kernel_size=(3,3), padding='same', activation='elu'))
-        model.add(Conv2D(filters=32, kernel_size=(3,3), padding='same', activation='elu'))
-        model.add(MaxPool2D())
-        model.add(Conv2D(filters=32, kernel_size=(3,3), padding='same', activation='elu'))
-        model.add(Flatten())
-        model.add(Dense(256, activation='elu'))
-        model.add(Dense(64, activation='elu'))
-        model.add(Dense(self.action_size, activation='softmax'))
-        model.compile(loss="mean_squared_error", optimizer=RMSprop(lr=self.learning_rate, rho=0.95, epsilon=0.01), metrics=["accuracy"])
-        if os.path.isfile(self.weight_backup):
-                    model.load_weights(self.weight_backup)
-                    self.exploration_rate = self.exploration_min
-        return model
+    model.summary()
+    return model
 
-    def save_model(self):
-            self.brain.save(self.weight_backup)
-    
-    def act(self, state):
-        if np.random.rand() <= self.exploration_rate:
-            return self.env.get_random_valid_action('computer')
+class DQNAgent:
+    def __init__(self, env_name):
+        self.env_name = env_name       
+        self.env = gym.make(env_name)
+        self.env.seed(0)
+        self.state_size = self.env.observation_space.shape
+        self.action_size = self.env.action_space.n
+
+        self.EPISODES = 1000 #500
+        self.memory = deque(maxlen=100000)
         
-        act_values = self.brain.predict(state)
-        act_values = np.squeeze(act_values, axis=0)
-        action = np.argmax(act_values)
-        while(not self.env.valid_action(action, 'computer')):
-            act_values = np.delete(act_values, action)
-            action = np.argmax(act_values)
-        return action
+        self.gamma = 0.9    # discount rate
+        self.epsilon = 1.0 # exploration rate
+        self.epsilon_min = 0.01
+        self.epsilon_decay = 0.997 #0.995
+        self.batch_size = 64
+        self.train_start = 3000 # memory_size
+
+        # defining model parameters
+        self.ddqn = True
+        self.Soft_Update = False
+
+        self.TAU = 0.1 # target network soft update hyperparameter
+
+        self.Save_Path = 'weights'
+        self.scores, self.steps, self.episodes, self.averages, self.averages_steps = [], [], [], [], []
+        fig, (self.ax1, self.ax2) = plt.subplots(2, 1, figsize=(18, 9))
+        self.ax1.set_ylabel('Score', fontsize=15)
+        self.ax1.set_ylim([-0.2, 1])
+        self.ax2.set_ylabel('Step', fontsize=15)
+        self.ax2.set_xlabel('Episode', fontsize=15)
+        
+        if self.ddqn:
+            print("----------Double DQN--------")
+            self.Model_name = os.path.join(self.Save_Path,"ddqn_agent.h5")
+        else:
+            print("-------------DQN------------")
+            self.Model_name = os.path.join(self.Save_Path,"dqn_agent.h5")
+        
+        # create main model
+        self.model = OurModel(input_shape=self.state_size, action_space = self.action_size)
+        self.target_model = OurModel(input_shape=self.state_size, action_space = self.action_size)
+
+    # after some time interval update the target model to be same with model
+    def update_target_model(self):
+        if not self.Soft_Update and self.ddqn:
+            self.target_model.set_weights(self.model.get_weights())
+            return
+        if self.Soft_Update and self.ddqn:
+            q_model_theta = self.model.get_weights()
+            target_model_theta = self.target_model.get_weights()
+            counter = 0
+            for q_weight, target_weight in zip(q_model_theta, target_model_theta):
+                target_weight = target_weight * (1-self.TAU) + q_weight * self.TAU
+                target_model_theta[counter] = target_weight
+                counter += 1
+            self.target_model.set_weights(target_model_theta)
 
     def remember(self, state, action, reward, next_state, done):
         self.memory.append((state, action, reward, next_state, done))
-    
-    def replay(self, sample_batch_size):
-        if len(self.memory) < sample_batch_size:
+
+
+    def act(self, state):
+        if np.random.random() <= self.epsilon:
+            return random.randrange(self.action_size)
+            # return self.env.get_random_valid_action('computer')
+        else:
+            return np.argmax(self.model.predict(state))
+            # act_values = self.model.predict(state)
+            # act_values = np.squeeze(act_values, axis=0)
+            # action = np.argmax(act_values)
+            # while(not self.env.valid_action(action, 'computer')):
+            #     act_values = np.delete(act_values, action)
+            #     action = np.argmax(act_values)
+            # return action
+
+    def replay(self):
+        if len(self.memory) < self.train_start:
             return
-        sample_batch = random.sample(self.memory, sample_batch_size)
-        for state, action, reward, next_state, done in sample_batch:
-            target = reward
-            if not done:
-              target = reward + self.gamma * np.amax(self.brain.predict(next_state)[0])
-            target_f = self.brain.predict(state)
-            target_f[0][action] = target
-            self.brain.fit(state, target_f, epochs=10, verbose=0)
-        if self.exploration_rate > self.exploration_min:
-            self.exploration_rate *= self.exploration_decay
+        # Randomly sample minibatch from the memory
+        minibatch = random.sample(self.memory, min(self.batch_size, self.batch_size))
+        
+        state = np.zeros((self.batch_size,) + self.state_size)
+        next_state = np.zeros((self.batch_size,) + self.state_size)
+        action, reward, done = [], [], []
+
+        # do this before prediction
+        # for speedup, this could be done on the tensor level
+        # but easier to understand using a loop
+        for i in range(self.batch_size):
+            state[i] = minibatch[i][0]
+            action.append(minibatch[i][1])
+            reward.append(minibatch[i][2])
+            next_state[i] = minibatch[i][3]
+            done.append(minibatch[i][4])
+
+        # do batch prediction to save speed
+        target = self.model.predict(state)
+        target_next = self.model.predict(next_state)
+        target_val = self.target_model.predict(next_state)
+
+        for i in range(len(minibatch)):
+            # correction on the Q value for the action used
+            if done[i]:
+                target[i][action[i]] = reward[i]
+            else:
+                if self.ddqn: # Double - DQN
+                    # current Q Network selects the action
+                    # a'_max = argmax_a' Q(s', a')
+                    a = np.argmax(target_next[i])
+                    # target Q Network evaluates the action
+                    # Q_max = Q_target(s', a'_max)
+                    target[i][action[i]] = reward[i] + self.gamma * (target_val[i][a])   
+                else: # Standard - DQN
+                    # DQN chooses the max Q value among next actions
+                    # selection and evaluation of action is on the target Q Network
+                    # Q_max = max_a' Q_target(s', a')
+                    target[i][action[i]] = reward[i] + self.gamma * (np.amax(target_next[i]))
+
+        # Train the Neural Network with batches
+        self.model.fit(state, target,  epochs=2, batch_size=self.batch_size, verbose=0)
 
 
-    pylab.figure(figsize=(18, 9))
-    def PlotModel(self, score, episode):
+    def load(self, name):
+        self.model = load_model(name)
+
+    def updateEpsilon(self):
+        if self.epsilon > self.epsilon_min:
+            self.epsilon *= self.epsilon_decay
+
+    def save(self, name):
+        print("\nFinish training, here some statistics:\n")
+        print("Mean score: ", np.mean(self.averages))
+        print("Mean steps: ", np.mean(self.averages_steps))
+        print("\nMedian score: ", np.median(self.averages))
+        print("Median steps: ", np.median(self.averages_steps))
+        print("\nStd score: ", np.std(self.averages))
+        print("Std steps: ", np.std(self.averages_steps))
+        print("\nVar score: ", np.var(self.averages))
+        print("Var steps: ", np.var(self.averages_steps))
+        print("\nMin score: ", np.min(self.scores))
+        print("Min steps: ", np.min(self.steps))
+        print("\nMax score: ", np.max(self.scores))
+        print("Max steps: ", np.max(self.steps))
+
+        print("Saving trained model as ppo_agent.h5")
+        self.model.save(name)
+    
+    def PlotModel(self, score, step, episode):
+        window_size = 50 #int(self.epochs / 100)
         self.scores.append(score)
-        self.episodes.append(episode)
-        self.average.append(sum(self.scores) / len(self.scores))
-        pylab.plot(self.episodes, self.average, 'r')
-        pylab.plot(self.episodes, self.scores, 'b')
-        pylab.ylabel('Score', fontsize=18)
-        pylab.xlabel('Episode', fontsize=18)
+        self.episodes.append(episode)        
+        self.steps.append(step)
+        if len(self.steps) > window_size:
+            # moving avrage:
+            self.averages.append(sum(self.scores[-1 * window_size: ]) / window_size)
+            self.averages_steps.append(sum(self.steps[-1 * window_size: ]) / window_size)
+        else:
+            self.averages.append(sum(self.scores) / len(self.scores))
+            self.averages_steps.append(sum(self.steps) / len(self.steps))
+
+        self.ax1.plot(self.scores, 'b')
+        self.ax1.plot(self.averages, 'r')
+        self.ax2.plot(self.steps, 'b')
+        self.ax2.plot(self.averages_steps, 'r')
+
+        dqn = 'DQN_'
+        softupdate = ''
+        if self.ddqn:
+            dqn = 'DDQN_'
+        if self.Soft_Update:
+            softupdate = '_soft'
         try:
-            pylab.savefig("data/images/dqn_performance.png")
+            plt.savefig("data/images/"+dqn+self.env_name+softupdate+".png")
         except OSError:
             pass
 
-        return str(self.average[-1])[:5]
+        return str(self.averages[-1])[:5]
 
+    def run(self):
+        for e in range(self.EPISODES):
+            state = self.env.reset()
+            state = np.expand_dims(state, axis=0)
+            done = False
+            i = 0
+            ep_rewards = 0
+            while not done:
+                # self.env.render()
+                action = self.act(state)
+                next_state, reward, done, _ = self.env.step(action)
+                next_state = np.expand_dims(next_state, axis=0)
+                self.remember(state, action, reward, next_state, done)
+                state = next_state
+                i += 1
+                ep_rewards += reward
+                if done:
+                    # every step update target model
+                    self.update_target_model()
+                    # every episode, plot the result
+                    average = self.PlotModel(ep_rewards, i, e)
+                    print("episode: {}/{}, steps: {}, score: {}, e: {:.2}, average: {}".format(e, self.EPISODES, i, ep_rewards, self.epsilon, average))
+                    # decay epsilon
+                    self.updateEpsilon()
+                    
+                self.replay()
+        self.save("weights/ddqn_agent.h5")
 
-sample_batch_size = 64
-episodes = 1000
-env_name = 'gym_packman:Packman-v0'
-env = gym.make(env_name)
-state_size = env.observation_space.shape
-action_size = env.action_space.n
-agent = Agent(state_size, action_size, env)
+    def test(self, test_episodes):
+        self.load("weights/ddqn_agent.h5")
+        for e in range(test_episodes):
+            state = self.env.reset()
+            state = np.expand_dims(state, axis=0)
+            done = False
+            i = 0
+            ep_rewards = 0
+            while not done:
+                self.env.render()
+                action = np.argmax(self.model.predict(state))
+                next_state, reward, done, info = self.env.step(action)
+                state = np.expand_dims(next_state, axis=0)
+                i += 1
+                ep_rewards += reward
+                print(info)
+                if done:
+                    print("episode: {}/{}, steps: {}, score: {}".format(e, test_episodes, i, ep_rewards))
+                    break
 
-ep_reward_list = []
-
-for e in range(episodes):
-    state = env.reset()
-    state = np.expand_dims(state, axis=0)
-    done = False
-    ep_reward = 0
-    i = 0
-    while not done:
-        # env.render()
-        
-        action = agent.act(state)
-        next_state, reward, done, info = env.step(action)
-        next_state = np.expand_dims(next_state, axis=0)
-        agent.remember(state, action, reward, next_state, done)
-        state = next_state
-        ep_reward += reward
-        i += 1
-        # print(info)
-
-    average = agent.PlotModel(ep_reward, e)
-    agent.replay(sample_batch_size)
-    print("episode: {}/{}, steps: {}, score: {}, e: {:.2}, average: {}".format(e, episodes, i, ep_reward, agent.exploration_rate, average))
-    ep_reward_list.append(ep_reward)
-
-agent.save_model()
-
-
-# import numpy as np
-# import gym
-
-# from tensorflow.keras.models import Sequential, Model
-# from tensorflow.keras.layers import Input, Dense, Flatten, Conv2D, MaxPool2D
-# from tensorflow.keras.optimizers import Adam
-# import tensorflow as tf
-
-# # ENV_NAME = 'CartPole-v0'
-# ENV_NAME = 'gym_packman:Packman-v0'
-
-# # Get the environment and extract the number of actions available in the Cartpole problem
-# env = gym.make(ENV_NAME)
-# np.random.seed(123)
-# env.seed(123)
-# num_states = env.observation_space.shape
-# num_actions = env.action_space.n
-
-# def build_model(num_states, num_actions):
-#     model = Sequential()
-#     # Initialize weights between -3e-3 and 3-e3
-#     last_init = tf.random_uniform_initializer(minval=-0.003, maxval=0.003)
-#     model.add(Input(shape=(1,) + num_states))
-                
-#     model.add(Conv2D(filters=16, kernel_size=(3,3), activation='relu', padding="same"))                
-#     model.add(Conv2D(filters=32, kernel_size=(3,3), activation='relu', padding="same"))
-#     model.add(Conv2D(filters=64, kernel_size=(3,3), activation='relu', padding="same"))
-#     # model.add(MaxPool2D())
-
-#     model.add(Flatten())
-#     model.add(Dense(516, activation="elu", kernel_initializer=last_init))
-#     model.add(Dense(64, activation="elu", kernel_initializer=last_init))
-#     model.add(Dense(num_actions, activation="softmax", kernel_initializer=last_init))
-#     return model
-
-# from rl.agents.dqn import DQNAgent
-# from rl.policy import EpsGreedyQPolicy
-# from rl.memory import SequentialMemory
-
-# policy = EpsGreedyQPolicy()
-# memory = SequentialMemory(limit=50000, window_length=1)
-
-# model = build_model(num_states, num_actions)
-# print(model.summary())
-
-# dqn = DQNAgent(model=model, nb_actions=num_actions, memory=memory, nb_steps_warmup=10,
-# target_model_update=1e-2, policy=policy)
-# dqn.compile(Adam(lr=1e-3), metrics=['mae'])
-
-# # Okay, now it's time to learn something! We visualize the training here for show, but this slows down training quite a lot. 
-# dqn.fit(env, nb_steps=5000, visualize=False, verbose=2)
-
-# dqn.test(env, nb_episodes=5, visualize=True)
+if __name__ == "__main__":
+    env_name = 'gym_packman:Packman-v0'
+    agent = DQNAgent(env_name)
+    # agent.run()
+    agent.test(5)
