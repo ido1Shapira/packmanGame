@@ -125,10 +125,10 @@ let steps = 1;
 function finishGame(state, action) { //update database
     saveToFirebase(state, action); //saving the last state
 
-    firebase.database().ref("all-games/"+postID+"/human_score").set(human_player.score);
-    firebase.database().ref("all-games/"+postID+"/computer_score").set(computer_player.score);
+    firebase.database().ref("all-games/"+postID+"/human_score").set(human_player.score.toFixed(3));
+    firebase.database().ref("all-games/"+postID+"/computer_score").set(computer_player.score.toFixed(3));
     // Get the survey
-    getDOM("survey_title").innerHTML = "Well done, you reached your destination safely!<br>Your score is: "+human_player.score+ " point(s).\n"+ "<br>Please fill the following survey:";
+    getDOM("survey_title").innerHTML = "Well done, you reached your destination safely!<br>Your score is: "+human_player.score.toFixed(3)+ " point(s).\n"+ "<br>Please fill the following survey:";
     getDOM("survey").style.display = "block";
     keyEnable = false;
 }

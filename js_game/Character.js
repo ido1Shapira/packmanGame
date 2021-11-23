@@ -15,10 +15,10 @@ class Character{
         32 : false //enter (stay)
     };
     scores = {
-        stay : -1,
-        step : -2,
-        collide : 0,
-        finish : 100,
+        stay : -0.001, //-1,
+        step : -0.005, //-2,
+        //collide : 0,
+        finish : 1.0 //100,
     }
     constructor(tileFrom , tileTo, timeMoved, dimensions, dimensions_at_stay, position, delayMove) {
         this.tileFrom	= tileFrom;
@@ -28,7 +28,7 @@ class Character{
         this.dimensions_at_stay = dimensions_at_stay;
         this.position	= position;
         this.delayMove	= delayMove;
-        this.score = 50;
+        this.score = 0.5; //50;
         this.first_stay = true;
     }
     placeAt(x,y) {
