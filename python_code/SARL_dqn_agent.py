@@ -59,7 +59,7 @@ class DQNAgent:
         self.TAU = 0.1 # target network soft update hyperparameter
 
         # defining SARL parameters
-        self.beta = 0.07
+        self.beta = 0.14
 
         self.Save_Path = 'weights'
         self.scores, self.steps, self.episodes, self.averages, self.averages_steps = [], [], [], [], []
@@ -243,7 +243,7 @@ class DQNAgent:
                     self.update_target_model()
                     # every episode, plot the result
                     average, SARL_average = self.PlotModel(ep_rewards, ep_SARL_rewards, i, e)
-                    print("episode: {}/{}, steps: {}, score: {}, e: {:.2}, average: {}, SARL average {}, dones: {}".format(e, self.EPISODES, i, ep_rewards, self.epsilon, average, SARL_average, n_dones))
+                    print("episode: {}/{}, steps: {} | score: {:.2}, average: {} | SARL score: {:.2}, SARL average: {} | e: {:.2}, dones: {}".format(e, self.EPISODES, i, ep_rewards, average, ep_SARL_rewards, SARL_average, self.epsilon, n_dones))
                     # decay epsilon
                     self.updateEpsilon()
                     
