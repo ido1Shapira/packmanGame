@@ -58,12 +58,17 @@ class DQNAgent:
 
         self.TAU = 0.1 # target network soft update hyperparameter
 
+        # defining SARL parameters
+        self.beta = 0.07
+
         self.Save_Path = 'weights'
         self.scores, self.steps, self.episodes, self.averages, self.averages_steps = [], [], [], [], []
-        fig, (self.ax1, self.ax2) = plt.subplots(2, 1, figsize=(18, 9))
+        self.SARL_scores, self.SARL_averages = [], []
+        fig, (self.ax1, self.ax2, self.ax3) = plt.subplots(3, 1, figsize=(18, 9))
         self.ax1.set_ylabel('Score', fontsize=15)
-        self.ax2.set_ylabel('Step', fontsize=15)
-        self.ax2.set_xlabel('Episode', fontsize=15)
+        self.ax2.set_ylabel('SARL Score', fontsize=15)
+        self.ax3.set_ylabel('Step', fontsize=15)
+        self.ax3.set_xlabel('Episode', fontsize=15)
         
         if self.ddqn:
             print("----------Double DQN--------")
@@ -175,23 +180,28 @@ class DQNAgent:
         print("Saving trained model as ppo_agent.h5")
         self.model.save(name)
     
-    def PlotModel(self, score, step, episode):
+    def PlotModel(self, score, SARL_score, step, episode):
         window_size = 50 #int(self.epochs / 100)
         self.scores.append(score)
+        self.SARL_scores.append(SARL_score)
         self.episodes.append(episode)        
         self.steps.append(step)
         if len(self.steps) > window_size:
             # moving avrage:
             self.averages.append(sum(self.scores[-1 * window_size: ]) / window_size)
+            self.SARL_averages.append(sum(self.SARL_scores[-1 * window_size: ]) / window_size)
             self.averages_steps.append(sum(self.steps[-1 * window_size: ]) / window_size)
         else:
             self.averages.append(sum(self.scores) / len(self.scores))
+            self.SARL_averages.append(sum(self.SARL_scores) / len(self.SARL_scores))
             self.averages_steps.append(sum(self.steps) / len(self.steps))
-
+        
         self.ax1.plot(self.scores, 'b')
         self.ax1.plot(self.averages, 'r')
-        self.ax2.plot(self.steps, 'b')
-        self.ax2.plot(self.averages_steps, 'r')
+        self.ax2.plot(self.SARL_scores, 'b')
+        self.ax2.plot(self.SARL_averages, 'r')
+        self.ax3.plot(self.steps, 'b')
+        self.ax3.plot(self.averages_steps, 'r')
 
         dqn = 'DQN_'
         softupdate = ''
@@ -200,11 +210,11 @@ class DQNAgent:
         if self.Soft_Update:
             softupdate = 'soft'
         try:
-            plt.savefig("data/images/"+dqn+softupdate+".png", dpi = 150)
+            plt.savefig("data/images/SARL_"+dqn+softupdate+".png", dpi = 150)
         except OSError:
             pass
 
-        return str(self.averages[-1])[:5]
+        return str(self.averages[-1])[:5], str(self.SARL_averages[-1])[:5] 
 
     def run(self):
         n_dones = 0
@@ -214,31 +224,34 @@ class DQNAgent:
             done = False
             i = 0
             ep_rewards = 0
+            ep_SARL_rewards = 0
             while not done:
                 # self.env.render()
                 action = self.act(state)
                 next_state, reward, done, info = self.env.step(action)
                 next_state = np.expand_dims(next_state, axis=0)
-                self.remember(state, action, reward, next_state, done)
+                SARL_reward = self.beta * reward + (1 - self.beta) * info['human_reward']
+                self.remember(state, action, SARL_reward, next_state, done)
                 state = next_state
                 i += 1
                 ep_rewards += reward
+                ep_SARL_rewards += SARL_reward
                 if done:
                     if i < 300:
                         n_dones += 1
                     # every step update target model
                     self.update_target_model()
                     # every episode, plot the result
-                    average = self.PlotModel(ep_rewards, i, e)
-                    print("episode: {}/{}, steps: {}, score: {}, e: {:.2}, average: {}, dones: {}".format(e, self.EPISODES, i, ep_rewards, self.epsilon, average, n_dones))
+                    average, SARL_average = self.PlotModel(ep_rewards, ep_SARL_rewards, i, e)
+                    print("episode: {}/{}, steps: {}, score: {}, e: {:.2}, average: {}, SARL average {}, dones: {}".format(e, self.EPISODES, i, ep_rewards, self.epsilon, average, SARL_average, n_dones))
                     # decay epsilon
                     self.updateEpsilon()
                     
                 self.replay()
-        self.save("weights/ddqn_agent.h5")
+        self.save("weights/SARL_ddqn_agent.h5")
 
     def test(self, test_episodes):
-        self.load("weights/ddqn_agent.h5")
+        self.load("weights/SARL_ddqn_agent.h5")
         for e in range(test_episodes):
             state = self.env.reset()
             state = np.expand_dims(state, axis=0)
@@ -260,5 +273,5 @@ class DQNAgent:
 if __name__ == "__main__":
     env_name = 'gym_packman:Packman-v0'
     agent = DQNAgent(env_name)
-    # agent.run()
+    agent.run()
     agent.test(5)

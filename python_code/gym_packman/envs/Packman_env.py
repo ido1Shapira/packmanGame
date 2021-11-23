@@ -21,15 +21,15 @@ class PackmanEnv(Env):
     metadata = {'render.modes': ['human']}
     
     rewards = {
-        'Start': 0,
-        0: 0, #stay
-        1: 0, #left
-        2: 0, #up
-        3: 0, #right
-        4: 0, #down
-        'CollectDirt': 0.2,  # (-2 + 2 = 0)
-        'EndGame': 0,
-        'invalidAction': -0.001
+        'Start': 1.5, #0.5,
+        0: -0.001, #stay
+        1: -0.005, #left
+        2: -0.005, #up
+        3: -0.005, #right
+        4: -0.005, #down
+        'CollectDirt': 0,  # (-2 + 2 = 0)
+        'EndGame': 1.0,
+        'invalidAction': -0.005
     }
 
     toIndex = {
@@ -83,8 +83,10 @@ class PackmanEnv(Env):
 
         # when human model is ready uncomment this line
         # human_action = self.predict_action(self.canvas)
-        human_action = self.get_random_valid_action('human')
-        # human_action = 0
+        if np.random.random() < 1.0:
+            human_action = self.get_random_valid_action('human')
+        else:
+            human_action = 0
 
         # assert self.valid_action(action, 'computer'), "Computer preformed invalid action: " + str(
         #     action) + " at pos: " + str(computer_pos)
@@ -95,42 +97,39 @@ class PackmanEnv(Env):
         human_valid_action = self.valid_action(human_action, 'human')
         if not computer_valid_action:
             computer_reward += self.rewards['invalidAction']
-            done = False
-            # render not update when computer action is not valid!!!!!!!!!!!!!!!!!!!
+            action = 0
         elif not human_valid_action:
             human_reward += self.rewards['invalidAction']
-            done = False
+            human_action = 0
+       
+        # computer and human action are valid
+        self.move(human_action, 'human')
+        self.move(action, 'computer')
+
+        # check for clean dirt for both agents
+        dirts_pos = np.where(self.state[::, ::, self.toIndex['All awards']] == 1)
+        for dirt_pos_i, dirt_pos_j in zip(dirts_pos[0], dirts_pos[1]):
+            if human_pos[0][0] == dirt_pos_i and human_pos[1][0] == dirt_pos_j:
+                self.state[::, ::, self.toIndex['All awards']][human_pos] = 0
+                self.state[::, ::, self.toIndex['Human awards']][human_pos] = 1
+                human_reward += self.rewards['CollectDirt']
+
+            if computer_pos[0][0] == dirt_pos_i and computer_pos[1][0] == dirt_pos_j:
+                self.state[::, ::, self.toIndex['All awards']][computer_pos] = 0
+                self.state[::, ::, self.toIndex['Computer awards']][computer_pos] = 1
+                computer_reward += self.rewards['CollectDirt']
+
+        # Reward for executing an action.
+        computer_reward += self.rewards[action]
+        human_reward += self.rewards[human_action]
+
+        if not np.any(self.state[::, ::, self.toIndex['All awards']]):  # game ended when there is no dirt to clean
+            computer_reward += self.rewards['EndGame']
+            human_reward += self.rewards['EndGame']
+            done = True
         else:
-            # computer and human action are valid
-
-            self.move(human_action, 'human')
-            # apply the action to the agent
-            self.move(action, 'computer')
-
-            # check for clean dirt for both agents
-            dirts_pos = np.where(self.state[::, ::, self.toIndex['All awards']] == 1)
-            for dirt_pos_i, dirt_pos_j in zip(dirts_pos[0], dirts_pos[1]):
-                if human_pos[0][0] == dirt_pos_i and human_pos[1][0] == dirt_pos_j:
-                    self.state[::, ::, self.toIndex['All awards']][human_pos] = 0
-                    self.state[::, ::, self.toIndex['Human awards']][human_pos] = 1
-                    human_reward += self.rewards['CollectDirt']
-
-                if computer_pos[0][0] == dirt_pos_i and computer_pos[1][0] == dirt_pos_j:
-                    self.state[::, ::, self.toIndex['All awards']][computer_pos] = 0
-                    self.state[::, ::, self.toIndex['Computer awards']][computer_pos] = 1
-                    computer_reward += self.rewards['CollectDirt']
-
-            # Reward for executing an action.
-            computer_reward += self.rewards[action]
-            human_reward += self.rewards[human_action]
-
-            if not np.any(self.state[::, ::, self.toIndex['All awards']]):  # game ended when there is no dirt to clean
-                computer_reward += self.rewards['EndGame']
-                human_reward += self.rewards['EndGame']
-                done = True
-            else:
-                # Flag that marks the termination of an episode
-                done = False
+            # Flag that marks the termination of an episode
+            done = False
 
 
         self.ep_return += computer_reward
@@ -140,8 +139,7 @@ class PackmanEnv(Env):
         info = {
             'done': done,
             'current_reward': computer_reward,
-            'ep_return': self.ep_return,
-            'human_return': self.ep_human_reward,
+            'human_reward': human_reward,
             'computer valid action': computer_valid_action,
             # 'computer action': action,
             'human valid action': human_valid_action
@@ -150,7 +148,7 @@ class PackmanEnv(Env):
 
         # Return step information
         # return self.state, computer_reward, done, info
-        return self.render(mode = 'rgb_array'), computer_reward, done, info
+        return self.render(), computer_reward, done, info
 
     def render(self, mode='rgb_array'):
         screen_width = 400
