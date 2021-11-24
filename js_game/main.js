@@ -28,10 +28,10 @@ var mapW = 10, mapH = 10;
 var currentSecond = 0, frameCount = 0, framesLastSecond = 0, lastFrameTime = 0;
 
                     // tileFrom , tileTo, timeMoved, dimensions, dimensions_at_stay, position, delayMove
-var human_player = new Character([2,2], [2,2], 0, [30,30], [20, 20], [85,85], 300);
+var human_player = new Character([3,5], [3,5], 0, [30,30], [20, 20], [125,205], 300);
 
 initializeFirebase();
-var computer_player = new Character([7,7], [7,7], 0, [30,30], [20, 20], [285,285], 300);
+var computer_player = new Character([4,6], [4,6], 0, [30,30], [20, 20], [165,245], 300);
 var computer_controller;
 firebase.database().ref("chosen-controller").once('value',
     (snap) => {
@@ -71,6 +71,7 @@ function randomValidTiles(n) {
 	// choose randomly n indexs
 	for (var i = 0; i < n; i++) {
 		var idx = Math.floor(Math.random() * indexs.length);
+		// var idx = [ 10, 23, 30, 35, 41]
 		result.push(indexs[idx]);
 		indexs.splice(idx, 1);
 	}
@@ -78,9 +79,11 @@ function randomValidTiles(n) {
 }
 
 var awards = [];
-var validTiles = randomValidTiles(numOfAwards);
+// It is not random anymore
+// var validTiles = randomValidTiles(numOfAwards);
+var validTiles = [[1,3],[1,8],[8,8],[5,5],[6,6]]
 for(var i=0; i<numOfAwards; i++) {
-	awards.push(new Award(validTiles[i], [15,15], position(validTiles[i], [15, 15]), 2));
+	awards.push(new Award(validTiles[i], [15,15], position(validTiles[i], [15, 15]), 0.005)); //2));
 }
 var human_awards = [];
 var computer_awards = [];
@@ -335,8 +338,8 @@ function drawGame()
 
 	ctx.fillStyle = "#FFFFFF"; // title color: white
 	// ctx.fillText("FPS: " + framesLastSecond, 10, 20);
-    ctx.fillText("Red score: " + human_player.score, 110, 20);
-	ctx.fillText("Blue score: " + computer_player.score, 210, 20);
+    ctx.fillText("Red score: " + human_player.score.toFixed(3), 20, 25);
+	ctx.fillText("Blue score: " + computer_player.score.toFixed(3), 275, 25);
 
 	ctx.fillText("Red action: " + human_player.codeToAction[humanMove], 20, 385);
     ctx.fillText("Blue action: " + computer_player.codeToAction[computerMove], 275, 385);
