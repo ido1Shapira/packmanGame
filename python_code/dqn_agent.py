@@ -2,16 +2,22 @@
 # Tutorial written for - Tensorflow 2.3.1
 # https://pylessons.com/CartPole-DDQN/
 
+random_seed = 0
 import os
 import random
 import gym
-# import pylab
 import matplotlib.pyplot as plt
 import numpy as np
 from collections import deque
+import tensorflow as tf
 from tensorflow.keras.models import Model, load_model
 from tensorflow.keras.layers import Input, Dense, Conv2D, MaxPool2D, Flatten
 from tensorflow.keras.optimizers import Adam
+
+# if setting seed the result is always the same
+# np.random.seed(random_seed)
+# random.seed(random_seed)
+# tf.random.set_seed(random_seed)
 
 
 def OurModel(input_shape, action_space):
@@ -38,7 +44,7 @@ class DQNAgent:
     def __init__(self, env_name):
         self.env_name = env_name       
         self.env = gym.make(env_name)
-        self.env.seed(0)
+        self.env.seed(random_seed)
         self.state_size = self.env.observation_space.shape
         self.action_size = self.env.action_space.n
 

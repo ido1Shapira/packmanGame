@@ -3,6 +3,7 @@
 
 # # 1. Build Packman Environment with OpenAI Gym
 
+import random
 from gym import Env
 from gym.spaces import Discrete, Box
 from gym.utils import seeding
@@ -52,7 +53,6 @@ class PackmanEnv(Env):
         self.observation_space = Box(low=np.zeros(self.observation_shape),
                                      high=np.ones(self.observation_shape),
                                      dtype=np.float32)
-        self.seed()
 
         # Set start state
         self.canvas = None
@@ -203,6 +203,9 @@ class PackmanEnv(Env):
 
     def seed(self, seed=None):
         self.np_random, seed = seeding.np_random(seed)
+        # np.random.seed(seed)
+        # tf.random.set_seed(seed)
+        # random.seed(seed)
         return [seed]
 
     def close(self):
@@ -252,9 +255,9 @@ class PackmanEnv(Env):
          np.expand_dims(computer_awards, axis=2), np.expand_dims(all_awards, axis=2)], axis=2)
         
     def get_random_valid_action(self, who):
-        random_action = self.action_space.sample()
+        random_action = random.randrange(self.action_space.n) #self.action_space.sample()
         while not self.valid_action(random_action, who):
-            random_action = self.action_space.sample()
+            random_action = random.randrange(self.action_space.n) #self.action_space.sample()
         return random_action
 
     def valid_action(self, action, who):
