@@ -59,7 +59,7 @@ class PackmanEnv(Env):
         self.state = None
 
         # Load human model from the computer
-        self.human_model = tf.keras.models.load_model('./data/humanModel/mode_v0')
+        self.human_model = tf.keras.models.load_model('./data/humanModel/model_v0.h5')
 
     def step(self, action):
         # Apply action
@@ -82,11 +82,11 @@ class PackmanEnv(Env):
         # predict next human action
 
         # when human model is ready uncomment this line
-        # human_action = self.predict_action(self.canvas)
-        if np.random.random() < 1.0:
-            human_action = self.get_random_valid_action('human')
-        else:
-            human_action = 0
+        human_action = self.predict_action(self.canvas)
+        # if np.random.random() < 1.0:
+        #     human_action = self.get_random_valid_action('human')
+        # else:
+        #     human_action = 0
 
         # assert self.valid_action(action, 'computer'), "Computer preformed invalid action: " + str(
         #     action) + " at pos: " + str(computer_pos)
@@ -302,11 +302,15 @@ class PackmanEnv(Env):
             assert True, "agent not define:" + str(agent)
 
     def predict_action(self, img):
-        img_array = tf.keras.preprocessing.image.img_to_array(img)
-        img_array = tf.expand_dims(img_array, 0)  # Create a batch
+        b, g, r = cv2.split(img) # For BGR image
+        img = np.dstack((r, g, b))
+        # img_array = tf.keras.preprocessing.image.img_to_array(img)
+        img_array = tf.expand_dims(img, 0)  # Create a batch
         predictions = self.human_model.predict(img_array)
         score = tf.nn.softmax(predictions[0])
         action = np.argmax(score)
+        print(score)
+        print(action)
         #         print(
         #             "This image most likely belongs to {} with a {:.2f} percent confidence."
         #             .format(action, 100 * np.max(score))
