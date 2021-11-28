@@ -29,8 +29,31 @@ class PlayerController{
         this.TYPES[type] = true;
         this.type = type;
         this.player_controlled = player;
+
+        // var path = "https://github.com/ido1Shapira/packmanGame/blob/master/js_game/data/models/ddqn_agent_random_humanModel/model.json";
+        // var path = "https://raw.githubusercontent.com/ido1shapira/packmanGame/blob/master/js_game/data/models/ddqn_agent_random_humanModel/model.json";
+        // var path = "./js_game/data/models/ddqn_agent_random_humanModel";
+        // https://stackoverflow.com/questions/53639919/load-tensorflow-js-model-from-local-file-system-in-javascript
+
+        // const uploadJSONInput = document.getElementById('upload-json');
+        // const uploadWeightsInput = document.getElementById('upload-weights');
+        // const model = await tf.loadLayersModel(tf.io.browserFiles(
+        // [uploadJSONInput.files[0], uploadWeightsInput.files[0]]));
+        
+        // (async () => {
+        //     this.model = await tf.loadLayersModel('http://localhost:8080/model.json', 'http://localhost:8080/group1-shard1of1.bin')
+        // })()
+        
+        // var path = 'https://storage.cloud.google.com/packman_game/ddqn_agent_random_humanModel';
+        var path = './models/ddqn_agent_random_humanModel';
+        (async () => {
+            this.model = await tf.loadLayersModel(path + '/model.json');
+            console.log(this.model.summary());
+        })()
     }
+    
     getType() { return this.type; }
+
     move(state) {
         switch(this.type) {
             case "random":
@@ -46,9 +69,9 @@ class PlayerController{
             // case "mix":
             //     return this.mix(state);
             case "ddqn":
-                return this.dqn(state);
+                return this.ddqn(state);
             case "sarl ddqn":
-                return this.sarl_dqn(state);
+                return this.sarl_ddqn(state);
             case "ppo":
                 return this.ppo(state);
             case "sarl ppo":
@@ -240,28 +263,10 @@ class PlayerController{
     // }
     
     ////////////////////////////// Advance agents ////////////////////////////////////////////////
-    async loadModel() {
-        model = undefined;
-        model = await tf.loadLayersModel("https://raw.githubusercontent.com/bhattbhavesh91/tfjs-model/master/model.json");
-        console.log("model loaded")
-    }
-
-    make_prediction() {
-        var a, b, output;
-        a = Number(document.getElementById("first").value);
-        b = Number(document.getElementById("second").value);
-        input_xs = tf.tensor2d([
-        [a, b]
-        ]);
-        output = model.predict(input_xs);
-        const outputData = output.dataSync();
-        document.getElementById("answer").value = Number(outputData[0] > 0.5);
-    }
-
     ddqn(state) {
-        loadModel();
-        console.log('im here');
-        throw "sdasda"
+        var output = this.model.predict(state);
+        const outputData = output.dataSync();
+        console.log(outputData)
     }
     sarl_ddqn(state) {
         throw "not implemnet error!"
