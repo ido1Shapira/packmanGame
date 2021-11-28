@@ -6,6 +6,10 @@ class PlayerController{
         "closest": false,
         "TSP": false,
         // "mix": false
+        "ddqn": false,
+        "sarl ddqn": false,
+        "ppo": false,
+        "sarl ppo": false
     }
     // players_controlled = []; // option for more than one agent
     constructor(player, type) {
@@ -41,6 +45,14 @@ class PlayerController{
                 return this.TSP(state);
             // case "mix":
             //     return this.mix(state);
+            case "ddqn":
+                return this.dqn(state);
+            case "sarl ddqn":
+                return this.sarl_dqn(state);
+            case "ppo":
+                return this.ppo(state);
+            case "sarl ppo":
+                return this.sarl_ppo(state);
             default:
                 throw "move(state): not a valid baseline"
         }
@@ -226,5 +238,39 @@ class PlayerController{
     //             return this.TSP(state);
     //     }
     // }
+    
+    ////////////////////////////// Advance agents ////////////////////////////////////////////////
+    async loadModel() {
+        model = undefined;
+        model = await tf.loadLayersModel("https://raw.githubusercontent.com/bhattbhavesh91/tfjs-model/master/model.json");
+        console.log("model loaded")
+    }
+
+    make_prediction() {
+        var a, b, output;
+        a = Number(document.getElementById("first").value);
+        b = Number(document.getElementById("second").value);
+        input_xs = tf.tensor2d([
+        [a, b]
+        ]);
+        output = model.predict(input_xs);
+        const outputData = output.dataSync();
+        document.getElementById("answer").value = Number(outputData[0] > 0.5);
+    }
+
+    ddqn(state) {
+        loadModel();
+        console.log('im here');
+        throw "sdasda"
+    }
+    sarl_ddqn(state) {
+        throw "not implemnet error!"
+    }
+    ppo(state) {
+        throw "not implemnet error!"
+    }
+    sarl_ppo(state) {
+        throw "not implemnet error!"
+    }
     
 }
