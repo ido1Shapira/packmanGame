@@ -22,7 +22,7 @@ class PackmanEnv(Env):
     metadata = {'render.modes': ['human']}
     
     rewards = {
-        'Start': 1.5, #0.5,
+        'Start': 0.5, #0.5,
         0: -0.001, #stay
         1: -0.005, #left
         2: -0.005, #up
