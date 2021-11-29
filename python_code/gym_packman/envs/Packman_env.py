@@ -60,6 +60,7 @@ class PackmanEnv(Env):
 
         # Load human model from the computer
         self.human_model = tf.keras.models.load_model('./data/humanModel/model_v0.h5')
+        # self.human_model.summary()
 
     def step(self, action):
         # Apply action
@@ -84,9 +85,9 @@ class PackmanEnv(Env):
         # when human model is ready uncomment this line
         human_action = self.predict_action(self.canvas)
         # if np.random.random() < 1.0:
-        #     human_action = self.get_random_valid_action('human')
+        #     action = self.get_random_valid_action('computer')
         # else:
-        #     human_action = 0
+        #     action = 0
 
         # assert self.valid_action(action, 'computer'), "Computer preformed invalid action: " + str(
         #     action) + " at pos: " + str(computer_pos)
@@ -241,10 +242,10 @@ class PackmanEnv(Env):
         computer_awards = np.zeros(board.shape)
 
         all_awards = np.zeros(board.shape)
-        # idx = np.random.choice(np.count_nonzero(board), 5)
+        idx = np.random.choice(np.count_nonzero(board), 5)
         
         # Determine fixed dirt locations
-        idx = [ 10, 23, 30, 35, 41]
+        # idx = [ 10, 23, 30, 35, 41]
         all_awards[tuple(map(lambda x: x[idx], np.where(board)))] = 1
 
         board[5][3] = 1  # locate human player
@@ -309,8 +310,8 @@ class PackmanEnv(Env):
         predictions = self.human_model.predict(img_array)
         score = tf.nn.softmax(predictions[0])
         action = np.argmax(score)
-        print(score)
-        print(action)
+        # print(score)
+        # print(action)
         #         print(
         #             "This image most likely belongs to {} with a {:.2f} percent confidence."
         #             .format(action, 100 * np.max(score))

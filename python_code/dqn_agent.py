@@ -231,7 +231,7 @@ class DQNAgent:
                 ep_rewards += reward
                 if done:
                     if i < 300:
-                        n_dones += 1
+                        n_dones += 1 
                     # every step update target model
                     self.update_target_model()
                     # every episode, plot the result
@@ -244,7 +244,7 @@ class DQNAgent:
         self.save("weights/ddqn_agent.h5")
 
     def test(self, test_episodes):
-        self.load("weights/ddqn_agent_random_humanModel.h5")
+        self.load("weights/ddqn_agent.h5")
         for e in range(test_episodes):
             state = self.env.reset()
             state = np.expand_dims(state, axis=0)
@@ -266,5 +266,5 @@ class DQNAgent:
 if __name__ == "__main__":
     env_name = 'gym_packman:Packman-v0'
     agent = DQNAgent(env_name)
-    # agent.run()
+    agent.run()
     agent.test(5)
