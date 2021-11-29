@@ -242,10 +242,10 @@ class PackmanEnv(Env):
         computer_awards = np.zeros(board.shape)
 
         all_awards = np.zeros(board.shape)
-        idx = np.random.choice(np.count_nonzero(board), 5)
+        # idx = np.random.choice(np.count_nonzero(board), 5)
         
         # Determine fixed dirt locations
-        # idx = [ 10, 23, 30, 35, 41]
+        idx = [ 10, 23, 30, 35, 41]
         all_awards[tuple(map(lambda x: x[idx], np.where(board)))] = 1
 
         board[5][3] = 1  # locate human player
