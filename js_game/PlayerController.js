@@ -6,11 +6,29 @@ class PlayerController{
         "closest": false,
         "TSP": false,
         // "mix": false
+
         "ddqn": false,
         "sarl ddqn": false,
         "ppo": false,
         "sarl ppo": false
     }
+
+    toIndex = {
+        'Board': 0,
+        'Human trace': 1,
+        'Computer trace': 2,
+        'Human awards': 3,
+        'Computer awards': 4,
+        'All awards': 5,
+    }
+    toAction = {
+        0: 32, //stay
+        1: 37, //left
+        2: 38, //up
+        3: 39, //right
+        4: 40, //down
+    }
+
     // players_controlled = []; // option for more than one agent
     constructor(player, type) {
         //5 kinds of type:
@@ -30,26 +48,7 @@ class PlayerController{
         this.type = type;
         this.player_controlled = player;
 
-        // var path = "https://github.com/ido1Shapira/packmanGame/blob/master/js_game/data/models/ddqn_agent_random_humanModel/model.json";
-        // var path = "https://raw.githubusercontent.com/ido1shapira/packmanGame/blob/master/js_game/data/models/ddqn_agent_random_humanModel/model.json";
-        // var path = "./js_game/data/models/ddqn_agent_random_humanModel";
-        // https://stackoverflow.com/questions/53639919/load-tensorflow-js-model-from-local-file-system-in-javascript
-
-        // const uploadJSONInput = document.getElementById('upload-json');
-        // const uploadWeightsInput = document.getElementById('upload-weights');
-        // const model = await tf.loadLayersModel(tf.io.browserFiles(
-        // [uploadJSONInput.files[0], uploadWeightsInput.files[0]]));
-        
-        // (async () => {
-        //     this.model = await tf.loadLayersModel('http://localhost:8080/model.json', 'http://localhost:8080/group1-shard1of1.bin')
-        // })()
-        
-        // var path = 'https://storage.cloud.google.com/packman_game/ddqn_agent_random_humanModel';
-        var path = './models/ddqn_agent_random_humanModel';
-        (async () => {
-            this.model = await tf.loadLayersModel(path + '/model.json');
-            console.log(this.model.summary());
-        })()
+        this.loadAgent();
     }
     
     getType() { return this.type; }
@@ -68,14 +67,9 @@ class PlayerController{
                 return this.TSP(state);
             // case "mix":
             //     return this.mix(state);
-            case "ddqn":
-                return this.ddqn(state);
-            case "sarl ddqn":
-                return this.sarl_ddqn(state);
-            case "ppo":
-                return this.ppo(state);
-            case "sarl ppo":
-                return this.sarl_ppo(state);
+            case "ddqn": case "sarl ddqn":
+            case "ppo": case "sarl ppo":
+                return this.predict(state);
             default:
                 throw "move(state): not a valid baseline"
         }
@@ -263,19 +257,76 @@ class PlayerController{
     // }
     
     ////////////////////////////// Advance agents ////////////////////////////////////////////////
-    ddqn(state) {
-        var output = this.model.predict(state);
-        const outputData = output.dataSync();
-        console.log(outputData)
+    loadAgent() {
+        var path = 'data/models/';
+        switch(this.type) {
+            case "ddqn":
+                // path += 'ddqn_agent_random_humanModel';
+                path += 'ddqn_agent';
+                break;
+            case "sarl ddqn":
+                // path += 'SARL_ddqn_agent_0.24_random_humanModel';
+                path += 'SARL_ddqn_agent_0.24';
+                break;
+
+            case "ppo":
+                throw "file not found! at ppo";
+            case "sarl ppo":
+                throw "file not found! at sarl ppo";
+
+        }
+        (async () => {
+            // this.model = await tf.loadLayersModel(path + '/model.json');
+            this.model = await tf.loadGraphModel(path + '/model.json');
+        })()
     }
-    sarl_ddqn(state) {
-        throw "not implemnet error!"
+    divideByScalar(arr, scalar) {
+        var nj_matrix = nj.array(arr);
+        if(scalar < 1) {
+            throw "scalar: " + scalar + " can not be negitive";
+        }
+        // var scalar_matrix = nj.ones(nj_matrix.shape);
+        // for(var i=0; i<scalar-1; i++) {
+        //     scalar_matrix = scalar_matrix.add(nj.ones(nj_matrix.shape));
+        // }
+        var scalar_matrix = nj.ones(nj_matrix.shape).multiply(scalar);
+        return nj.divide(nj_matrix, scalar_matrix);;
     }
-    ppo(state) {
-        throw "not implemnet error!"
+    argmax(arr) {
+        var i=0;
+        var max=arr[i];
+        for(var j=0; j<arr.length; j++){
+            if(arr[j] > max) {
+                max = arr[j];
+                i = j;
+            }   
+        }
+        return i;
     }
-    sarl_ppo(state) {
-        throw "not implemnet error!"
+    preproccess(state) {
+        // var r = state[this.toIndex['Human awards']] / 2 + state[this.toIndex['Human trace']] + state[this.toIndex['All awards']];
+        // var g = state[this.toIndex['Board']] / 3 + state[this.toIndex['All awards']];
+        // var b = state[this.toIndex['Computer awards']] / 2 + state[this.toIndex['Computer trace']] + state[this.toIndex['All awards']]
+
+        var r = nj.add(this.divideByScalar(state[this.toIndex['Human awards']], 2), nj.add(nj.array(state[this.toIndex['Human trace']]), nj.array(state[this.toIndex['All awards']])));
+        var g = nj.add(this.divideByScalar(state[this.toIndex['Board']] , 3), nj.array(state[this.toIndex['All awards']]));
+        var b = nj.add(this.divideByScalar(state[this.toIndex['Computer awards']], 2), nj.add(nj.array(state[this.toIndex['Computer trace']]), nj.array(state[this.toIndex['All awards']])))
+        var rgb = nj.stack([r, g, b], -1);
+
+        // NormalizeImage
+        var min_matrix = nj.ones(rgb.shape, "uint8").multiply(nj.min(rgb));
+        var max_matrix = nj.ones(rgb.shape, "uint8").multiply(nj.max(rgb));
+        return nj.divide(nj.subtract(rgb, min_matrix), nj.subtract(max_matrix, min_matrix)).tolist();
     }
-    
+    predict(state) {
+        var img = this.preproccess(state);
+        var tensorImg = tf.tensor3d(img).expandDims(0);
+        const outputData = this.model.predict(tensorImg).dataSync();
+        var action = this.argmax(outputData);
+        // im here
+        // if(! this.validAction(action, state[0])) {
+        //     action = 0;
+        // }
+        return this.toAction[action];
+    }  
 }
