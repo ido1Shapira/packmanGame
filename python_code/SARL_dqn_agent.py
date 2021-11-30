@@ -254,10 +254,10 @@ class DQNAgent:
                     self.updateEpsilon()
                     
                 self.replay()
-        self.save("weights/SARL_ddqn_agent.h5")
+        self.save("weights/SARL_ddqn_agent_"+str(self.beta)+".h5")
 
     def test(self, test_episodes):
-        self.load("weights/SARL_ddqn_agent_0.24.h5")
+        self.load("weights/SARL_ddqn_agent_"+str(self.beta)+".h5")
         for e in range(test_episodes):
             state = self.env.reset()
             state = np.expand_dims(state, axis=0)
