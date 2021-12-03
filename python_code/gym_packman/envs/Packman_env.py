@@ -77,13 +77,11 @@ class PackmanEnv(Env):
         # Assert that it is a valid action 
         assert self.action_space.contains(action), "Invalid Action: " + str(action)
 
-        human_pos = np.where(self.state[::, ::, self.toIndex['Human trace']] == 1)
-        computer_pos = np.where(self.state[::, ::, self.toIndex['Computer trace']] == 1)
-
         # predict next human action
 
         # when human model is ready uncomment this line
         human_action = self.predict_action(self.canvas)
+        # human_action = 0
         # if np.random.random() < 1.0:
         #     action = self.get_random_valid_action('computer')
         # else:
@@ -106,6 +104,9 @@ class PackmanEnv(Env):
         # computer and human action are valid
         self.move(human_action, 'human')
         self.move(action, 'computer')
+
+        human_pos = np.where(self.state[::, ::, self.toIndex['Human trace']] == 1)
+        computer_pos = np.where(self.state[::, ::, self.toIndex['Computer trace']] == 1)
 
         # check for clean dirt for both agents
         dirts_pos = np.where(self.state[::, ::, self.toIndex['All awards']] == 1)
