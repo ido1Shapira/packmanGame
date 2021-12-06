@@ -76,8 +76,6 @@ class PlayerController{
     }
 
     validAction(action, board) {
-        // console.log(action);
-        // console.log(this.player_controlled.tileFrom);
         switch(action) {
             case 38: //up
                 return this.player_controlled.tileFrom[1]>0 && board[this.player_controlled.tileFrom[1]-1][this.player_controlled.tileFrom[0]]==1;
@@ -258,6 +256,7 @@ class PlayerController{
     
     ////////////////////////////// Advance agents ////////////////////////////////////////////////
     loadAgent() {
+        var deepRL = true;
         var path = 'data/models/';
         switch(this.type) {
             case "ddqn":
@@ -266,30 +265,31 @@ class PlayerController{
                 break;
             case "sarl ddqn":
                 // path += 'SARL_ddqn_agent_0.24_random_humanModel';
-                path += 'SARL_ddqn_agent_0.24';
+                path += 'SARL_ddqn_agent_afterbug_0.24';
                 break;
 
             case "ppo":
                 throw "file not found! at ppo";
             case "sarl ppo":
                 throw "file not found! at sarl ppo";
+            
+            default:
+                deepRL = false;
 
         }
-        (async () => {
-            // this.model = await tf.loadLayersModel(path + '/model.json');
-            this.model = await tf.loadGraphModel(path + '/model.json');
-        })()
+        if(deepRL) {
+            (async () => {
+                // this.model = await tf.loadLayersModel(path + '/model.json');
+                this.model = await tf.loadGraphModel(path + '/model.json');
+            })()
+        }
     }
     divideByScalar(arr, scalar) {
-        var nj_matrix = nj.array(arr);
+        var nj_matrix = nj.array(arr, 'float32');
         if(scalar < 1) {
             throw "scalar: " + scalar + " can not be negitive";
         }
-        // var scalar_matrix = nj.ones(nj_matrix.shape);
-        // for(var i=0; i<scalar-1; i++) {
-        //     scalar_matrix = scalar_matrix.add(nj.ones(nj_matrix.shape));
-        // }
-        var scalar_matrix = nj.ones(nj_matrix.shape).multiply(scalar);
+        var scalar_matrix = nj.ones(nj_matrix.shape, 'float32').multiply(scalar);
         return nj.divide(nj_matrix, scalar_matrix);;
     }
     argmax(arr) {
@@ -303,30 +303,45 @@ class PlayerController{
         }
         return i;
     }
-    preproccess(state) {
-        // var r = state[this.toIndex['Human awards']] / 2 + state[this.toIndex['Human trace']] + state[this.toIndex['All awards']];
-        // var g = state[this.toIndex['Board']] / 3 + state[this.toIndex['All awards']];
-        // var b = state[this.toIndex['Computer awards']] / 2 + state[this.toIndex['Computer trace']] + state[this.toIndex['All awards']]
 
-        var r = nj.add(this.divideByScalar(state[this.toIndex['Human awards']], 2), nj.add(nj.array(state[this.toIndex['Human trace']]), nj.array(state[this.toIndex['All awards']])));
-        var g = nj.add(this.divideByScalar(state[this.toIndex['Board']] , 3), nj.array(state[this.toIndex['All awards']]));
-        var b = nj.add(this.divideByScalar(state[this.toIndex['Computer awards']], 2), nj.add(nj.array(state[this.toIndex['Computer trace']]), nj.array(state[this.toIndex['All awards']])))
-        var rgb = nj.stack([r, g, b], -1);
+    preproccess(state, i) {
+        var r = nj.add(
+            this.divideByScalar(state[this.toIndex['Human awards']], 2),
+            nj.add(
+                state[this.toIndex['Human trace']],
+                state[this.toIndex['All awards']]));
+        
+        var g = nj.add(
+            this.divideByScalar(state[this.toIndex['Board']] , 3),
+            nj.array(state[this.toIndex['All awards']], 'float32'));
+        
+        var b = nj.add(
+            this.divideByScalar(state[this.toIndex['Computer awards']], 2),
+            nj.add(
+                nj.array(state[this.toIndex['Computer trace']], 'float32'),
+                nj.array(state[this.toIndex['All awards']], 'float32')));
 
+        var rgb = nj.stack([b, g, r], -1, 'float32');
+        
         // NormalizeImage
-        var min_matrix = nj.ones(rgb.shape, "uint8").multiply(nj.min(rgb));
-        var max_matrix = nj.ones(rgb.shape, "uint8").multiply(nj.max(rgb));
-        return nj.divide(nj.subtract(rgb, min_matrix), nj.subtract(max_matrix, min_matrix)).tolist();
+        var min_matrix = nj.ones(rgb.shape, "float32").multiply(nj.min(rgb));
+        var max_matrix = nj.ones(rgb.shape, "float32").multiply(nj.max(rgb));
+        rgb = nj.divide(nj.subtract(rgb, min_matrix), nj.subtract(max_matrix, min_matrix)).tolist();
+        
+        state = nj.stack([state[0], state[1], state[2],
+                       state[3],state[4],state[5]], -1, 'float32').tolist();
+        
+        return rgb;
     }
     predict(state) {
         var img = this.preproccess(state);
         var tensorImg = tf.tensor3d(img).expandDims(0);
         const outputData = this.model.predict(tensorImg).dataSync();
         var action = this.argmax(outputData);
-        // im here
-        // if(! this.validAction(action, state[0])) {
-        //     action = 0;
-        // }
+        // if action not valid stay in place
+        if(! this.validAction(this.toAction[action], state[0])) {
+            action = 0;
+        }
         return this.toAction[action];
     }  
 }

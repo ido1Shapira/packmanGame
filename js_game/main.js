@@ -71,7 +71,6 @@ function randomValidTiles(n) {
 	// choose randomly n indexs
 	for (var i = 0; i < n; i++) {
 		var idx = Math.floor(Math.random() * indexs.length);
-		// var idx = [ 10, 23, 30, 35, 41]
 		result.push(indexs[idx]);
 		indexs.splice(idx, 1);
 	}
@@ -81,9 +80,9 @@ function randomValidTiles(n) {
 var awards = [];
 // It is not random anymore
 // var validTiles = randomValidTiles(numOfAwards);
-var validTiles = [[1,3],[1,8],[8,8],[5,5],[6,6]]
+var validTiles = [[1,3],[1,8],[8,8],[5,5],[7,6]];
 for(var i=0; i<numOfAwards; i++) {
-	awards.push(new Award(validTiles[i], [15,15], position(validTiles[i], [15, 15]), 0.005)); //2));
+	awards.push(new Award(validTiles[i], [15,15], position(validTiles[i], [15, 15]), 0.005, 5));
 }
 var human_awards = [];
 var computer_awards = [];
@@ -206,7 +205,7 @@ window.onload = function()
 	requestAnimationFrame(drawGame);
 	ctx.font = "bold 10pt sans-serif";
 
-	window.addEventListener("keyup", handleKeyUp);
+	// window.addEventListener("keyup", handleKeyUp);
 };
 
 function drawGame()
@@ -254,8 +253,10 @@ function drawGame()
 		if(temp_award.tile[0] == human_player.tileFrom[0] && temp_award.tile[1] == human_player.tileFrom[1]) {
 			awards.splice(i, 1);
 			human_player.score = human_player.score + temp_award.value;
+			human_player.scoreToView = human_player.scoreToView + temp_award.valueToView;
 			if(human_player.tileFrom[0] == computer_player.tileFrom[0] && human_player.tileFrom[1] == computer_player.tileFrom[0]) {
 				computer_player.score = computer_player.score + award.value;
+				computer_player.scoreToView = computer_player.scoreToView + award.valueToView;
 				computer_awards.push(temp_award);
 			}
 			human_awards.push(temp_award);
@@ -263,9 +264,11 @@ function drawGame()
 		if(temp_award.tile[0] == computer_player.tileFrom[0] && temp_award.tile[1] == computer_player.tileFrom[1]) {
 			awards.splice(i, 1);
 			computer_player.score = computer_player.score + temp_award.value;
+			computer_player.scoreToView = computer_player.scoreToView + temp_award.valueToView;
 			if(human_player.tileFrom[0] == computer_player.tileFrom[0] && human_player.tileFrom[1] == computer_player.tileFrom[0]) {
 				// two player got to the award at the same time
 				human_player.score = human_player.score + award.value;
+				human_player.scoreToView = human_player.scoreToView + award.valueToView;
 				human_awards.push(temp_award);
 			}
 			computer_awards.push(temp_award);
@@ -284,7 +287,10 @@ function drawGame()
 		gameStatus.stoped = true;
 
 		human_player.score = human_player.score + human_player.scores.finish;
+		human_player.scoreToView = human_player.scoreToView + human_player.scoresToView.finish;
+
 		computer_player.score = computer_player.score + computer_player.scores.finish;
+		computer_player.scoreToView = computer_player.scoreToView + computer_player.scoresToView.finish;
 		
 		window.removeEventListener("keyup", handleKeyUp);
 
@@ -338,8 +344,8 @@ function drawGame()
 
 	ctx.fillStyle = "#FFFFFF"; // title color: white
 	// ctx.fillText("FPS: " + framesLastSecond, 10, 20);
-    ctx.fillText("Red score: " + human_player.score.toFixed(3), 20, 25);
-	ctx.fillText("Blue score: " + computer_player.score.toFixed(3), 275, 25);
+    ctx.fillText("Red score: " + human_player.scoreToView, 20, 25);
+	ctx.fillText("Blue score: " + computer_player.scoreToView, 275, 25);
 
 	ctx.fillText("Red action: " + human_player.codeToAction[humanMove], 20, 385);
     ctx.fillText("Blue action: " + computer_player.codeToAction[computerMove], 275, 385);
