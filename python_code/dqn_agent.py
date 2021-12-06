@@ -3,7 +3,10 @@
 # https://pylessons.com/CartPole-DDQN/
 
 random_seed = 0
+
 import os
+os.environ['CUDA_VISIBLE_DEVICES'] = '-1'
+
 import random
 import gym
 import matplotlib.pyplot as plt
@@ -206,7 +209,7 @@ class DQNAgent:
         if self.Soft_Update:
             softupdate = 'soft'
         try:
-            plt.savefig("data/images/"+dqn+softupdate+".png", dpi = 150)
+            plt.savefig("data/images/"+dqn+softupdate+"_after bug.png", dpi = 150)
         except OSError:
             pass
 
@@ -241,10 +244,10 @@ class DQNAgent:
                     self.updateEpsilon()
                     
                 self.replay()
-        self.save("weights/ddqn_agent.h5")
+        self.save("weights/ddqn_agent_after bug.h5")
 
     def test(self, test_episodes):
-        self.load("weights/ddqn_agent.h5")
+        self.load("weights/ddqn_agent_after bug.h5")
         for e in range(test_episodes):
             state = self.env.reset()
             state = np.expand_dims(state, axis=0)
@@ -259,6 +262,10 @@ class DQNAgent:
                 i += 1
                 ep_rewards += reward
                 # print(info)
+                
+                # import time
+                # time.sleep(1)
+                
                 if done:
                     print("episode: {}/{}, steps: {}, score: {}".format(e, test_episodes, i, ep_rewards))
                     break
@@ -266,5 +273,5 @@ class DQNAgent:
 if __name__ == "__main__":
     env_name = 'gym_packman:Packman-v0'
     agent = DQNAgent(env_name)
-    # agent.run()
+    agent.run()
     agent.test(5)
