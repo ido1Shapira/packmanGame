@@ -13,6 +13,7 @@ import tensorflow as tf
 from tensorflow.keras.models import Model, load_model
 from tensorflow.keras.layers import Input, Dense, Conv2D, MaxPool2D, Flatten
 from tensorflow.keras.optimizers import Adam
+import time
 
 # if setting seed the result is always the same
 # np.random.seed(random_seed)
@@ -216,7 +217,7 @@ class DQNAgent:
         if self.Soft_Update:
             softupdate = 'soft'
         try:
-            plt.savefig("data/images/SARL_"+dqn+softupdate+"_after bug.png", dpi = 150)
+            plt.savefig("data/images/SARL_"+dqn+softupdate+"_new.png", dpi = 150)
         except OSError:
             pass
 
@@ -254,10 +255,10 @@ class DQNAgent:
                     self.updateEpsilon()
                     
                 self.replay()
-        self.save("weights/SARL_ddqn_agent_afterbug_"+str(self.beta)+".h5")
+        self.save("weights/SARL_ddqn_agent_new_"+str(self.beta)+".h5")
 
     def test(self, test_episodes):
-        self.load("weights/SARL_ddqn_agent_afterbug_"+str(self.beta)+".h5")
+        self.load("weights/SARL_ddqn_agent_new_"+str(self.beta)+".h5")
         for e in range(test_episodes):
             state = self.env.reset()
             state = np.expand_dims(state, axis=0)
@@ -271,7 +272,10 @@ class DQNAgent:
                 state = np.expand_dims(next_state, axis=0)
                 i += 1
                 ep_rewards += reward
-                # print(info)
+                print(info)
+
+                time.sleep(0.5)
+
                 if done:
                     print("episode: {}/{}, steps: {}, score: {}".format(e, test_episodes, i, ep_rewards))
                     break

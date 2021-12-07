@@ -3,6 +3,9 @@
 """
 Title: Proximal Policy Optimization
 """
+import os
+os.environ['CUDA_VISIBLE_DEVICES'] = '-1'
+
 import numpy as np
 from numpy.lib.function_base import average
 import tensorflow as tf
@@ -190,7 +193,7 @@ class PPOAgent:
         self.ax2.plot(self.steps, 'b')
         self.ax2.plot(self.averages_steps, 'r')
         try:
-            plt.savefig("data/images/"+"ppo_agent_humanModel_stay.png")
+            plt.savefig("data/images/"+"ppo_agent.png")
         except OSError:
             pass
 
@@ -302,10 +305,10 @@ class PPOAgent:
             for _ in range(self.train_value_iterations):
                 self.train_value_function(observation_buffer, return_buffer)
         
-        self.save("weights/ppo_actor_agent_humanModel_stay.h5", "weights/ppo_critic_agent_humanModel_stay.h5")
+        self.save("weights/ppo_actor_agent.h5", "weights/ppo_critic_agent.h5")
 
     def test(self, test_episodes):
-        self.load("weights/ppo_actor_agent_humanModel_stay.h5", "weights/ppo_critic_agent_humanModel_stay.h5")
+        self.load("weights/ppo_actor_agent.h5", "weights/ppo_critic_agent.h5")
         for e in range(test_episodes):
             state = self.env.reset()
             state = np.expand_dims(state, axis=0)
