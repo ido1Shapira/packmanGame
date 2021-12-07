@@ -5,7 +5,7 @@
 random_seed = 0
 
 import os
-# os.environ['CUDA_VISIBLE_DEVICES'] = '-1'
+os.environ['CUDA_VISIBLE_DEVICES'] = '-1'
 
 import random
 import gym
@@ -213,7 +213,7 @@ class DQNAgent:
         if self.Soft_Update:
             softupdate = 'soft'
         try:
-            plt.savefig("data/images/"+dqn+softupdate+".png", dpi = 150)
+            plt.savefig("data/images/"+dqn+softupdate+"_new.png", dpi = 150)
         except OSError:
             pass
 
