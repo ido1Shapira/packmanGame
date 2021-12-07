@@ -330,5 +330,5 @@ class PPOAgent:
 if __name__ == "__main__":
     env_name = 'gym_packman:Packman-v0'
     agent = PPOAgent(env_name)
-    agent.run()
+    # agent.run()
     agent.test(5)

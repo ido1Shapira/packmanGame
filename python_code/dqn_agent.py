@@ -210,7 +210,7 @@ class DQNAgent:
         if self.Soft_Update:
             softupdate = 'soft'
         try:
-            plt.savefig("data/images/"+dqn+softupdate+".png", dpi = 150)
+            plt.savefig("data/images/"+dqn+softupdate+"_with_noise.png", dpi = 150)
         except OSError:
             pass
 
@@ -245,10 +245,10 @@ class DQNAgent:
                     self.updateEpsilon()
                     
                 self.replay()
-        self.save("weights/ddqn_agent.h5")
+        self.save("weights/ddqn_agent_with_noise.h5")
 
     def test(self, test_episodes):
-        self.load("weights/ddqn_agent.h5")
+        self.load("weights/ddqn_agent_with_noise.h5")
         for e in range(test_episodes):
             state = self.env.reset()
             state = np.expand_dims(state, axis=0)
@@ -273,5 +273,5 @@ class DQNAgent:
 if __name__ == "__main__":
     env_name = 'gym_packman:Packman-v0'
     agent = DQNAgent(env_name)
-    # agent.run()
+    agent.run()
     agent.test(5)

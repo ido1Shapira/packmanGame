@@ -255,10 +255,10 @@ class DQNAgent:
                     self.updateEpsilon()
                     
                 self.replay()
-        self.save("weights/SARL_ddqn_agent_new_"+str(self.beta)+".h5")
+        self.save("weights/SARL_ddqn_agent_"+str(self.beta)+".h5")
 
     def test(self, test_episodes):
-        self.load("weights/SARL_ddqn_agent_new_"+str(self.beta)+".h5")
+        self.load("weights/SARL_ddqn_agent_"+str(self.beta)+".h5")
         for e in range(test_episodes):
             state = self.env.reset()
             state = np.expand_dims(state, axis=0)
@@ -272,7 +272,7 @@ class DQNAgent:
                 state = np.expand_dims(next_state, axis=0)
                 i += 1
                 ep_rewards += reward
-                print(info)
+                # print(info)
 
                 time.sleep(0.5)
 
@@ -283,5 +283,5 @@ class DQNAgent:
 if __name__ == "__main__":
     env_name = 'gym_packman:Packman-v0'
     agent = DQNAgent(env_name)
-    agent.run()
+    # agent.run()
     agent.test(5)

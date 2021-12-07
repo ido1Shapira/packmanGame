@@ -310,13 +310,11 @@ class PackmanEnv(Env):
         img_array = tf.expand_dims(img, 0)  # Create a batch
         predictions = self.human_model.predict(img_array)
         score = tf.nn.softmax(predictions[0])
+        # adding noise
+        noise = np.random.normal(0,0.04,len(score))
+        score = score + noise
         action = np.argmax(score)
-        # print(score)
-        # print(action)
-        #         print(
-        #             "This image most likely belongs to {} with a {:.2f} percent confidence."
-        #             .format(action, 100 * np.max(score))
-        #         )
+
         while(not self.valid_action(action, 'human')):
             score = np.delete(score, action)
             action = np.argmax(score)
