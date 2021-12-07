@@ -260,11 +260,9 @@ class PlayerController{
         var path = 'data/models/';
         switch(this.type) {
             case "ddqn":
-                // path += 'ddqn_agent_random_humanModel';
                 path += 'ddqn_agent';
                 break;
             case "sarl ddqn":
-                // path += 'SARL_ddqn_agent_0.24_random_humanModel';
                 path += 'SARL_ddqn_agent_0.24';
                 break;
 
@@ -292,16 +290,30 @@ class PlayerController{
         var scalar_matrix = nj.ones(nj_matrix.shape, 'float32').multiply(scalar);
         return nj.divide(nj_matrix, scalar_matrix);;
     }
-    argmax(arr) {
-        var i=0;
-        var max=arr[i];
-        for(var j=0; j<arr.length; j++){
-            if(arr[j] > max) {
-                max = arr[j];
-                i = j;
-            }   
+    argmax(dict) {
+        //return key of max value
+        var max_key=0;
+        var max_value=dict[max_key];
+        for(var key in dict) {
+            if(dict[key] > max_value) {
+                max_value = dict[key];
+                max_key = key;
+            }
         }
-        return i;
+        return max_key;
+    }
+    slice(arr, from, to) {
+        var result = [];
+        for(var j=from; j<to; j++) {
+            result.push(arr[j]);
+        }
+        return result;
+    }
+
+    delete(arr, index) {
+        var before = this.slice(arr, 0, index);
+        var after = this.slice(arr, index +1, arr.length);    
+        return nj.concatenate(before, after);
     }
 
     preproccess(state, i) {
@@ -336,12 +348,21 @@ class PlayerController{
     predict(state) {
         var img = this.preproccess(state);
         var tensorImg = tf.tensor3d(img).expandDims(0);
-        const outputData = this.model.predict(tensorImg).dataSync();
-        var action = this.argmax(outputData);
-        // if action not valid stay in place
-        if(! this.validAction(this.toAction[action], state[0])) {
-            action = 0;
+        var score = this.model.predict(tensorImg).dataSync();
+        var dict_scores = {
+            0: score[0], //stay
+            1: score[1], //left
+            2: score[2], //up
+            3: score[3], //right
+            4: score[4], //down
         }
+        var action = this.argmax(dict_scores);
+        while(! this.validAction(this.toAction[action], state[0])) {
+            delete dict_scores[action];
+            action = this.argmax(dict_scores);
+        }
+
+        
         return this.toAction[action];
     }  
 }
