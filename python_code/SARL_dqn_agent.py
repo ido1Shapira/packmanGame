@@ -217,7 +217,7 @@ class DQNAgent:
         if self.Soft_Update:
             softupdate = 'soft'
         try:
-            plt.savefig("data/images/SARL_"+dqn+softupdate+"_new.png", dpi = 150)
+            plt.savefig("data/images/SARL_"+dqn+softupdate+"_with_noise.png", dpi = 150)
         except OSError:
             pass
 
@@ -255,10 +255,10 @@ class DQNAgent:
                     self.updateEpsilon()
                     
                 self.replay()
-        self.save("weights/SARL_ddqn_agent_"+str(self.beta)+".h5")
+        self.save("weights/SARL_ddqn_agent_"+str(self.beta)+"_with_noise.h5")
 
     def test(self, test_episodes):
-        self.load("weights/SARL_ddqn_agent_"+str(self.beta)+".h5")
+        self.load("weights/SARL_ddqn_agent_"+str(self.beta)+"_with_noise.h5")
         for e in range(test_episodes):
             state = self.env.reset()
             state = np.expand_dims(state, axis=0)
@@ -275,7 +275,7 @@ class DQNAgent:
                 ep_rewards += reward
                 # print(info)
 
-                time.sleep(0.5)
+                # time.sleep(0.5)
 
                 if done:
                     print("episode: {}/{}, steps: {}, score: {}, SARL score: {}".format(e, test_episodes, i, ep_rewards, SARL_reward))

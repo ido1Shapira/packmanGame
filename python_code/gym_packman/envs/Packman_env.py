@@ -311,8 +311,8 @@ class PackmanEnv(Env):
         predictions = self.human_model.predict(img_array)
         score = tf.nn.softmax(predictions[0])
         # adding noise
-        # noise = np.random.normal(0,0.04,len(score))
-        # score = score + noise
+        noise = np.random.normal(0,0.04,len(score))
+        score = score + noise
 
         dict_scores = dict(enumerate(score.numpy()))
         action = max(dict_scores, key=dict_scores.get)
