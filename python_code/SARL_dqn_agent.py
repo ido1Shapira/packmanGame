@@ -269,6 +269,7 @@ class DQNAgent:
                 self.env.render(mode='human')
                 action = np.argmax(self.model.predict(state))
                 next_state, reward, done, info = self.env.step(action)
+                SARL_reward = self.beta * reward + (1 - self.beta) * info['human_reward']
                 state = np.expand_dims(next_state, axis=0)
                 i += 1
                 ep_rewards += reward
@@ -277,7 +278,7 @@ class DQNAgent:
                 time.sleep(0.5)
 
                 if done:
-                    print("episode: {}/{}, steps: {}, score: {}".format(e, test_episodes, i, ep_rewards))
+                    print("episode: {}/{}, steps: {}, score: {}, SARL score: {}".format(e, test_episodes, i, ep_rewards, SARL_reward))
                     break
 
 if __name__ == "__main__":

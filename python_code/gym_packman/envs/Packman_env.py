@@ -98,8 +98,8 @@ class PackmanEnv(Env):
             computer_reward += self.rewards['invalidAction']
             action = 0
         elif not human_valid_action:
-            human_reward += self.rewards['invalidAction']
-            human_action = 0
+            # human_reward += self.rewards['invalidAction']
+            raise RuntimeError('human model action is not valid: ' + str(human_action))
        
         # computer and human action are valid
         self.move(human_action, 'human')
@@ -311,12 +311,13 @@ class PackmanEnv(Env):
         predictions = self.human_model.predict(img_array)
         score = tf.nn.softmax(predictions[0])
         # adding noise
-        noise = np.random.normal(0,0.04,len(score))
-        score = score + noise
-        action = np.argmax(score)
+        # noise = np.random.normal(0,0.04,len(score))
+        # score = score + noise
 
+        dict_scores = dict(enumerate(score.numpy()))
+        action = max(dict_scores, key=dict_scores.get)
         while(not self.valid_action(action, 'human')):
-            score = np.delete(score, action)
-            action = np.argmax(score)
+            del dict_scores[action]
+            action = max(dict_scores, key=dict_scores.get)
 
         return action
