@@ -265,7 +265,7 @@ class PlayerController{
                 break;
             case "sarl ddqn":
                 // path += 'SARL_ddqn_agent_0.24_random_humanModel';
-                path += 'SARL_ddqn_agent_afterbug_0.24';
+                path += 'SARL_ddqn_agent_0.24';
                 break;
 
             case "ppo":
