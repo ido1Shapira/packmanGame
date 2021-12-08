@@ -205,7 +205,7 @@ window.onload = function()
 	requestAnimationFrame(drawGame);
 	ctx.font = "bold 10pt sans-serif";
 
-	window.addEventListener("keyup", handleKeyUp);
+	// window.addEventListener("keyup", handleKeyUp);
 };
 
 function drawGame()
@@ -292,6 +292,7 @@ function drawGame()
 		computer_player.score = computer_player.score + computer_player.scores.finish;
 		computer_player.scoreToView = computer_player.scoreToView + computer_player.scoresToView.finish;
 		
+		console.log('Computer score: '+ computer_player.scoreToView);
 		window.removeEventListener("keyup", handleKeyUp);
 
 		finishGame(getBoardState(), humanMove); //sending the last state

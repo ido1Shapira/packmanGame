@@ -10,7 +10,10 @@ class PlayerController{
         "ddqn": false,
         "sarl ddqn": false,
         "ppo": false,
-        "sarl ppo": false
+        "sarl ppo": false,
+
+        "ddqn with noise": false,
+        "sarl ddqn with noise": false
     }
 
     toIndex = {
@@ -69,6 +72,7 @@ class PlayerController{
             //     return this.mix(state);
             case "ddqn": case "sarl ddqn":
             case "ppo": case "sarl ppo":
+            case "ddqn with noise": case "sarl ddqn with noise":
                 return this.predict(state);
             default:
                 throw "move(state): not a valid baseline"
@@ -265,9 +269,17 @@ class PlayerController{
             case "sarl ddqn":
                 path += 'SARL_ddqn_agent_0.24';
                 break;
+            
+            case "ddqn with noise":
+                path += 'ddqn_agent_with_noise';
+                break;
+            case "sarl ddqn with noise":
+                path += 'SARL_ddqn_agent_0.24_with_noise';
+                break;
 
             case "ppo":
-                throw "file not found! at ppo";
+                path += "ppo_actor_agent";
+                break;
             case "sarl ppo":
                 throw "file not found! at sarl ppo";
             
@@ -282,6 +294,8 @@ class PlayerController{
             })()
         }
     }
+
+    // functions for numjs that were missing
     divideByScalar(arr, scalar) {
         var nj_matrix = nj.array(arr, 'float32');
         if(scalar < 1) {
@@ -310,13 +324,7 @@ class PlayerController{
         return result;
     }
 
-    delete(arr, index) {
-        var before = this.slice(arr, 0, index);
-        var after = this.slice(arr, index +1, arr.length);    
-        return nj.concatenate(before, after);
-    }
-
-    preproccess(state, i) {
+    preproccess(state) {
         var r = nj.add(
             this.divideByScalar(state[this.toIndex['Human awards']], 2),
             nj.add(
