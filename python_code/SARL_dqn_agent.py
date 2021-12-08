@@ -265,6 +265,7 @@ class DQNAgent:
             done = False
             i = 0
             ep_rewards = 0
+            ep_SARL_rewards = 0
             while not done:
                 self.env.render(mode='human')
                 action = np.argmax(self.model.predict(state))
@@ -273,16 +274,17 @@ class DQNAgent:
                 state = np.expand_dims(next_state, axis=0)
                 i += 1
                 ep_rewards += reward
+                ep_SARL_rewards += SARL_reward
                 # print(info)
 
                 # time.sleep(0.5)
 
                 if done:
-                    print("episode: {}/{}, steps: {}, score: {}, SARL score: {}".format(e, test_episodes, i, ep_rewards, SARL_reward))
+                    print("episode: {}/{}, steps: {}, score: {}, SARL score: {}".format(e, test_episodes, i, ep_rewards, ep_SARL_rewards))
                     break
 
 if __name__ == "__main__":
     env_name = 'gym_packman:Packman-v0'
     agent = DQNAgent(env_name)
-    agent.run()
+    # agent.run()
     agent.test(5)
