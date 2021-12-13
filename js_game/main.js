@@ -28,7 +28,7 @@ var mapW = 10, mapH = 10;
 var currentSecond = 0, frameCount = 0, framesLastSecond = 0, lastFrameTime = 0;
 
                     // tileFrom , tileTo, timeMoved, dimensions, dimensions_at_stay, position, delayMove
-var human_player = new Character([3,5], [3,5], 0, [30,30], [20, 20], [125,205], 300);
+var human_player = new Character([3,4], [3,4], 0, [30,30], [20, 20], [125,165], 300);
 
 initializeFirebase();
 var computer_player = new Character([4,6], [4,6], 0, [30,30], [20, 20], [165,245], 300);
@@ -80,7 +80,7 @@ function randomValidTiles(n) {
 var awards = [];
 // It is not random anymore
 // var validTiles = randomValidTiles(numOfAwards);
-var validTiles = [[1,3],[1,8],[8,8],[5,5],[7,6]];
+var validTiles = [[1,3],[1,6],[1,8],[7,8],[8,6]];
 for(var i=0; i<numOfAwards; i++) {
 	awards.push(new Award(validTiles[i], [15,15], position(validTiles[i], [15, 15]), 0.005, 5));
 }
