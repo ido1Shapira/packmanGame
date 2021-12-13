@@ -55,7 +55,7 @@ class DQNAgent:
         self.EPISODES = 1010 #900
         self.memory = deque(maxlen=100000)
         
-        self.gamma = 0.99    # discount rate
+        self.gamma = 0.999 # discount rate
         self.epsilon = 1.0 # exploration rate
         self.epsilon_min = 0.1
         self.epsilon_decay = 0.997
@@ -213,7 +213,7 @@ class DQNAgent:
         if self.Soft_Update:
             softupdate = 'soft'
         try:
-            plt.savefig("data/images/"+dqn+softupdate+"_with_noise.png", dpi = 150)
+            plt.savefig("data/images/"+dqn+softupdate+"_new.png", dpi = 150)
         except OSError:
             pass
 
@@ -226,7 +226,7 @@ class DQNAgent:
             state = np.expand_dims(state, axis=0)
             done = False
             i = 0
-            ep_rewards = 0
+            ep_rewards = self.env.rewards['Start']
             while not done:
                 # self.env.render()
                 action = self.act(state)
@@ -248,17 +248,17 @@ class DQNAgent:
                     self.updateEpsilon()
                     
                 self.replay()
-        self.save("weights/ddqn_agent_with_noise.h5")
+        self.save("weights/ddqn_agent_new.h5")
 
     def test(self, test_episodes):
-        self.load("weights/ddqn_agent_with_noise.h5")
+        self.load("weights/ddqn_agent.h5")
         for e in range(test_episodes):
             state = self.env.reset()
             state = np.expand_dims(state, axis=0)
             done = False
             i = 0
-            ep_rewards = 0
-            ep_SARL_rewards = 0
+            ep_rewards = self.env.rewards['Start']
+            ep_SARL_rewards = self.env.rewards['Start']
             while not done:
                 self.env.render(mode='human')
                 action = np.argmax(self.model.predict(state))
@@ -270,7 +270,7 @@ class DQNAgent:
                 ep_SARL_rewards += SARL_reward
                 # print(info)
                 
-                # time.sleep(0.5)
+                time.sleep(0.5)
                 
                 if done:
                     print("episode: {}/{}, steps: {}, score: {}, SARL score: {}".format(e, test_episodes, i, ep_rewards, ep_SARL_rewards))

@@ -22,15 +22,15 @@ class PackmanEnv(Env):
     metadata = {'render.modes': ['human']}
     
     rewards = {
-        'Start': 0.5, #0.5,
-        0: -0.001, #stay
-        1: -0.005, #left
-        2: -0.005, #up
-        3: -0.005, #right
-        4: -0.005, #down
+        'Start': 0.5,
+        0: -0.01, #stay
+        1: -0.05, #left
+        2: -0.05, #up
+        3: -0.05, #right
+        4: -0.05, #down
         'CollectDirt': 0,  # (-2 + 2 = 0)
         'EndGame': 1.0,
-        'invalidAction': -0.005
+        'invalidAction': -0.05
     }
 
     toIndex = {
@@ -232,8 +232,8 @@ class PackmanEnv(Env):
         ])
         
         human_trace = np.zeros(board.shape)
-        human_trace[5][3] = 1  # locate human player
-        board[5][3] = 0  # locate human player
+        human_trace[4][3] = 1  # locate human player
+        board[4][3] = 0  # locate human player
 
         computer_trace = np.zeros(board.shape)
         computer_trace[6][4] = 1  # locate computer player
@@ -246,10 +246,13 @@ class PackmanEnv(Env):
         # idx = np.random.choice(np.count_nonzero(board), 5)
         
         # Determine fixed dirt locations
-        idx = [ 10, 23, 30, 35, 41]
+        # prev:
+        # idx = [ 10, 23, 30, 35, 41]
+        # new:
+        idx = [10, 25, 31, 35, 40]
         all_awards[tuple(map(lambda x: x[idx], np.where(board)))] = 1
 
-        board[5][3] = 1  # locate human player
+        board[4][3] = 1  # locate human player
         board[6][4] = 1  # locate computer player
 
         return np.concatenate([np.expand_dims(board, axis=2), np.expand_dims(human_trace, axis=2),
@@ -310,9 +313,10 @@ class PackmanEnv(Env):
         img_array = tf.expand_dims(img, 0)  # Create a batch
         predictions = self.human_model.predict(img_array)
         score = tf.nn.softmax(predictions[0])
+        
         # adding noise
-        noise = np.random.normal(0,0.04,len(score))
-        score = score + noise
+        # noise = np.random.normal(0,0.04,len(score))
+        # score = score + noise
 
         dict_scores = dict(enumerate(score.numpy()))
         action = max(dict_scores, key=dict_scores.get)

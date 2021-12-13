@@ -4,7 +4,6 @@
 Title: Proximal Policy Optimization
 """
 import os
-os.environ['CUDA_VISIBLE_DEVICES'] = '-1'
 
 import numpy as np
 from numpy.lib.function_base import average
@@ -24,7 +23,7 @@ def discounted_cumulative_sums(x, discount):
 
 class Buffer:
     # Buffer for storing trajectories
-    def __init__(self, observation_dimensions, size, gamma=0.9, lam=0.925):
+    def __init__(self, observation_dimensions, size, gamma=0.999, lam=0.985):
         # Buffer initialization
         self.observation_buffer = np.zeros(
             (size,) + observation_dimensions, dtype=np.float32
@@ -90,11 +89,11 @@ class PPOAgent:
 
         # Hyperparameters of the PPO algorithm
         self.steps_per_epoch = 300
-        self.epochs = 1000
-        self.gamma = 0.9
-        self.clip_ratio = 0.1
-        self.policy_learning_rate = 3e-4
-        self.value_function_learning_rate = 1e-3
+        self.epochs = 1500
+        self.gamma = 0.999
+        self.clip_ratio = 0.05
+        self.policy_learning_rate = 3e-5
+        self.value_function_learning_rate = 1e-4
         self.train_policy_iterations = 128
         self.train_value_iterations = 128
         self.lam = 0.985
@@ -258,7 +257,7 @@ class PPOAgent:
     def run(self):
         observation = self.env.reset()
         for epoch in range(self.epochs):
-            episode_return = 0
+            episode_return = self.env.rewards['Start']
             # Iterate over the steps of each epoch
             for t in range(self.steps_per_epoch):
                 # self.env.render()
@@ -314,7 +313,7 @@ class PPOAgent:
             state = np.expand_dims(state, axis=0)
             done = False
             i = 0
-            ep_rewards = 0
+            ep_rewards = self.env.rewards['Start']
             while not done:
                 self.env.render()
                 _ , action = self.sample_action(state)
