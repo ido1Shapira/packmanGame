@@ -16,16 +16,14 @@ class Character{
     };
     scores = {
         start : 0.5,
-        stay : -0.001, //-1,
-        step : -0.005, //-2,
-        //collide : 0,
+        stay : -0.01, //-1,
+        step : -0.05, //-5,
         finish : 1.0 //100,
     }
     scoresToView = {
         start : 50,
         stay : -1,
         step : -5,
-        //collide : 0,
         finish : 100
     }
     constructor(tileFrom , tileTo, timeMoved, dimensions, dimensions_at_stay, position, delayMove) {
