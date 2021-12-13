@@ -9,6 +9,7 @@ class PlayerController{
 
         "ddqn": false,
         "sarl ddqn": false,
+
         "ppo": false,
         "sarl ppo": false,
 
@@ -44,9 +45,26 @@ class PlayerController{
         
         // this.players_controlled.push(player);
         if(type == -1) {
-            var baselines = Object.keys(this.TYPES);
+            var all = Object.keys(this.TYPES);
+            type = all[Math.floor(all.length * Math.random())];
+        }
+        if(type == -2) {
+            var baselines = Object.keys(this.TYPES).slice(0,5);
             type = baselines[Math.floor(baselines.length * Math.random())];
         }
+        if(type == -3) {
+            var ddqns = Object.keys(this.TYPES).slice(5,7);
+            type = ddqns[Math.floor(ddqns.length * Math.random())];
+        }
+        if(type == -4) {
+            var ppos = Object.keys(this.TYPES).slice(7, 9);
+            type = ppos[Math.floor(ppos.length * Math.random())];
+        }
+        if(type == -5) {
+            var noises = Object.keys(this.TYPES).slice(9,11);
+            type = noises[Math.floor(noises.length * Math.random())];
+        }
+
         this.TYPES[type] = true;
         this.type = type;
         this.player_controlled = player;
