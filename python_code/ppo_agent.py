@@ -23,7 +23,7 @@ def discounted_cumulative_sums(x, discount):
 
 class Buffer:
     # Buffer for storing trajectories
-    def __init__(self, observation_dimensions, size, gamma=0.999, lam=0.985):
+    def __init__(self, observation_dimensions, size, gamma=0.999, lam=0.95):
         # Buffer initialization
         self.observation_buffer = np.zeros(
             (size,) + observation_dimensions, dtype=np.float32
@@ -91,12 +91,12 @@ class PPOAgent:
         self.steps_per_epoch = 300
         self.epochs = 1500
         self.gamma = 0.999
-        self.clip_ratio = 0.05
-        self.policy_learning_rate = 3e-5
-        self.value_function_learning_rate = 1e-4
+        self.clip_ratio = 0.1
+        self.policy_learning_rate = 1e-4
+        self.value_function_learning_rate = 1e-3
         self.train_policy_iterations = 128
         self.train_value_iterations = 128
-        self.lam = 0.985
+        self.lam = 0.95
         self.target_kl = 0.01
 
 
@@ -329,5 +329,5 @@ class PPOAgent:
 if __name__ == "__main__":
     env_name = 'gym_packman:Packman-v0'
     agent = PPOAgent(env_name)
-    # agent.run()
+    agent.run()
     agent.test(5)

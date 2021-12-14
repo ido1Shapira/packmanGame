@@ -81,6 +81,7 @@ class PackmanEnv(Env):
 
         # when human model is ready uncomment this line
         human_action = self.predict_action(self.canvas)
+        action = 0
         # human_action = 0
         # if np.random.random() < 1.0:
         #     action = self.get_random_valid_action('computer')

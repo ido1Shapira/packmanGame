@@ -251,7 +251,7 @@ class DQNAgent:
         self.save("weights/ddqn_agent_new.h5")
 
     def test(self, test_episodes):
-        self.load("weights/ddqn_agent.h5")
+        self.load("weights/ddqn_agent_new.h5")
         for e in range(test_episodes):
             state = self.env.reset()
             state = np.expand_dims(state, axis=0)
@@ -279,5 +279,5 @@ class DQNAgent:
 if __name__ == "__main__":
     env_name = 'gym_packman:Packman-v0'
     agent = DQNAgent(env_name)
-    # agent.run()
+    agent.run()
     agent.test(5)
