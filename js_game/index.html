@@ -33,7 +33,6 @@ http://technologies4.me//articles/recursive-backtracking-maze-javascript-a21/maz
   <script src="main.js"></script>
 </head>
 
-<!-- You answered correctly! You can start playing the game. -->
 <!-- I'm staying and not helping. -->
 
 <body>
@@ -95,7 +94,7 @@ http://technologies4.me//articles/recursive-backtracking-maze-javascript-a21/maz
                     <input type="radio" id="3_3" name="q3" value="false"/>
                     <label for="3_3">No, actions do not incur costs.</label>
                   </div>
-<!-- 
+                  <!-- 
                   <div class="quiz_question">
                     <p><b>2. Does it cost to clean the dirt?</b></p>
                     <input type="radio" id="1_1" name="q1" value="false"/>
@@ -128,8 +127,9 @@ http://technologies4.me//articles/recursive-backtracking-maze-javascript-a21/maz
                   
                 </div>
                 <br>
-                <input type="button" onclick="checkQuiz()" ; value="Submit quiz"/>
                 <input type="button" id=returnToInstructions ; value="Return to instructions"/>
+                <input type="button" onclick="checkQuiz();" ; value="Submit quiz"/>
+                <input type="button" id=continueToGame style="color: rgb(45, 223, 45); display:none;" onclick="startGame();" ; value="Continue to game"/>
                 <p id="notFillAll1" style="color: red; display:none;">Did not submit, please fill all fields!</p>
               </form>
             </div>
@@ -141,7 +141,7 @@ http://technologies4.me//articles/recursive-backtracking-maze-javascript-a21/maz
       </div>
 
       <div id="down">
-        <canvas id="game" width="400" height="400"></canvas>
+        <canvas id="game" width="500" height="500"></canvas>
       </div>
     </div>
   </div>

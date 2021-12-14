@@ -33,16 +33,22 @@ function checkQuiz() {
     }
     else {
         if(q1 == "true" && q2 == "true" && q3 == "true") {
-	        window.addEventListener("keyup", handleKeyUp);
-            getDOM("quiz").style.display = "none";
-            getDOM("showgameButton").style.display = "none";
-            getDOM("showgameLabel").style.display = "none";
+            getDOM("continueToGame").style.display = "";
         }
         else {
             getDOM("notFillAll1").innerHTML = "At least one answer is incorrect, please read the instructions again."
             getDOM("notFillAll1").style.display = "";
         }
     }
+}
+
+function startGame() {
+    window.addEventListener("keyup", handleKeyUp);
+    getDOM("quiz").style.display = "none";
+    getDOM("showgameButton").style.display = "none";
+    getDOM("showgameLabel").style.display = "none";
+
+    getDOM("left").setAttribute("style","width:25%;font-size: 11pt;");
 }
 
 function submitSurvey() {

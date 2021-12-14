@@ -23,15 +23,15 @@ var gameStatus = {
 }
 const numOfAwards = 5;
 
-var tileW = 40, tileH = 40;
+var tileW = 50, tileH = 50;
 var mapW = 10, mapH = 10;
 var currentSecond = 0, frameCount = 0, framesLastSecond = 0, lastFrameTime = 0;
 
                     // tileFrom , tileTo, timeMoved, dimensions, dimensions_at_stay, position, delayMove
-var human_player = new Character([3,4], [3,4], 0, [30,30], [20, 20], [125,165], 300);
+var human_player = new Character([3,4], [3,4], 0, [30,30], [20, 20], [160,215], 500);
 
 initializeFirebase();
-var computer_player = new Character([4,6], [4,6], 0, [30,30], [20, 20], [165,245], 300);
+var computer_player = new Character([4,6], [4,6], 0, [30,30], [20, 20], [210,310], 500);
 var computer_controller;
 firebase.database().ref("chosen-controller").once('value',
     (snap) => {
@@ -205,7 +205,7 @@ window.onload = function()
 	requestAnimationFrame(drawGame);
 	ctx.font = "bold 10pt sans-serif";
 
-	// window.addEventListener("keyup", handleKeyUp);
+	window.addEventListener("keyup", handleKeyUp);
 };
 
 function drawGame()
@@ -323,22 +323,45 @@ function drawGame()
 		// 	award.dimensions[0], award.dimensions[1]);
 	}
 	
-	ctx.fillStyle = "#0000ff"; // computer color: blue
+	var borderWidth = 1;   
+	var offset = borderWidth * 2;
+	
+	ctx.fillStyle = "black"; // draw player borders
 	if(computerMove == 32 && human_player.keysDown[humanMove]) {
+		ctx.fillRect( computer_player.position[0] - borderWidth, computer_player.position[1] -borderWidth,
+			computer_player.dimensions_at_stay[0] + offset, computer_player.dimensions_at_stay[1] + offset);
+		ctx.fillStyle = "#0000ff"; // computer color: blue
 		ctx.fillRect(computer_player.position[0], computer_player.position[1],
 			computer_player.dimensions_at_stay[0], computer_player.dimensions_at_stay[1]);
+		drawBubble(ctx, computer_player.position[0], computer_player.position[1] + 20 , 120, 50, 20);
+		ctx.fillStyle = "#0000ff";
+		ctx.fillText("I'm staying", computer_player.position[0] + 10, computer_player.position[1]+40);
+		ctx.fillText("and not helping.", computer_player.position[0] + 10, computer_player.position[1]+60);
 	}
 	else {
+		ctx.fillRect( computer_player.position[0] - borderWidth, computer_player.position[1] -borderWidth,
+		computer_player.dimensions[0] + offset, computer_player.dimensions[1] + offset);
+		ctx.fillStyle = "#0000ff";
 		ctx.fillRect(computer_player.position[0], computer_player.position[1],
 			computer_player.dimensions[0], computer_player.dimensions[1]);
 	}
-	
-	ctx.fillStyle = "#FF5050"; // human color: red
+
+	ctx.fillStyle = "black"; 
 	if (humanMove == 32 && 	human_player.keysDown[humanMove]) {
+		ctx.fillRect( human_player.position[0] - borderWidth, human_player.position[1] -borderWidth,
+			human_player.dimensions_at_stay[0] + offset, human_player.dimensions_at_stay[1] + offset);
+		ctx.fillStyle = "#FF5050"; // human color: red
 		ctx.fillRect(human_player.position[0], human_player.position[1],
 			human_player.dimensions_at_stay[0], human_player.dimensions_at_stay[1]);
+		drawBubble(ctx, human_player.position[0], human_player.position[1] + 20 , 120, 50, 20);
+		ctx.fillStyle = "#FF5050";
+		ctx.fillText("I'm staying", human_player.position[0] + 10, human_player.position[1]+40);
+		ctx.fillText("and not helping.", human_player.position[0] + 10, human_player.position[1]+60);
 	}
 	else {
+		ctx.fillRect( human_player.position[0] - borderWidth, human_player.position[1] -borderWidth,
+			human_player.dimensions[0] + offset, human_player.dimensions[1] + offset);
+		ctx.fillStyle = "#FF5050";
 		ctx.fillRect(human_player.position[0], human_player.position[1],
 			human_player.dimensions[0], human_player.dimensions[1]);
 	}
@@ -346,11 +369,47 @@ function drawGame()
 	ctx.fillStyle = "#FFFFFF"; // title color: white
 	// ctx.fillText("FPS: " + framesLastSecond, 10, 20);
     ctx.fillText("Red score: " + human_player.scoreToView, 20, 25);
-	ctx.fillText("Blue score: " + computer_player.scoreToView, 275, 25);
+	ctx.fillText("Blue score: " + computer_player.scoreToView, 355, 25);
 
-	ctx.fillText("Red action: " + human_player.codeToAction[humanMove], 20, 385);
-    ctx.fillText("Blue action: " + computer_player.codeToAction[computerMove], 275, 385);
+	ctx.fillText("Red action: " + human_player.codeToAction[humanMove], 20, 475);
+    ctx.fillText("Blue action: " + computer_player.codeToAction[computerMove], 355, 475);
 
 	lastFrameTime = currentFrameTime;
 	requestAnimationFrame(drawGame);
+}
+
+function drawBubble(ctx, x, y, w, h, radius) {
+    var r = x + w;
+    var b = y + h;
+    ctx.beginPath();
+    ctx.strokeStyle = "black";
+    ctx.lineWidth = "2";
+
+    var handle = {
+        x1: x + radius,
+        y1: y,
+        x2: x + radius / 2,
+        y2: y - 10,
+        x3: x + radius * 2,
+        y3: y
+    }
+	
+    ctx.moveTo(handle.x1, handle.y1);
+    ctx.lineTo(handle.x2, handle.y2);
+    ctx.lineTo(handle.x3, handle.y3);
+
+    ctx.lineTo(r - radius, y);
+    ctx.quadraticCurveTo(r, y, r, y + radius);
+    ctx.lineTo(r, y + h - radius);
+    ctx.quadraticCurveTo(r, b, r - radius, b);
+    ctx.lineTo(x + radius, b);
+    ctx.quadraticCurveTo(x, b, x, b - radius);
+    ctx.lineTo(x, y + radius);
+    ctx.quadraticCurveTo(x, y, x + radius, y);
+
+	ctx.fillStyle = "white";
+	ctx.fill();
+    ctx.stroke();
+    
+    return handle;
 }
