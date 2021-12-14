@@ -66,7 +66,7 @@ class DQNAgent:
         self.TAU = 0.1 # target network soft update hyperparameter
 
         # defining SARL parameters
-        self.beta = 0.24
+        self.beta = 0.33
 
         self.Save_Path = 'weights'
         self.scores, self.steps, self.episodes, self.averages, self.averages_steps = [], [], [], [], []
@@ -76,6 +76,8 @@ class DQNAgent:
         self.ax2.set_ylabel('SARL Score', fontsize=15)
         self.ax3.set_ylabel('Step', fontsize=15)
         self.ax3.set_xlabel('Episode', fontsize=15)
+        self.ax1.set_ylim([-2, 1.5])
+        self.ax2.set_ylim([0, 100])
         
         if self.ddqn:
             print("----------Double DQN--------")
@@ -258,7 +260,7 @@ class DQNAgent:
         self.save("weights/SARL_ddqn_agent_"+str(self.beta)+"_new.h5")
 
     def test(self, test_episodes):
-        self.load("weights/SARL_ddqn_agent_"+str(self.beta)+".h5")
+        self.load("weights/SARL_ddqn_agent_"+str(self.beta)+"_new.h5")
         for e in range(test_episodes):
             state = self.env.reset()
             state = np.expand_dims(state, axis=0)
@@ -285,5 +287,5 @@ class DQNAgent:
 if __name__ == "__main__":
     env_name = 'gym_packman:Packman-v0'
     agent = DQNAgent(env_name)
-    # agent.run()
+    agent.run()
     agent.test(5)
