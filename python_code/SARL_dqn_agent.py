@@ -78,6 +78,7 @@ class DQNAgent:
         self.ax3.set_xlabel('Episode', fontsize=15)
         self.ax1.set_ylim([-2, 1.5])
         self.ax2.set_ylim([0, 100])
+        self.ax3.set_ylim([0, 100])
         
         if self.ddqn:
             print("----------Double DQN--------")
@@ -278,7 +279,7 @@ class DQNAgent:
                 ep_rewards += reward
                 ep_SARL_rewards += SARL_reward
                 # print(info)
-                # time.sleep(0.5)
+                time.sleep(0.5)
 
                 if done:
                     print("episode: {}/{}, steps: {}, score: {}, SARL score: {}".format(e, test_episodes, i, ep_rewards, ep_SARL_rewards))
