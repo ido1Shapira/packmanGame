@@ -8,8 +8,8 @@ var gameMap = [
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 	0, 1, 1, 1, 1, 0, 1, 1, 1, 0,
 	0, 0, 1, 1, 0, 0, 0, 0, 1, 0,
-	0, 1, 1, 1, 1, 1, 1, 1, 1, 0,
-	0, 1, 0, 1, 0, 0, 0, 1, 1, 0,
+	0, 1, 1, 1, 0, 1, 1, 1, 1, 0,
+	0, 1, 0, 1, 1, 1, 0, 1, 1, 0,
 	0, 1, 0, 1, 0, 1, 0, 0, 1, 0,
 	0, 1, 1, 1, 1, 1, 1, 1, 1, 0,
 	0, 1, 0, 0, 0, 0, 1, 1, 0, 0,
@@ -80,7 +80,7 @@ function randomValidTiles(n) {
 var awards = [];
 // It is not random anymore
 // var validTiles = randomValidTiles(numOfAwards);
-var validTiles = [[1,3],[1,6],[1,8],[7,8],[8,6]];
+var validTiles = [[1,3],[1,6],[3,8],[7,8],[8,6]];
 for(var i=0; i<numOfAwards; i++) {
 	awards.push(new Award(validTiles[i], [15,15], position(validTiles[i], [15, 15]), 0.05, 5));
 }
@@ -205,7 +205,7 @@ window.onload = function()
 	requestAnimationFrame(drawGame);
 	ctx.font = "bold 10pt sans-serif";
 
-	window.addEventListener("keyup", handleKeyUp);
+	// window.addEventListener("keyup", handleKeyUp);
 };
 
 function drawGame()
