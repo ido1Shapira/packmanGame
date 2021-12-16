@@ -82,7 +82,7 @@ var awards = [];
 // var validTiles = randomValidTiles(numOfAwards);
 var validTiles = [[1,3],[1,6],[1,8],[7,8],[8,6]];
 for(var i=0; i<numOfAwards; i++) {
-	awards.push(new Award(validTiles[i], [15,15], position(validTiles[i], [15, 15]), 0.005, 5));
+	awards.push(new Award(validTiles[i], [15,15], position(validTiles[i], [15, 15]), 0.05, 5));
 }
 var human_awards = [];
 var computer_awards = [];
@@ -292,7 +292,10 @@ function drawGame()
 		computer_player.score = computer_player.score + computer_player.scores.finish;
 		computer_player.scoreToView = computer_player.scoreToView + computer_player.scoresToView.finish;
 		
-		console.log('Computer score: '+ computer_player.scoreToView);
+		console.log('1) Computer score: '+ computer_player.scoreToView);
+		console.log('2) Computer score: '+ computer_player.score);
+		console.log('1) Human score: '+ human_player.scoreToView);
+		console.log('2) Human score: '+ human_player.score);
 		window.removeEventListener("keyup", handleKeyUp);
 
 		finishGame(getBoardState(), humanMove); //sending the last state
