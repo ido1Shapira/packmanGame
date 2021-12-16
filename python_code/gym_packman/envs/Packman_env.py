@@ -44,7 +44,7 @@ class PackmanEnv(Env):
 
     def __init__(self):
         super(PackmanEnv, self).__init__()
-        self.map_dir = 'map 2'
+        self.map_dir = 'map 3'
         
         # Actions we can take, left, down, stay, up, right
         self.action_space = Discrete(5)
@@ -61,7 +61,8 @@ class PackmanEnv(Env):
         self.state = None
 
         # Load human model from the computer
-        self.human_model = tf.keras.models.load_model('./data/'+self.map_dir+'/humanModel_v0.h5')
+        # self.human_model = tf.keras.models.load_model('./data/'+self.map_dir+'/humanModel_v0.h5')
+        self.human_model = tf.keras.models.load_model('./data/map 2/humanModel_v0.h5')
         self.human_model_with_noise = False
 
     def step(self, action):
@@ -224,8 +225,8 @@ class PackmanEnv(Env):
             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
             [0, 1, 1, 1, 1, 0, 1, 1, 1, 0],
             [0, 0, 1, 1, 0, 0, 0, 0, 1, 0],
-            [0, 1, 1, 1, 1, 1, 1, 1, 1, 0],
-            [0, 1, 0, 1, 0, 0, 0, 1, 1, 0],
+            [0, 1, 1, 1, 0, 1, 1, 1, 1, 0],
+            [0, 1, 0, 1, 1, 1, 0, 1, 1, 0],
             [0, 1, 0, 1, 0, 1, 0, 0, 1, 0],
             [0, 1, 1, 1, 1, 1, 1, 1, 1, 0],
             [0, 1, 0, 0, 0, 0, 1, 1, 0, 0],
@@ -236,19 +237,22 @@ class PackmanEnv(Env):
         dirts_init_pos = {
             'map 0': np.random.choice(np.count_nonzero(board)-1, 5), #random
             'map 1': [ 10, 23, 30, 35, 41],
-            'map 2': [ 10, 25, 31, 35, 40]
+            'map 2': [ 10, 25, 31, 35, 40],
+            'map 3': [ 10, 26, 32, 38, 41]
         }
 
         human_init_pos = {
             'map 0': {'x': 2 , 'y': 2},
             'map 1': {'x': 3 , 'y': 5},
-            'map 2': {'x': 3 , 'y': 4}
+            'map 2': {'x': 3 , 'y': 4},
+            'map 3': {'x': 3 , 'y': 4}
         }
 
         computer_init_pos = {
             'map 0': {'x': 7 , 'y': 7},
             'map 1': {'x': 4 , 'y': 6},
-            'map 2': {'x': 4 , 'y': 6}
+            'map 2': {'x': 4 , 'y': 6},
+            'map 3': {'x': 4 , 'y': 6}
         }
         
         human_trace = np.zeros(board.shape)

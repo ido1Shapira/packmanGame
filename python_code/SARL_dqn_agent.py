@@ -78,7 +78,7 @@ class DQNAgent:
         self.ax3.set_ylabel('Step', fontsize=15)
         self.ax3.set_xlabel('Episode', fontsize=15)
         self.ax1.set_ylim([-2, 1.5])
-        self.ax2.set_ylim([0, 100])
+        self.ax2.set_ylim([-2, 1.5])
         self.ax3.set_ylim([0, 100])
         
         # create main model
