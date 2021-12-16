@@ -44,6 +44,8 @@ class PackmanEnv(Env):
 
     def __init__(self):
         super(PackmanEnv, self).__init__()
+        self.map_dir = 'map 2'
+        
         # Actions we can take, left, down, stay, up, right
         self.action_space = Discrete(5)
 
@@ -59,8 +61,8 @@ class PackmanEnv(Env):
         self.state = None
 
         # Load human model from the computer
-        self.human_model = tf.keras.models.load_model('./data/humanModel/model_v0.h5')
-        # self.human_model.summary()
+        self.human_model = tf.keras.models.load_model('./data/'+self.map_dir+'/humanModel_v0.h5')
+        self.human_model_with_noise = False
 
     def step(self, action):
         # Apply action
@@ -230,30 +232,42 @@ class PackmanEnv(Env):
             [0, 1, 1, 1, 0, 1, 1, 1, 1, 0],
             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         ])
+
+        dirts_init_pos = {
+            'map 0': np.random.choice(np.count_nonzero(board)-1, 5), #random
+            'map 1': [ 10, 23, 30, 35, 41],
+            'map 2': [ 10, 25, 31, 35, 40]
+        }
+
+        human_init_pos = {
+            'map 0': {'x': 2 , 'y': 2},
+            'map 1': {'x': 3 , 'y': 5},
+            'map 2': {'x': 3 , 'y': 4}
+        }
+
+        computer_init_pos = {
+            'map 0': {'x': 7 , 'y': 7},
+            'map 1': {'x': 4 , 'y': 6},
+            'map 2': {'x': 4 , 'y': 6}
+        }
         
         human_trace = np.zeros(board.shape)
-        human_trace[4][3] = 1  # locate human player
-        board[4][3] = 0  # locate human player
+        human_trace[human_init_pos[self.map_dir]['y']][human_init_pos[self.map_dir]['x']] = 1  # locate human player
+        board[human_init_pos[self.map_dir]['y']][human_init_pos[self.map_dir]['x']] = 0  # locate human player
 
         computer_trace = np.zeros(board.shape)
-        computer_trace[6][4] = 1  # locate computer player
-        board[6][4] = 0  # locate computer player
+        computer_trace[computer_init_pos[self.map_dir]['y']][computer_init_pos[self.map_dir]['x']] = 1  # locate computer player
+        board[computer_init_pos[self.map_dir]['y']][computer_init_pos[self.map_dir]['x']] = 0  # locate computer player
 
         human_awards = np.zeros(board.shape)
         computer_awards = np.zeros(board.shape)
 
         all_awards = np.zeros(board.shape)
-        # idx = np.random.choice(np.count_nonzero(board), 5)
-        
-        # Determine fixed dirt locations
-        # prev:
-        # idx = [ 10, 23, 30, 35, 41]
-        # new:
-        idx = [10, 25, 31, 35, 40]
+        idx = dirts_init_pos[self.map_dir]
         all_awards[tuple(map(lambda x: x[idx], np.where(board)))] = 1
 
-        board[4][3] = 1  # locate human player
-        board[6][4] = 1  # locate computer player
+        board[human_init_pos[self.map_dir]['y']][human_init_pos[self.map_dir]['x']] = 1  # locate human player
+        board[computer_init_pos[self.map_dir]['y']][computer_init_pos[self.map_dir]['x']] = 1  # locate computer player
 
         return np.concatenate([np.expand_dims(board, axis=2), np.expand_dims(human_trace, axis=2),
          np.expand_dims(computer_trace, axis=2), np.expand_dims(human_awards, axis=2),
@@ -314,9 +328,10 @@ class PackmanEnv(Env):
         predictions = self.human_model.predict(img_array)
         score = tf.nn.softmax(predictions[0])
         
+        if self.human_model_with_noise:
         # adding noise
-        # noise = np.random.normal(0,0.04,len(score))
-        # score = score + noise
+            noise = np.random.normal(0,0.04,len(score))
+            score = score + noise
 
         dict_scores = dict(enumerate(score.numpy()))
         action = max(dict_scores, key=dict_scores.get)

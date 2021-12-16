@@ -1,0 +1,3 @@
+random dirt position
+
+The agents did not converge and did not perform well at training
