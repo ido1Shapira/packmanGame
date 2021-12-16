@@ -46,6 +46,8 @@ def OurModel(input_shape, action_space):
 
 class DQNAgent:
     def __init__(self, env_name):
+        self.map_dir = 'map 2'
+
         self.env_name = env_name       
         self.env = gym.make(env_name)
         self.env.seed(random_seed)
@@ -69,9 +71,8 @@ class DQNAgent:
         self.TAU = 0.1 # target network soft update hyperparameter
 
         # defining SARL parameters
-        self.beta = 0.33
+        self.beta = 0.3
 
-        self.Save_Path = 'weights'
         self.scores, self.steps, self.episodes, self.averages, self.averages_steps = [], [], [], [], []
         fig, (self.ax1, self.ax2) = plt.subplots(2, 1, figsize=(18, 9))
         self.ax1.set_ylabel('Score', fontsize=15)
@@ -79,13 +80,6 @@ class DQNAgent:
         self.ax2.set_xlabel('Episode', fontsize=15)
         self.ax1.set_ylim([-2, 1.5])
         self.ax2.set_ylim([0, 100])
-        
-        if self.ddqn:
-            print("----------Double DQN--------")
-            self.Model_name = os.path.join(self.Save_Path,"ddqn_agent.h5")
-        else:
-            print("-------------DQN------------")
-            self.Model_name = os.path.join(self.Save_Path,"dqn_agent.h5")
         
         # create main model
         self.model = OurModel(input_shape=self.state_size, action_space = self.action_size)
@@ -187,7 +181,6 @@ class DQNAgent:
         print("\nMax score: ", np.max(self.scores))
         print("Max steps: ", np.max(self.steps))
 
-        print("Saving trained model as ppo_agent.h5")
         self.model.save(name)
     
     def PlotModel(self, score, step, episode):
@@ -215,7 +208,7 @@ class DQNAgent:
         if self.Soft_Update:
             softupdate = 'soft'
         try:
-            plt.savefig("data/images/"+dqn+softupdate+"_new.png", dpi = 150)
+            plt.savefig("data/"+self.map_dir+"/images/"+dqn+softupdate+".png", dpi = 150)
         except OSError:
             pass
 
@@ -250,10 +243,10 @@ class DQNAgent:
                     self.updateEpsilon()
                     
                 self.replay()
-        self.save("weights/ddqn_agent_new.h5")
+        self.save("data/"+self.map_dir+"/weights/ddqn_agent.h5")
 
     def test(self, test_episodes):
-        self.load("weights/ddqn_agent_new.h5")
+        self.load("data/"+self.map_dir+"/weights/ddqn_agent.h5")
         for e in range(test_episodes):
             state = self.env.reset()
             state = np.expand_dims(state, axis=0)

@@ -1,0 +1,21 @@
+
+permanent dirt positions: [ 10, 23, 30, 35, 41]
+human player position: [5][3]
+computer player position: [6][4]
+
+the reward function is:
+rewards = {
+        'Start': 0.5,
+        0: -0.001, #stay
+        1: -0.005, #left
+        2: -0.005, #up
+        3: -0.005, #right
+        4: -0.005, #down
+        'CollectDirt': 0,  # (-2 + 2 = 0)
+        'EndGame': 1.0,
+        'invalidAction': -0.005
+    }
+    
+run SARL with beta=0.24
+The ddqn and SARL ddqn agents converged
+run also the agents with adding some noise to the human model

@@ -81,6 +81,8 @@ class Buffer:
 
 class PPOAgent:
     def __init__(self, env_name):
+        self.map_dir = 'map 1'
+
         self.env_name = env_name       
         self.env = gym.make(env_name)
         self.env.seed(0)
@@ -192,7 +194,7 @@ class PPOAgent:
         self.ax2.plot(self.steps, 'b')
         self.ax2.plot(self.averages_steps, 'r')
         try:
-            plt.savefig("data/images/"+"ppo_agent.png")
+            plt.savefig("data/"+self.map_dir+"/images/ppo_agent.png")
         except OSError:
             pass
 
@@ -304,10 +306,10 @@ class PPOAgent:
             for _ in range(self.train_value_iterations):
                 self.train_value_function(observation_buffer, return_buffer)
         
-        self.save("weights/ppo_actor_agent.h5", "weights/ppo_critic_agent.h5")
+        self.save("data/"+self.map_dir+"/weights/ppo_actor_agent.h5", "data/"+self.map_dir+"/weights/ppo_critic_agent.h5")
 
     def test(self, test_episodes):
-        self.load("weights/ppo_actor_agent.h5", "weights/ppo_critic_agent.h5")
+        self.load("data/"+self.map_dir+"/weights/ppo_actor_agent.h5", "data/"+self.map_dir+"/weights/ppo_critic_agent.h5")
         for e in range(test_episodes):
             state = self.env.reset()
             state = np.expand_dims(state, axis=0)
@@ -329,5 +331,5 @@ class PPOAgent:
 if __name__ == "__main__":
     env_name = 'gym_packman:Packman-v0'
     agent = PPOAgent(env_name)
-    agent.run()
+    # agent.run()
     agent.test(5)
