@@ -45,8 +45,8 @@ def OurModel(input_shape, action_space):
     return model
 
 class DQNAgent:
-    def __init__(self, env_name):
-        self.map_dir = 'map 2'
+    def __init__(self, env_name, map):
+        self.map_dir = map
 
         self.env_name = env_name       
         self.env = gym.make(env_name)
@@ -273,6 +273,7 @@ class DQNAgent:
 
 if __name__ == "__main__":
     env_name = 'gym_packman:Packman-v0'
-    agent = DQNAgent(env_name)
+    dir_map = 'map 3'
+    agent = DQNAgent(env_name, dir_map)
     agent.run()
     agent.test(5)
