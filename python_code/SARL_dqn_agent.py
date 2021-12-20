@@ -51,13 +51,13 @@ class DQNAgent:
         self.state_size = self.env.observation_space.shape
         self.action_size = self.env.action_space.n
 
-        self.EPISODES = 1010 #900
+        self.EPISODES = 1100
         self.memory = deque(maxlen=100000)
         
         self.gamma = 0.999 # discount rate
         self.epsilon = 1.0 # exploration rate
         self.epsilon_min = 0.1
-        self.epsilon_decay = 0.997
+        self.epsilon_decay = 0.998
         self.batch_size = 128
         self.train_start = 2000 # memory_size
 
@@ -68,7 +68,7 @@ class DQNAgent:
         self.TAU = 0.1 # target network soft update hyperparameter
 
         # defining SARL parameters
-        self.beta = 0.3
+        self.beta = 0.4
 
         self.scores, self.steps, self.episodes, self.averages, self.averages_steps = [], [], [], [], []
         self.SARL_scores, self.SARL_averages = [], []

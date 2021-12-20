@@ -54,13 +54,13 @@ class DQNAgent:
         self.state_size = self.env.observation_space.shape
         self.action_size = self.env.action_space.n
 
-        self.EPISODES = 1010 #900
+        self.EPISODES = 1500 #1010
         self.memory = deque(maxlen=100000)
         
         self.gamma = 0.999 # discount rate
         self.epsilon = 1.0 # exploration rate
         self.epsilon_min = 0.1
-        self.epsilon_decay = 0.997
+        self.epsilon_decay = 0.998 #0.997
         self.batch_size = 128
         self.train_start = 2000 # memory_size
 
@@ -263,9 +263,9 @@ class DQNAgent:
                 i += 1
                 ep_rewards += reward
                 ep_SARL_rewards += SARL_reward
-                # print(info)
+                print(info)
                 
-                time.sleep(0.5)
+                time.sleep(1)
                 
                 if done:
                     print("episode: {}/{}, steps: {}, score: {}, SARL score: {}".format(e, test_episodes, i, ep_rewards, ep_SARL_rewards))
