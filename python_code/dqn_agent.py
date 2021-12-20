@@ -5,7 +5,7 @@
 random_seed = 0
 
 import os
-os.environ['CUDA_VISIBLE_DEVICES'] = '-1'
+# os.environ['CUDA_VISIBLE_DEVICES'] = '-1'
 
 import random
 import gym
@@ -54,13 +54,13 @@ class DQNAgent:
         self.state_size = self.env.observation_space.shape
         self.action_size = self.env.action_space.n
 
-        self.EPISODES = 1500 #1010
+        self.EPISODES = 1100
         self.memory = deque(maxlen=100000)
         
         self.gamma = 0.999 # discount rate
         self.epsilon = 1.0 # exploration rate
         self.epsilon_min = 0.1
-        self.epsilon_decay = 0.998 #0.997
+        self.epsilon_decay = 0.998
         self.batch_size = 128
         self.train_start = 2000 # memory_size
 

@@ -61,8 +61,7 @@ class PackmanEnv(Env):
         self.state = None
 
         # Load human model from the computer
-        # self.human_model = tf.keras.models.load_model('./data/'+self.map_dir+'/humanModel_v0.h5')
-        self.human_model = tf.keras.models.load_model('./data/map 2/humanModel_v0.h5')
+        self.human_model = tf.keras.models.load_model('./data/'+self.map_dir+'/humanModel_v0.h5')
         self.human_model_with_noise = False
 
     def step(self, action):

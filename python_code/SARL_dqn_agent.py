@@ -4,6 +4,8 @@
 
 random_seed = 0
 import os
+os.environ['CUDA_VISIBLE_DEVICES'] = '-1'
+
 import random
 import gym
 import matplotlib.pyplot as plt
@@ -271,7 +273,7 @@ class DQNAgent:
                 i += 1
                 ep_rewards += reward
                 ep_SARL_rewards += SARL_reward
-                # print(info)
+                print(info)
                 time.sleep(0.5)
 
                 if done:
