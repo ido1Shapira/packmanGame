@@ -4,6 +4,7 @@
 Title: Proximal Policy Optimization
 """
 import os
+os.environ['CUDA_VISIBLE_DEVICES'] = '-1'
 
 import numpy as np
 from numpy.lib.function_base import average
@@ -14,6 +15,7 @@ from tensorflow.keras.models import Model, load_model
 from tensorflow.keras.layers import Input, Dense, Conv2D, MaxPool2D, Flatten, Dropout
 from tensorflow.keras.optimizers import Adam
 import matplotlib.pyplot as plt
+import time
 """
 ## Functions and class
 """
@@ -80,8 +82,8 @@ class Buffer:
         )
 
 class PPOAgent:
-    def __init__(self, env_name):
-        self.map_dir = 'map 1'
+    def __init__(self, env_name, map):
+        self.map_dir = map
 
         self.env_name = env_name       
         self.env = gym.make(env_name)
@@ -319,10 +321,14 @@ class PPOAgent:
             while not done:
                 self.env.render()
                 _ , action = self.sample_action(state)
-                next_state, reward, done, _ = self.env.step(action[0].numpy())
+                next_state, reward, done, info = self.env.step(action[0].numpy())
                 state = np.expand_dims(next_state, axis=0)
                 i += 1
                 ep_rewards += reward
+
+                # print(info)
+                time.sleep(1)
+
                 if done:
                     print("episode: {}/{}, steps: {}, score: {}".format(e, test_episodes, i, ep_rewards))
                     break
@@ -330,6 +336,7 @@ class PPOAgent:
 
 if __name__ == "__main__":
     env_name = 'gym_packman:Packman-v0'
-    agent = PPOAgent(env_name)
-    # agent.run()
+    dir_map = 'map 3'
+    agent = PPOAgent(env_name, dir_map)
+    agent.run()
     agent.test(5)
