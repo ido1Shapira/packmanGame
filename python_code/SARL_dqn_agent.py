@@ -4,14 +4,14 @@
 
 random_seed = 0
 import os
-os.environ['CUDA_VISIBLE_DEVICES'] = '-1'
+# os.environ['CUDA_VISIBLE_DEVICES'] = '-1'
 
 import random
 import gym
 import matplotlib.pyplot as plt
 import numpy as np
 from collections import deque
-import tensorflow as tf
+# import tensorflow as tf
 from tensorflow.keras.models import Model, load_model
 from tensorflow.keras.layers import Input, Dense, Conv2D, MaxPool2D, Flatten
 from tensorflow.keras.optimizers import Adam
@@ -38,7 +38,7 @@ def OurModel(input_shape, action_space):
     X = Dense(action_space, activation="linear")(X)
 
     model = Model(inputs = X_input, outputs = X)
-    model.compile(loss="mean_squared_error", optimizer=Adam(learning_rate=0.0002), metrics=["accuracy"])
+    model.compile(loss="mean_squared_error", optimizer=Adam(learning_rate=0.0001), metrics=["accuracy"])
 
     model.summary()
     return model
@@ -59,18 +59,21 @@ class DQNAgent:
         self.gamma = 0.999 # discount rate
         self.epsilon = 1.0 # exploration rate
         self.epsilon_min = 0.1
-        self.epsilon_decay = 0.998
+        self.epsilon_decay = 0.9975
         self.batch_size = 128
         self.train_start = 2000 # memory_size
 
         # defining model parameters
         self.ddqn = True
         self.Soft_Update = True
+        self.distribution = True
 
         self.TAU = 0.1 # target network soft update hyperparameter
 
         # defining SARL parameters
         self.beta = 0.4
+
+        
 
         self.scores, self.steps, self.episodes, self.averages, self.averages_steps = [], [], [], [], []
         self.SARL_scores, self.SARL_averages = [], []
@@ -112,14 +115,7 @@ class DQNAgent:
             # return self.env.get_random_valid_action('computer')
         else:
             return np.argmax(self.model.predict(state))
-            # act_values = self.model.predict(state)
-            # act_values = np.squeeze(act_values, axis=0)
-            # action = np.argmax(act_values)
-            # while(not self.env.valid_action(action, 'computer')):
-            #     act_values = np.delete(act_values, action)
-            #     action = np.argmax(act_values)
-            # return action
-
+                
     def replay(self):
         if len(self.memory) < self.train_start:
             return
@@ -210,19 +206,21 @@ class DQNAgent:
 
         dqn = 'DQN_'
         softupdate = ''
+        distribution = ''
         if self.ddqn:
             dqn = 'DDQN_'
         if self.Soft_Update:
             softupdate = 'soft'
+        if self.distribution:
+            distribution='_distribution'
         try:
-            plt.savefig("data/"+self.map_dir+"/images/SARL_"+dqn+softupdate+".png", dpi = 150)
+            plt.savefig("data/"+self.map_dir+"/images/SARL_"+dqn+softupdate+distribution+".png", dpi = 150)
         except OSError:
             pass
 
         return str(self.averages[-1])[:5], str(self.SARL_averages[-1])[:5] 
 
     def run(self):
-        n_dones = 0
         for e in range(self.EPISODES):
             state = self.env.reset()
             state = np.expand_dims(state, axis=0)
@@ -231,7 +229,6 @@ class DQNAgent:
             ep_rewards = self.env.rewards['Start']
             ep_SARL_rewards = self.env.rewards['Start']
             while not done:
-                # self.env.render()
                 action = self.act(state)
                 next_state, reward, done, info = self.env.step(action)
                 next_state = np.expand_dims(next_state, axis=0)
@@ -242,21 +239,26 @@ class DQNAgent:
                 ep_rewards += reward
                 ep_SARL_rewards += SARL_reward
                 if done:
-                    if i < 300:
-                        n_dones += 1
                     # every step update target model
                     self.update_target_model()
                     # every episode, plot the result
                     average, SARL_average = self.PlotModel(ep_rewards, ep_SARL_rewards, i, e)
-                    print("episode: {}/{}, steps: {} | score: {:.2}, average: {} | SARL score: {:.2}, SARL average: {} | e: {:.2}, dones: {}".format(e, self.EPISODES, i, ep_rewards, average, ep_SARL_rewards, SARL_average, self.epsilon, n_dones))
+                    print("episode: {}/{}, steps: {} | score: {:.2}, average: {} | SARL score: {:.2}, SARL average: {} | e: {:.3}".format(e, self.EPISODES, i, ep_rewards, average, ep_SARL_rewards, SARL_average, self.epsilon))
                     # decay epsilon
                     self.updateEpsilon()
                     
                 self.replay()
-        self.save("data/"+self.map_dir+"/weights/SARL_ddqn_agent_"+str(self.beta)+".h5")
+
+        distribution = ''
+        if self.distribution:
+            distribution='_distribution'
+        self.save("data/"+self.map_dir+"/weights/SARL_ddqn_agent_"+str(self.beta)+distribution+".h5")
 
     def test(self, test_episodes):
-        self.load("data/"+self.map_dir+"/weights/SARL_ddqn_agent_"+str(self.beta)+".h5")
+        distribution = ''
+        if self.distribution:
+            distribution='_distribution'
+        self.load("data/"+self.map_dir+"/weights/SARL_ddqn_agent_"+str(self.beta)+distribution+".h5")
         for e in range(test_episodes):
             state = self.env.reset()
             state = np.expand_dims(state, axis=0)
@@ -273,7 +275,8 @@ class DQNAgent:
                 i += 1
                 ep_rewards += reward
                 ep_SARL_rewards += SARL_reward
-                # print(info)
+
+                print(info)
                 time.sleep(0.5)
 
                 if done:
@@ -284,5 +287,5 @@ if __name__ == "__main__":
     env_name = 'gym_packman:Packman-v0'
     map_dir = 'map 3'
     agent = DQNAgent(env_name, map_dir)
-    # agent.run()
+    agent.run()
     agent.test(5)

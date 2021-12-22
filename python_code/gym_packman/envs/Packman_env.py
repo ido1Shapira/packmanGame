@@ -62,7 +62,7 @@ class PackmanEnv(Env):
 
         # Load human model from the computer
         self.human_model = tf.keras.models.load_model('./data/'+self.map_dir+'/humanModel_v0.h5')
-        self.human_model_with_noise = False
+        self.sample_from_distribution = True
 
     def step(self, action):
         # Apply action
@@ -83,16 +83,6 @@ class PackmanEnv(Env):
 
         # when human model is ready uncomment this line
         human_action = self.predict_action(self.canvas)
-        # human_action = 0
-        # if np.random.random() < 1.0:
-        #     action = self.get_random_valid_action('computer')
-        # else:
-        #     action = 0
-
-        # assert self.valid_action(action, 'computer'), "Computer preformed invalid action: " + str(
-        #     action) + " at pos: " + str(computer_pos)
-        # assert self.valid_action(human_action, 'human'), "Human preformed invalid action: " + str(
-        #     human_action) + " at pos: " + str(computer_pos)
 
         computer_valid_action = self.valid_action(action, 'computer')
         human_valid_action = self.valid_action(human_action, 'human')
@@ -326,20 +316,24 @@ class PackmanEnv(Env):
     def predict_action(self, img):
         b, g, r = cv2.split(img) # For BGR image
         img = np.dstack((r, g, b))
-        # img_array = tf.keras.preprocessing.image.img_to_array(img)
         img_array = tf.expand_dims(img, 0)  # Create a batch
-        predictions = self.human_model.predict(img_array)
-        score = tf.nn.softmax(predictions[0])
-        
-        if self.human_model_with_noise:
-        # adding noise
-            noise = np.random.normal(0,0.04,len(score))
-            score = score + noise
+        score = self.human_model.predict(img_array)[0]
 
-        dict_scores = dict(enumerate(score.numpy()))
-        action = max(dict_scores, key=dict_scores.get)
-        while(not self.valid_action(action, 'human')):
-            del dict_scores[action]
-            action = max(dict_scores, key=dict_scores.get)
+        if self.sample_from_distribution:
+            if np.random.random() <= 0.5:
+                #fix numeric problem that softmax not always sum to 1
+                diff = 1 - sum(score)
+                score[0] = score[0] + diff
+                dict_scores = dict(enumerate(score))
+                action = random.choices(list(dict_scores.keys()), weights=list(dict_scores.values()))[0]
+                while(not self.valid_action(action, 'human')):
+                    del dict_scores[action]
+                    action = random.choices(list(dict_scores.keys()), weights=list(dict_scores.values()))[0]
+            else:
+                dict_scores = dict(enumerate(score))
+                action = max(dict_scores, key=dict_scores.get)
+                while(not self.valid_action(action, 'human')):
+                    del dict_scores[action]
+                    action = max(dict_scores, key=dict_scores.get)
 
         return action

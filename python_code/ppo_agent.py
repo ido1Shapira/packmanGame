@@ -284,7 +284,7 @@ class PPOAgent:
                     # every episode, plot the result
                     average = self.PlotModel(episode_return, t + 1, epoch)
                     print("episode: {}/{}, steps: {}, score: {}, average: {}".format(epoch, self.epochs, t + 1, episode_return, average))
-                    observation, episode_return = self.env.reset(), 0
+                    observation, episode_return = self.env.reset(), self.env.rewards['Start']
                     break
 
             # Get values from the buffer
