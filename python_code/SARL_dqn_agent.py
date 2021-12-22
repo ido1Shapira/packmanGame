@@ -38,7 +38,7 @@ def OurModel(input_shape, action_space):
     X = Dense(action_space, activation="linear")(X)
 
     model = Model(inputs = X_input, outputs = X)
-    model.compile(loss="mean_squared_error", optimizer=Adam(learning_rate=0.0001), metrics=["accuracy"])
+    model.compile(loss="mean_squared_error", optimizer=Adam(learning_rate=0.0002), metrics=["accuracy"])
 
     model.summary()
     return model
@@ -71,7 +71,7 @@ class DQNAgent:
         self.TAU = 0.1 # target network soft update hyperparameter
 
         # defining SARL parameters
-        self.beta = 0.4
+        self.beta = 0.419
 
         
 
@@ -287,5 +287,5 @@ if __name__ == "__main__":
     env_name = 'gym_packman:Packman-v0'
     map_dir = 'map 3'
     agent = DQNAgent(env_name, map_dir)
-    agent.run()
+    # agent.run()
     agent.test(5)

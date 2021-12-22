@@ -320,7 +320,7 @@ class PackmanEnv(Env):
         score = self.human_model.predict(img_array)[0]
 
         if self.sample_from_distribution:
-            if np.random.random() <= 0.5:
+            if np.random.random() <= 1.0:
                 #fix numeric problem that softmax not always sum to 1
                 diff = 1 - sum(score)
                 score[0] = score[0] + diff

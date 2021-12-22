@@ -38,7 +38,7 @@ def OurModel(input_shape, action_space):
     X = Dense(action_space, activation="linear")(X)
 
     model = Model(inputs = X_input, outputs = X)
-    model.compile(loss="mean_squared_error", optimizer=Adam(learning_rate=0.0001), metrics=["accuracy"])
+    model.compile(loss="mean_squared_error", optimizer=Adam(learning_rate=0.0002), metrics=["accuracy"])
 
     model.summary()
     return model
@@ -71,7 +71,7 @@ class DQNAgent:
         self.TAU = 0.1 # target network soft update hyperparameter
 
         # defining SARL parameters
-        self.beta = 0.3
+        self.beta = 0.419
 
         self.scores, self.steps, self.episodes, self.averages, self.averages_steps = [], [], [], [], []
         fig, (self.ax1, self.ax2) = plt.subplots(2, 1, figsize=(18, 9))
@@ -265,7 +265,7 @@ class DQNAgent:
                 ep_SARL_rewards += SARL_reward
                 
                 print(info)  
-                time.sleep(0.5)
+                # time.sleep(0.5)
                 
                 if done:
                     print("episode: {}/{}, steps: {}, score: {}, SARL score: {}".format(e, test_episodes, i, ep_rewards, ep_SARL_rewards))
@@ -275,5 +275,5 @@ if __name__ == "__main__":
     env_name = 'gym_packman:Packman-v0'
     dir_map = 'map 3'
     agent = DQNAgent(env_name, dir_map)
-    agent.run()
+    # agent.run()
     agent.test(5)
