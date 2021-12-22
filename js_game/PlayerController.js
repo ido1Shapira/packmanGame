@@ -13,8 +13,8 @@ class PlayerController{
         "ppo": false,
         "sarl ppo": false,
 
-        "ddqn with noise": false,
-        "sarl ddqn with noise": false
+        "ddqn distribution": false,
+        "sarl ddqn distribution": false
     }
 
     toIndex = {
@@ -61,12 +61,13 @@ class PlayerController{
             type = ppos[Math.floor(ppos.length * Math.random())];
         }
         if(type == -5) {
-            var noises = Object.keys(this.TYPES).slice(9,11);
-            type = noises[Math.floor(noises.length * Math.random())];
+            var distribution = Object.keys(this.TYPES).slice(9,11);
+            type = distribution[Math.floor(distribution.length * Math.random())];
         }
 
         this.TYPES[type] = true;
         this.type = type;
+        console.log(this.type)
         this.player_controlled = player;
 
         this.loadAgent();
@@ -90,7 +91,7 @@ class PlayerController{
             //     return this.mix(state);
             case "ddqn": case "sarl ddqn":
             case "ppo": case "sarl ppo":
-            case "ddqn with noise": case "sarl ddqn with noise":
+            case "ddqn distribution": case "sarl ddqn distribution":
                 return this.predict(state);
             default:
                 throw "move(state): not a valid baseline"
@@ -285,19 +286,21 @@ class PlayerController{
                 path += 'ddqn_agent';
                 break;
             case "sarl ddqn":
-                path += 'SARL_ddqn_agent_0.24';
+                path += 'SARL_ddqn_agent_0.4';
                 break;
             
-            case "ddqn with noise":
-                path += 'ddqn_agent_with_noise';
+            case "ddqn distribution":
+                path += 'ddqn_agent_distribution';
                 break;
-            case "sarl ddqn with noise":
-                path += 'SARL_ddqn_agent_0.24_with_noise';
+
+            case "sarl ddqn distribution":
+                path += 'SARL_ddqn_agent_0.4_distribution';
                 break;
 
             case "ppo":
-                path += "ppo_actor_agent";
-                break;
+                // path += "ppo_actor_agent";
+                // break;
+                throw "file not found! at sarl ppo";
             case "sarl ppo":
                 throw "file not found! at sarl ppo";
             
