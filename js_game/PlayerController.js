@@ -294,7 +294,7 @@ class PlayerController{
                 break;
 
             case "sarl ddqn distribution":
-                path += 'SARL_ddqn_agent_0.4_distribution';
+                path += 'SARL_ddqn_agent_0.419_distribution';
                 break;
 
             case "ppo":
