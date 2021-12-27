@@ -4,7 +4,7 @@
 Title: Proximal Policy Optimization
 """
 import os
-os.environ['CUDA_VISIBLE_DEVICES'] = '-1'
+# os.environ['CUDA_VISIBLE_DEVICES'] = '-1'
 
 import numpy as np
 from numpy.lib.function_base import average
