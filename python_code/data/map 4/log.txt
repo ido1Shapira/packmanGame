@@ -30,3 +30,5 @@ var gameMap = [
 	0, 1, 1, 1, 1, 1, 0, 1, 1, 0,
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 ];
+
+run again only for the selfish baseline
