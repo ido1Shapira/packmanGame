@@ -71,7 +71,7 @@ class DQNAgent:
         self.TAU = 0.1 # target network soft update hyperparameter
 
         # defining SARL parameters
-        self.beta = 0.419
+        self.beta = 0.65
 
         self.scores, self.steps, self.episodes, self.averages, self.averages_steps = [], [], [], [], []
         fig, (self.ax1, self.ax2) = plt.subplots(2, 1, figsize=(18, 9))
@@ -264,7 +264,7 @@ class DQNAgent:
                 ep_rewards += reward
                 ep_SARL_rewards += SARL_reward
                 
-                print(info)  
+                # print(info)  
                 # time.sleep(0.5)
                 
                 if done:
@@ -273,7 +273,7 @@ class DQNAgent:
 
 if __name__ == "__main__":
     env_name = 'gym_packman:Packman-v0'
-    dir_map = 'map 3'
+    dir_map = 'map 4'
     agent = DQNAgent(env_name, dir_map)
     # agent.run()
     agent.test(5)
