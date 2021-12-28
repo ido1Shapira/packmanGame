@@ -71,7 +71,7 @@ class DQNAgent:
         self.TAU = 0.1 # target network soft update hyperparameter
 
         # defining SARL parameters
-        self.beta = 0.65
+        self.beta = 0.645
 
         
 
@@ -287,5 +287,5 @@ if __name__ == "__main__":
     env_name = 'gym_packman:Packman-v0'
     map_dir = 'map 4'
     agent = DQNAgent(env_name, map_dir)
-    # agent.run()
+    agent.run()
     agent.test(5)
