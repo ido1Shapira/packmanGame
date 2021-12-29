@@ -276,5 +276,5 @@ if __name__ == "__main__":
     dir_map = 'map 4'
     beta = 0.869
     agent = DQNAgent(env_name, dir_map, beta)
-    agent.run()
+    # agent.run()
     agent.test(5)
