@@ -44,7 +44,7 @@ def OurModel(input_shape, action_space):
     return model
 
 class DQNAgent:
-    def __init__(self, env_name, map):
+    def __init__(self, env_name, map, beta):
         self.map_dir = map
 
         self.env_name = env_name       
@@ -71,7 +71,7 @@ class DQNAgent:
         self.TAU = 0.1 # target network soft update hyperparameter
 
         # defining SARL parameters
-        self.beta = 0.645
+        self.beta = beta
 
         self.scores, self.steps, self.episodes, self.averages, self.averages_steps = [], [], [], [], []
         fig, (self.ax1, self.ax2) = plt.subplots(2, 1, figsize=(18, 9))
@@ -274,6 +274,7 @@ class DQNAgent:
 if __name__ == "__main__":
     env_name = 'gym_packman:Packman-v0'
     dir_map = 'map 4'
-    agent = DQNAgent(env_name, dir_map)
+    beta = 0.869
+    agent = DQNAgent(env_name, dir_map, beta)
     agent.run()
     agent.test(5)

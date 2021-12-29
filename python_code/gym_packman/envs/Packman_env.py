@@ -28,7 +28,7 @@ class PackmanEnv(Env):
         2: -0.05, #up
         3: -0.05, #right
         4: -0.05, #down
-        'CollectDirt': 0,  # (-2 + 2 = 0)
+        'CollectDirt': 0.05,  # (-2 + 2 = 0)
         'EndGame': 1.0,
         'invalidAction': -0.05
     }
