@@ -32,3 +32,6 @@ var gameMap = [
 ];
 
 run again only for the selfish baseline
+
+ddqn and SARL converge to the selfish agent baseline.
+Therefore there is no need to run ddqn and SARL on mturk.
