@@ -7,11 +7,11 @@ var canvas = null;
 var gameMap = [
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 	0, 1, 1, 1, 1, 0, 1, 1, 1, 0,
-	0, 1, 0, 0, 1, 1, 1, 1, 0, 0,
-	0, 0, 0, 1, 1, 1, 0, 1, 1, 0,
-	0, 1, 1, 1, 0, 0, 0, 0, 1, 0,
-	0, 1, 1, 1, 0, 1, 1, 0, 1, 0,
-	0, 0, 0, 1, 1, 1, 1, 1, 1, 0,
+	0, 1, 0, 1, 1, 0, 1, 0, 0, 0,
+	0, 1, 0, 0, 1, 1, 1, 0, 1, 0,
+	0, 1, 1, 1, 1, 0, 0, 0, 1, 0,
+	0, 1, 0, 1, 0, 0, 1, 0, 1, 0,
+	0, 1, 0, 1, 1, 1, 1, 1, 1, 0,
 	0, 1, 0, 1, 1, 0, 0, 0, 1, 0,
 	0, 1, 1, 1, 1, 1, 0, 1, 1, 0,
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0
@@ -31,7 +31,7 @@ var currentSecond = 0, frameCount = 0, framesLastSecond = 0, lastFrameTime = 0;
 var human_player = new Character([1,5], [1,5], 0, [30,30], [20, 20], [60,260], 500);
 
 initializeFirebase();
-var computer_player = new Character([4,7], [4,7], 0, [30,30], [20, 20], [210,360], 500);
+var computer_player = new Character([4,6], [4,6], 0, [30,30], [20, 20], [210,310], 500);
 var computer_controller;
 firebase.database().ref("chosen-controller").once('value',
     (snap) => {
@@ -80,7 +80,7 @@ function randomValidTiles(n) {
 var awards = [];
 // It is not random anymore
 // var validTiles = randomValidTiles(numOfAwards);
-var validTiles = [[8, 5], [3, 5], [8, 1], [8, 8], [6, 5]]
+var validTiles = [[3, 4], [3, 2], [8, 1], [7, 8], [8, 6]]
 for(var i=0; i<numOfAwards; i++) {
 	awards.push(new Award(validTiles[i], [15,15], position(validTiles[i], [15, 15]), 0.05, 5));
 }
