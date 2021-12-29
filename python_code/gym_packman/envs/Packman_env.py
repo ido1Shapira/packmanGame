@@ -28,7 +28,7 @@ class PackmanEnv(Env):
         2: -0.05, #up
         3: -0.05, #right
         4: -0.05, #down
-        'CollectDirt': 0.05,  # (-2 + 2 = 0)
+        'CollectDirt': 0,  # (-2 + 2 = 0)
         'EndGame': 1.0,
         'invalidAction': -0.05
     }
@@ -44,7 +44,7 @@ class PackmanEnv(Env):
 
     def __init__(self):
         super(PackmanEnv, self).__init__()
-        self.map_dir = 'map 4'
+        self.map_dir = 'map 5'
         
         # Actions we can take, left, down, stay, up, right
         self.action_space = Discrete(5)
@@ -210,37 +210,56 @@ class PackmanEnv(Env):
 
     def init_state(self):
         # init board state with random n=5 dirt position
-        # board = np.array([
-        #     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        #     [0, 1, 1, 1, 1, 0, 1, 1, 1, 0],
-        #     [0, 0, 1, 1, 0, 0, 0, 0, 1, 0],
-        #     [0, 1, 1, 1, 0, 1, 1, 1, 1, 0],
-        #     [0, 1, 0, 1, 1, 1, 0, 1, 1, 0],
-        #     [0, 1, 0, 1, 0, 1, 0, 0, 1, 0],
-        #     [0, 1, 1, 1, 1, 1, 1, 1, 1, 0],
-        #     [0, 1, 0, 0, 0, 0, 1, 1, 0, 0],
-        #     [0, 1, 1, 1, 0, 1, 1, 1, 1, 0],
-        #     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-        # ])
-        board = np.array([
+        initial_board = np.array([
             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
             [0, 1, 1, 1, 1, 0, 1, 1, 1, 0],
-            [0, 1, 0, 0, 1, 1, 1, 1, 0, 0],
-            [0, 0, 0, 1, 1, 1, 0, 1, 1, 0],
-            [0, 1, 1, 1, 0, 0, 0, 0, 1, 0],
-            [0, 1, 1, 1, 0, 1, 1, 0, 1, 0],
-            [0, 0, 0, 1, 1, 1, 1, 1, 1, 0],
-            [0, 1, 0, 1, 1, 0, 0, 0, 1, 0],
-            [0, 1, 1, 1, 1, 1, 0, 1, 1, 0],
+            [0, 0, 1, 1, 0, 0, 0, 0, 1, 0],
+            [0, 1, 1, 1, 0, 1, 1, 1, 1, 0],
+            [0, 1, 0, 1, 1, 1, 0, 1, 1, 0],
+            [0, 1, 0, 1, 0, 1, 0, 0, 1, 0],
+            [0, 1, 1, 1, 1, 1, 1, 1, 1, 0],
+            [0, 1, 0, 0, 0, 0, 1, 1, 0, 0],
+            [0, 1, 1, 1, 0, 1, 1, 1, 1, 0],
             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         ])
+        boards = {
+            'map 0': initial_board,
+            'map 1': initial_board,
+            'map 2': initial_board,
+            'map 3': initial_board,
+            'map 4': np.array([
+                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 1, 1, 1, 1, 0, 1, 1, 1, 0],
+                [0, 1, 0, 0, 1, 1, 1, 1, 0, 0],
+                [0, 0, 0, 1, 1, 1, 0, 1, 1, 0],
+                [0, 1, 1, 1, 0, 0, 0, 0, 1, 0],
+                [0, 1, 1, 1, 0, 1, 1, 0, 1, 0],
+                [0, 0, 0, 1, 1, 1, 1, 1, 1, 0],
+                [0, 1, 0, 1, 1, 0, 0, 0, 1, 0],
+                [0, 1, 1, 1, 1, 1, 0, 1, 1, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+            ]),
+            'map 5': np.array([
+                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 1, 1, 1, 1, 0, 1, 1, 1, 0],
+                [0, 1, 0, 1, 1, 0, 1, 0, 0, 0],
+                [0, 1, 0, 0, 1, 1, 1, 0, 1, 0],
+                [0, 1, 1, 1, 1, 0, 0, 0, 1, 0],
+                [0, 1, 0, 1, 0, 0, 1, 0, 1, 0],
+                [0, 1, 0, 1, 1, 1, 1, 1, 1, 0],
+                [0, 1, 0, 1, 1, 0, 0, 0, 1, 0],
+                [0, 1, 1, 1, 1, 1, 0, 1, 1, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+            ]),
+        }
 
         dirts_init_pos = {
-            'map 0': np.random.choice(np.count_nonzero(board)-1, 5), #random
+            'map 0': np.random.choice(np.count_nonzero(boards[self.map_dir])-1, 5), #random
             'map 1': [ 10, 23, 30, 35, 41],
             'map 2': [ 10, 25, 31, 35, 40],
             'map 3': [ 10, 26, 32, 38, 41],
-            'map 4': [ 6, 22, 24, 25, 41]
+            'map 4': [ 6, 22, 24, 25, 41],
+            'map 5': [ 6, 8, 18, 29, 40]
         }
 
         human_init_pos = {
@@ -248,7 +267,8 @@ class PackmanEnv(Env):
             'map 1': {'x': 3 , 'y': 5},
             'map 2': {'x': 3 , 'y': 4},
             'map 3': {'x': 3 , 'y': 4},
-            'map 4': {'x': 1 , 'y': 5}
+            'map 4': {'x': 1 , 'y': 5},
+            'map 5': {'x': 1 , 'y': 5}
         }
 
         computer_init_pos = {
@@ -256,28 +276,29 @@ class PackmanEnv(Env):
             'map 1': {'x': 4 , 'y': 6},
             'map 2': {'x': 4 , 'y': 6},
             'map 3': {'x': 4 , 'y': 6},
-            'map 4': {'x': 4 , 'y': 7}
+            'map 4': {'x': 4 , 'y': 7},
+            'map 5': {'x': 4 , 'y': 6}
         }
         
-        human_trace = np.zeros(board.shape)
+        human_trace = np.zeros(boards[self.map_dir].shape)
         human_trace[human_init_pos[self.map_dir]['y']][human_init_pos[self.map_dir]['x']] = 1  # locate human player
-        board[human_init_pos[self.map_dir]['y']][human_init_pos[self.map_dir]['x']] = 0  # locate human player
+        boards[self.map_dir][human_init_pos[self.map_dir]['y']][human_init_pos[self.map_dir]['x']] = 0  # locate human player
 
-        computer_trace = np.zeros(board.shape)
+        computer_trace = np.zeros(boards[self.map_dir].shape)
         computer_trace[computer_init_pos[self.map_dir]['y']][computer_init_pos[self.map_dir]['x']] = 1  # locate computer player
-        board[computer_init_pos[self.map_dir]['y']][computer_init_pos[self.map_dir]['x']] = 0  # locate computer player
+        boards[self.map_dir][computer_init_pos[self.map_dir]['y']][computer_init_pos[self.map_dir]['x']] = 0  # locate computer player
 
-        human_awards = np.zeros(board.shape)
-        computer_awards = np.zeros(board.shape)
+        human_awards = np.zeros(boards[self.map_dir].shape)
+        computer_awards = np.zeros(boards[self.map_dir].shape)
 
-        all_awards = np.zeros(board.shape)
+        all_awards = np.zeros(boards[self.map_dir].shape)
         idx = dirts_init_pos[self.map_dir]
-        all_awards[tuple(map(lambda x: x[idx], np.where(board)))] = 1
+        all_awards[tuple(map(lambda x: x[idx], np.where(boards[self.map_dir])))] = 1
 
-        board[human_init_pos[self.map_dir]['y']][human_init_pos[self.map_dir]['x']] = 1  # locate human player
-        board[computer_init_pos[self.map_dir]['y']][computer_init_pos[self.map_dir]['x']] = 1  # locate computer player
+        boards[self.map_dir][human_init_pos[self.map_dir]['y']][human_init_pos[self.map_dir]['x']] = 1  # locate human player
+        boards[self.map_dir][computer_init_pos[self.map_dir]['y']][computer_init_pos[self.map_dir]['x']] = 1  # locate computer player
 
-        return np.concatenate([np.expand_dims(board, axis=2), np.expand_dims(human_trace, axis=2),
+        return np.concatenate([np.expand_dims(boards[self.map_dir], axis=2), np.expand_dims(human_trace, axis=2),
          np.expand_dims(computer_trace, axis=2), np.expand_dims(human_awards, axis=2),
          np.expand_dims(computer_awards, axis=2), np.expand_dims(all_awards, axis=2)], axis=2)
         

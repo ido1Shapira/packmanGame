@@ -1,0 +1,30 @@
+permanent dirt positions: [[3, 4], [3, 2], [8, 1], [7, 8], [8, 6]] (note that the board was change)
+human player position: [1][5]
+computer player position: [4][6]
+
+the reward function is change to:
+rewards = {
+        'Start': 0.5,
+        0: -0.01, #stay
+        1: -0.05, #left
+        2: -0.05, #up
+        3: -0.05, #right
+        4: -0.05, #down
+        'CollectDirt': 0,  # (-2 + 2 = 0)
+        'EndGame': 1.0,
+        'invalidAction': -0.05
+    }
+    
+the board was change to:
+var gameMap = [
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 1, 1, 1, 1, 0, 1, 1, 1, 0,
+	0, 1, 0, 1, 1, 0, 1, 0, 0, 0,
+	0, 1, 0, 0, 1, 1, 1, 0, 1, 0,
+	0, 1, 1, 1, 1, 0, 0, 0, 1, 0,
+	0, 1, 0, 1, 0, 0, 1, 0, 1, 0,
+	0, 1, 0, 1, 1, 1, 1, 1, 1, 0,
+	0, 1, 0, 1, 1, 0, 0, 0, 1, 0,
+	0, 1, 1, 1, 1, 1, 0, 1, 1, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+];
