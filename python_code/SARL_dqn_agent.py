@@ -80,9 +80,9 @@ class DQNAgent:
         self.ax2.set_ylabel('SARL Score', fontsize=15)
         self.ax3.set_ylabel('Step', fontsize=15)
         self.ax3.set_xlabel('Episode', fontsize=15)
-        self.ax1.set_ylim([-2, 1.5])
-        self.ax2.set_ylim([-2, 1.5])
-        self.ax3.set_ylim([0, 100])
+        self.ax1.set_ylim([-4, 1.5])
+        self.ax2.set_ylim([-4, 1.5])
+        self.ax3.set_ylim([0, 150])
         
         # create main model
         self.model = OurModel(input_shape=self.state_size, action_space = self.action_size)
@@ -274,8 +274,8 @@ class DQNAgent:
                 ep_rewards += reward
                 ep_SARL_rewards += SARL_reward
 
-                # print(info)
-                # time.sleep(0.5)
+                print(info)
+                time.sleep(0.5)
 
                 if done:
                     print("episode: {}/{}, steps: {}, score: {}, SARL score: {}".format(e, test_episodes, i, ep_rewards, ep_SARL_rewards))
@@ -284,7 +284,7 @@ class DQNAgent:
 if __name__ == "__main__":
     env_name = 'gym_packman:Packman-v0'
     map_dir = 'map 5'
-    beta = 0.869
+    beta = 0.74
     agent = DQNAgent(env_name, map_dir, beta)
-    # agent.run()
+    agent.run()
     agent.test(5)

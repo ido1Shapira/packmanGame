@@ -4,7 +4,7 @@
 Title: Proximal Policy Optimization
 """
 import os
-# os.environ['CUDA_VISIBLE_DEVICES'] = '-1'
+os.environ['CUDA_VISIBLE_DEVICES'] = '-1'
 
 import numpy as np
 from numpy.lib.function_base import average
@@ -93,7 +93,7 @@ class PPOAgent:
 
         # Hyperparameters of the PPO algorithm
         self.steps_per_epoch = 300
-        self.epochs = 1500
+        self.epochs = 1100
         self.gamma = 0.999
         self.clip_ratio = 0.1
         self.policy_learning_rate = 1e-4
@@ -336,7 +336,7 @@ class PPOAgent:
 
 if __name__ == "__main__":
     env_name = 'gym_packman:Packman-v0'
-    dir_map = 'map 3'
+    dir_map = 'map 5'
     agent = PPOAgent(env_name, dir_map)
     agent.run()
     agent.test(5)
