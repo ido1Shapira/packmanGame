@@ -274,7 +274,7 @@ class DQNAgent:
 if __name__ == "__main__":
     env_name = 'gym_packman:Packman-v0'
     dir_map = 'map 5'
-    beta = 0.74
+    beta = 0.615
     agent = DQNAgent(env_name, dir_map, beta)
-    agent.run()
+    # agent.run()
     agent.test(5)
