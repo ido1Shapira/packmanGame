@@ -386,8 +386,6 @@ class PlayerController{
             4: score[4], //down
         }
         var action = this.argmax(dict_scores);
-        console.log(score);
-        console.log(action);
         while(! this.validAction(this.toAction[action], state[0])) {
             delete dict_scores[action];
             action = this.argmax(dict_scores);
