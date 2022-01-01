@@ -80,7 +80,7 @@ function randomValidTiles(n) {
 var awards = [];
 // It is not random anymore
 // var validTiles = randomValidTiles(numOfAwards);
-var validTiles = [[3, 4], [3, 2], [8, 1], [7, 8], [8, 6]]
+var validTiles = [[3, 4], [3, 2], [8, 1], [8, 8], [8, 6]]
 for(var i=0; i<numOfAwards; i++) {
 	awards.push(new Award(validTiles[i], [15,15], position(validTiles[i], [15, 15]), 0.05, 5));
 }

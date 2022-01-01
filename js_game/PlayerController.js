@@ -294,7 +294,7 @@ class PlayerController{
                 break;
 
             case "sarl ddqn distribution":
-                path += 'SARL_ddqn_agent_0.419_distribution';
+                path += 'SARL_ddqn_agent_0.615_distribution';
                 break;
 
             case "ppo":
@@ -386,6 +386,8 @@ class PlayerController{
             4: score[4], //down
         }
         var action = this.argmax(dict_scores);
+        console.log(score);
+        console.log(action);
         while(! this.validAction(this.toAction[action], state[0])) {
             delete dict_scores[action];
             action = this.argmax(dict_scores);
