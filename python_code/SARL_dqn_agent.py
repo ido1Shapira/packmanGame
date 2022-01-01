@@ -4,7 +4,7 @@
 
 random_seed = 0
 import os
-# os.environ['CUDA_VISIBLE_DEVICES'] = '-1'
+os.environ['CUDA_VISIBLE_DEVICES'] = '-1'
 
 import random
 import gym
