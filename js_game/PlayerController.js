@@ -64,6 +64,10 @@ class PlayerController{
             var distribution = Object.keys(this.TYPES).slice(9,11);
             type = distribution[Math.floor(distribution.length * Math.random())];
         }
+        if(type == -6) {
+            var special = ['closest', 'random', 'farthest'];
+            type = special[Math.floor(special.length * Math.random())];
+        }
 
         this.TYPES[type] = true;
         this.type = type;
