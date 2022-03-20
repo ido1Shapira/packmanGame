@@ -61,7 +61,14 @@ class PackmanEnv(Env):
         self.state = None
 
         # Load human model from the computer
-        self.human_model = tf.keras.models.load_model('./data/'+self.map_dir+'/humanModel_v0.h5')
+
+        from tensorflow.keras import backend as K
+        def rmse(y_true, y_pred):
+            return K.sqrt(K.mean(K.square(y_pred - y_true)))
+        
+        # self.human_model = tf.keras.models.load_model('./data/'+self.map_dir+'/humanModel_v1.h5')
+        self.human_model = tf.keras.models.load_model('./data/'+self.map_dir+'/humanModel_v1.h5', custom_objects={'rmse': rmse})
+
         self.sample_from_distribution = True
 
     def step(self, action):
@@ -353,15 +360,23 @@ class PackmanEnv(Env):
         b, g, r = cv2.split(img) # For BGR image
         img = np.dstack((r, g, b))
         img_array = tf.expand_dims(img, 0)  # Create a batch
-        score = self.human_model.predict(img_array)[0]
-
+        predictions = self.human_model.predict(img_array)
+        score = predictions[0]
+        # line 358
+        score = score[0]
+        print('score: ', score)
+        print('rate: ', predictions[1][0])
+        
         if self.sample_from_distribution:
             if np.random.random() <= 1.0:
                 #fix numeric problem that softmax not always sum to 1
                 diff = 1 - sum(score)
                 score[0] = score[0] + diff
                 dict_scores = dict(enumerate(score))
+                # print('score1: ', score)
+                print('dict_scores: ', dict_scores)
                 action = random.choices(list(dict_scores.keys()), weights=list(dict_scores.values()))[0]
+                print('human action: ', action)
                 while(not self.valid_action(action, 'human')):
                     del dict_scores[action]
                     action = random.choices(list(dict_scores.keys()), weights=list(dict_scores.values()))[0]

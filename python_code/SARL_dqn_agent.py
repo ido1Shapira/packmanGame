@@ -3,8 +3,8 @@
 # https://pylessons.com/CartPole-DDQN/
 
 random_seed = 0
-import os
-os.environ['CUDA_VISIBLE_DEVICES'] = '-1'
+# import os
+# os.environ['CUDA_VISIBLE_DEVICES'] = '-1'
 
 import random
 import gym
