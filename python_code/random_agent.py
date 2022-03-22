@@ -18,6 +18,7 @@ for ep in range(1,total_episodes+1):
     while True:
         env.render()
         action = env.get_random_valid_action('computer')
+        action = 0
         # Recieve state and reward from environment.
         _, reward, done, _ = env.step(action)
         episodic_reward += reward
