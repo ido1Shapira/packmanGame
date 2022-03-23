@@ -280,5 +280,5 @@ if __name__ == "__main__":
 
     beta = 0.615
     agent = DQNAgent(env_name, dir_map, beta, humanModel_version)
-    agent.run()
+    # agent.run()
     agent.test(5)
