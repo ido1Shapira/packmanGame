@@ -44,7 +44,7 @@ def OurModel(input_shape, action_space):
     return model
 
 class DQNAgent:
-    def __init__(self, env_name, map, beta):
+    def __init__(self, env_name, map, beta, version):
         self.map_dir = map
 
         self.env_name = env_name       
@@ -72,6 +72,8 @@ class DQNAgent:
 
         # defining SARL parameters
         self.beta = beta
+
+        self.humanModel_version = version
 
         self.scores, self.steps, self.episodes, self.averages, self.averages_steps = [], [], [], [], []
         self.SARL_scores, self.SARL_averages = [], []
@@ -212,7 +214,7 @@ class DQNAgent:
         if self.distribution:
             distribution='_distribution'
         try:
-            plt.savefig("data/"+self.map_dir+"/images/SARL_"+dqn+softupdate+distribution+".png", dpi = 150)
+            plt.savefig("data/"+self.map_dir+"/images/SARL_"+dqn+softupdate+distribution+'_'+self.humanModel_version+".png", dpi = 150)
         except OSError:
             pass
 
@@ -250,7 +252,7 @@ class DQNAgent:
         distribution = ''
         if self.distribution:
             distribution='_distribution'
-        self.save("data/"+self.map_dir+"/weights/SARL_ddqn_agent_"+str(self.beta)+distribution+".h5")
+        self.save("data/"+self.map_dir+"/weights/SARL_ddqn_agent_"+str(self.beta)+distribution+'_'+self.humanModel_version+".h5")
 
     def test(self, test_episodes):
         distribution = ''
@@ -274,8 +276,8 @@ class DQNAgent:
                 ep_rewards += reward
                 ep_SARL_rewards += SARL_reward
 
-                # print(info)
-                # time.sleep(0.5)
+                print(info)
+                time.sleep(0.5)
 
                 if done:
                     print("episode: {}/{}, steps: {}, score: {}, SARL score: {}".format(e, test_episodes, i, ep_rewards, ep_SARL_rewards))
@@ -283,8 +285,10 @@ class DQNAgent:
 
 if __name__ == "__main__":
     env_name = 'gym_packman:Packman-v0'
-    map_dir = 'map 5'
+    dir_map = 'map 5'
+    humanModel_version = 'v2'
+
     beta = 0.615
-    agent = DQNAgent(env_name, map_dir, beta)
+    agent = DQNAgent(env_name, dir_map, beta, humanModel_version)
     # agent.run()
     agent.test(5)

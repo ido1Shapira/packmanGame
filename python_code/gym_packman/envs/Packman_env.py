@@ -61,7 +61,7 @@ class PackmanEnv(Env):
         self.state = None
 
         # Load human model from the computer
-        self.human_model = tf.keras.models.load_model('./data/'+self.map_dir+'/humanModel_v1.h5')
+        self.human_model = tf.keras.models.load_model('./data/'+self.map_dir+'/humanModel_v2.h5')
         self.sample_from_distribution = True
 
     def step(self, action):

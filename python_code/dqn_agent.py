@@ -109,7 +109,6 @@ class DQNAgent:
     def act(self, state):
         if np.random.random() <= self.epsilon:
             return random.randrange(self.action_size)
-            # return self.env.get_random_valid_action('computer')
         else:
             return np.argmax(self.model.predict(state))
 
@@ -266,8 +265,8 @@ class DQNAgent:
                 ep_rewards += reward
                 ep_SARL_rewards += SARL_reward
                 
-                # print(info)  
-                # time.sleep(0.5)
+                print(info)  
+                time.sleep(0.5)
                 
                 if done:
                     print("episode: {}/{}, steps: {}, score: {}, SARL score: {}".format(e, test_episodes, i, ep_rewards, ep_SARL_rewards))
@@ -276,9 +275,9 @@ class DQNAgent:
 if __name__ == "__main__":
     env_name = 'gym_packman:Packman-v0'
     dir_map = 'map 5'
-    humanModel_version = 'v1'
+    humanModel_version = 'v2'
 
     beta = 0.615
     agent = DQNAgent(env_name, dir_map, beta, humanModel_version)
-    # agent.run()
+    agent.run()
     agent.test(5)
