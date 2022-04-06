@@ -44,7 +44,7 @@ class PackmanEnv(Env):
 
     def __init__(self):
         super(PackmanEnv, self).__init__()
-        self.map_dir = 'map 3'
+        self.map_dir = 'map 5'
         
         # Actions we can take, left, down, stay, up, right
         self.action_space = Discrete(5)

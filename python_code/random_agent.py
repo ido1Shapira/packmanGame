@@ -10,7 +10,7 @@ import gym
 env_name = 'gym_packman:Packman-v0'
 env = gym.make(env_name)
 
-total_episodes = 10
+total_episodes = 5
 
 for ep in range(1,total_episodes+1):
     env.reset() 
