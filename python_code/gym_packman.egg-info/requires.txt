@@ -1,5 +1,5 @@
 gym
-tensorflow>=2.6
+tensorflow==2.6
 matplotlib
 IPython
 opencv-python

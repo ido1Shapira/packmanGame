@@ -1,6 +1,9 @@
 setup.py
+gym_packman/__init__.py
 gym_packman.egg-info/PKG-INFO
 gym_packman.egg-info/SOURCES.txt
 gym_packman.egg-info/dependency_links.txt
 gym_packman.egg-info/requires.txt
 gym_packman.egg-info/top_level.txt
+gym_packman/envs/Packman_env.py
+gym_packman/envs/__init__.py
