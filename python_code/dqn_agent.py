@@ -87,6 +87,8 @@ class DQNAgent:
         self.model = OurModel(input_shape=self.state_size, action_space = self.action_size)
         self.target_model = OurModel(input_shape=self.state_size, action_space = self.action_size)
 
+        self.env.set_agent_model(self.model)
+
     # after some time interval update the target model to be same with model
     def update_target_model(self):
         if not self.Soft_Update and self.ddqn:
@@ -157,7 +159,6 @@ class DQNAgent:
 
         # Train the Neural Network with batches
         self.model.fit(state, target,  epochs=2, batch_size=self.batch_size, verbose=0)
-
 
     def load(self, name):
         self.model = load_model(name)
@@ -275,7 +276,7 @@ class DQNAgent:
 if __name__ == "__main__":
     env_name = 'gym_packman:Packman-v0'
     dir_map = 'map 5'
-    humanModel_version = 'v2'
+    humanModel_version = 'v3'
 
     beta = 0.615
     agent = DQNAgent(env_name, dir_map, beta, humanModel_version)

@@ -61,8 +61,17 @@ class PackmanEnv(Env):
         self.state = None
 
         # Load human model from the computer
-        self.human_model = tf.keras.models.load_model('./data/'+self.map_dir+'/humanModel_v2.h5')
+        self.num_of_models = 2
+        self.human_models = []
+        for i in range(self.num_of_models):
+            self.human_models.append(tf.keras.models.load_model('./data/'+self.map_dir+'/humanModel_'+str(i)+'_v0.h5'))
+        
         self.sample_from_distribution = True
+
+        self.agent_model = None
+
+    def set_agent_model(self, model):
+        self.agent_model = model
 
     def step(self, action):
         # Apply action
@@ -353,31 +362,40 @@ class PackmanEnv(Env):
         b, g, r = cv2.split(img) # For BGR image
         img = np.dstack((r, g, b))
         img_array = tf.expand_dims(img, 0)  # Create a batch
-        predictions = self.human_model.predict(img_array)
-        score = predictions[0]
-        # line 358
-        score = score[0]
-        # print('score: ', score)
-        # print('rate: ', predictions[1][0])
         
-        if self.sample_from_distribution:
-            if np.random.random() <= 1.0:
-                #fix numeric problem that softmax not always sum to 1
-                diff = 1 - sum(score)
-                score[0] = score[0] + diff
-                dict_scores = dict(enumerate(score))
-                # print('score1: ', score)
-                # print('dict_scores: ', dict_scores)
-                action = random.choices(list(dict_scores.keys()), weights=list(dict_scores.values()))[0]
-                # print('human action: ', action)
-                while(not self.valid_action(action, 'human')):
-                    del dict_scores[action]
+        actions = []
+        for human_model in self.human_models:
+            predictions = human_model.predict(img_array)
+            score = predictions[0]
+            # score = score[0]
+            
+            if self.sample_from_distribution:
+                if np.random.random() <= 1.0:
+                    #fix numeric problem that softmax not always sum to 1
+                    diff = 1 - sum(score)
+                    score[0] = score[0] + diff
+                    dict_scores = dict(enumerate(score))
                     action = random.choices(list(dict_scores.keys()), weights=list(dict_scores.values()))[0]
-            else:
-                dict_scores = dict(enumerate(score))
-                action = max(dict_scores, key=dict_scores.get)
-                while(not self.valid_action(action, 'human')):
-                    del dict_scores[action]
+                    while(not self.valid_action(action, 'human')):
+                        del dict_scores[action]
+                        action = random.choices(list(dict_scores.keys()), weights=list(dict_scores.values()))[0]
+                else:
+                    dict_scores = dict(enumerate(score))
                     action = max(dict_scores, key=dict_scores.get)
+                    while(not self.valid_action(action, 'human')):
+                        del dict_scores[action]
+                        action = max(dict_scores, key=dict_scores.get)
 
-        return action
+            actions.append(action)
+
+        # print("actions: ", actions)
+
+        Q = self.agent_model.predict(img_array)[0]
+        choose_Q = np.zeros_like(Q)
+        for i in range(len(choose_Q)):
+            choose_Q[i] = Q[i] if i in actions else np.inf
+
+        # print("choose_Q: ", choose_Q)
+        # print("action: ", np.argmin(choose_Q))
+
+        return np.argmin(choose_Q)
