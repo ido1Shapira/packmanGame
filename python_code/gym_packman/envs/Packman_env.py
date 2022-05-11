@@ -61,10 +61,11 @@ class PackmanEnv(Env):
         self.state = None
 
         # Load human model from the computer
-        self.num_of_models = 2
-        self.human_models = []
-        for i in range(self.num_of_models):
-            self.human_models.append(tf.keras.models.load_model('./data/'+self.map_dir+'/humanModel_'+str(i)+'_v0.h5'))
+        self.human_model = tf.keras.models.load_model('./data/'+self.map_dir+'/humanModel_v0_dropout.h5')
+        # self.num_of_models = 2
+        # self.human_models = []
+        # for i in range(self.num_of_models):
+            # self.human_models.append(tf.keras.models.load_model('./data/'+self.map_dir+'/humanModel_'+str(i)+'_v0.h5'))
         
         self.sample_from_distribution = True
 
@@ -364,8 +365,9 @@ class PackmanEnv(Env):
         img_array = tf.expand_dims(img, 0)  # Create a batch
         
         actions = []
-        for human_model in self.human_models:
-            predictions = human_model.predict(img_array)
+        # for human_model in self.human_models:
+        for _ in range(2):
+            predictions = self.human_model.predict(img_array)
             score = predictions[0]
             # score = score[0]
             
