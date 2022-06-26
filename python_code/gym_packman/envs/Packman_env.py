@@ -30,7 +30,7 @@ class PackmanEnv(Env):
         4: -0.05, #down
         'CollectDirt': 0,  # (-2 + 2 = 0)
         'EndGame': 1.0,
-        'invalidAction': -0.05
+        'invalidAction': 0.0
     }
 
     toIndex = {
@@ -61,10 +61,12 @@ class PackmanEnv(Env):
         self.state = None
 
         # Load human model from the computer
-        self.num_of_models = 2
-        self.human_models = []
-        for i in range(self.num_of_models):
-            self.human_models.append(tf.keras.models.load_model('./data/'+self.map_dir+'/humanModel_'+str(i)+'_v1.h5'))
+        # self.num_of_models = 2
+        # self.human_models = []
+        # for i in range(self.num_of_models):
+        #     self.human_models.append(tf.keras.models.load_model('./data/'+self.map_dir+'/humanModel_'+str(i)+'_v1.h5'))
+
+        self.human_model = tf.keras.models.load_model('./data/'+self.map_dir+'/humanModel_v0.h5')
         
         self.sample_from_distribution = True
 
@@ -89,8 +91,6 @@ class PackmanEnv(Env):
         assert self.action_space.contains(action), "Invalid Action: " + str(action)
 
         # predict next human action
-
-        # when human model is ready uncomment this line
         human_action = self.predict_action(self.canvas)
 
         computer_valid_action = self.valid_action(action, 'computer')
@@ -363,40 +363,62 @@ class PackmanEnv(Env):
         img = np.dstack((r, g, b))
         img_array = tf.expand_dims(img, 0)  # Create a batch
         
-        actions = []
-        # for human_model in self.human_models:
-        for model in self.human_models:
-            predictions = model.predict(img_array)
-            score = predictions[0]
-            # score = score[0]
-            
-            if self.sample_from_distribution:
-                if np.random.random() <= 1.0:
-                    #fix numeric problem that softmax not always sum to 1
-                    diff = 1 - sum(score)
-                    score[0] = score[0] + diff
-                    dict_scores = dict(enumerate(score))
+
+        predictions = self.human_model.predict(img_array)
+        score = predictions[0]
+        # score = score[0]
+        
+        if self.sample_from_distribution:
+            if np.random.random() <= 1.0:
+                #fix numeric problem that softmax not always sum to 1
+                diff = 1 - sum(score)
+                score[0] = score[0] + diff
+                dict_scores = dict(enumerate(score))
+                action = random.choices(list(dict_scores.keys()), weights=list(dict_scores.values()))[0]
+                while(not self.valid_action(action, 'human')):
+                    del dict_scores[action]
                     action = random.choices(list(dict_scores.keys()), weights=list(dict_scores.values()))[0]
-                    while(not self.valid_action(action, 'human')):
-                        del dict_scores[action]
-                        action = random.choices(list(dict_scores.keys()), weights=list(dict_scores.values()))[0]
-                else:
-                    dict_scores = dict(enumerate(score))
+            else:
+                dict_scores = dict(enumerate(score))
+                action = max(dict_scores, key=dict_scores.get)
+                while(not self.valid_action(action, 'human')):
+                    del dict_scores[action]
                     action = max(dict_scores, key=dict_scores.get)
-                    while(not self.valid_action(action, 'human')):
-                        del dict_scores[action]
-                        action = max(dict_scores, key=dict_scores.get)
 
-            actions.append(action)
+        return action
+        # actions = []
+        # for model in self.human_models:
+        #     predictions = model.predict(img_array)
+        #     score = predictions[0]
+        #     # score = score[0]
+            
+        #     if self.sample_from_distribution:
+        #         if np.random.random() <= 1.0:
+        #             #fix numeric problem that softmax not always sum to 1
+        #             diff = 1 - sum(score)
+        #             score[0] = score[0] + diff
+        #             dict_scores = dict(enumerate(score))
+        #             action = random.choices(list(dict_scores.keys()), weights=list(dict_scores.values()))[0]
+        #             while(not self.valid_action(action, 'human')):
+        #                 del dict_scores[action]
+        #                 action = random.choices(list(dict_scores.keys()), weights=list(dict_scores.values()))[0]
+        #         else:
+        #             dict_scores = dict(enumerate(score))
+        #             action = max(dict_scores, key=dict_scores.get)
+        #             while(not self.valid_action(action, 'human')):
+        #                 del dict_scores[action]
+        #                 action = max(dict_scores, key=dict_scores.get)
 
-        # print("actions: ", actions)
+        #     actions.append(action)
 
-        Q = self.agent_model.predict(img_array)[0]
-        choose_Q = np.zeros_like(Q)
-        for i in range(len(choose_Q)):
-            choose_Q[i] = Q[i] if i in actions else np.inf
+        # # print("actions: ", actions)
 
-        # print("choose_Q: ", choose_Q)
-        # print("action: ", np.argmin(choose_Q))
+        # Q = self.agent_model.predict(img_array)[0]
+        # choose_Q = np.zeros_like(Q)
+        # for i in range(len(choose_Q)):
+        #     choose_Q[i] = Q[i] if i in actions else np.inf
 
-        return np.argmin(choose_Q)
+        # # print("choose_Q: ", choose_Q)
+        # # print("action: ", np.argmin(choose_Q))
+
+        # return np.argmin(choose_Q)
