@@ -1,26 +1,26 @@
 * {
-    transition: 200ms;
-    margin: auto;
+  transition: 200ms;
+  margin: auto;
 }
 
 body {
-  background-color:#DADAD8;
-  text-align: center;
-  overflow: hidden;
+background-color:#DADAD8;
+text-align: center;
+overflow: hidden;
 }
 
 input[type=button] {
-  background-color: #0B5862;
-  color: white;
-  border: none;
-  padding: 16px 32px;
-  margin: 4px 2px;
-  opacity: 0.8;
-  text-decoration: none;
-  cursor: pointer;
-  align-content: center;
-  font-weight: bold;
-  font-size: 12pt;
+background-color: #0B5862;
+color: white;
+border: none;
+padding: 16px 32px;
+margin: 4px 2px;
+opacity: 0.8;
+text-decoration: none;
+cursor: pointer;
+align-content: center;
+font-weight: bold;
+font-size: 12pt;
 }
 
 input[type=button]:hover {opacity: 2}
@@ -29,23 +29,23 @@ h3 { margin: 1%;}
 h1 { text-align: center;}
 
 #container {
-  height: 100%; width:100%; font-size: 0; margin: 0;
+height: 100%; width:100%; font-size: 0; margin: 0;
 }
 #left, #right {
-  display: inline-block;
-  font-size: 14pt;
-  margin-top: 1%;
-  text-align: left;
-  margin-left: 5%;
-  margin-right: 5%;
+display: inline-block;
+font-size: 14pt;
+margin-top: 1%;
+text-align: left;
+margin-left: 5%;
+margin-right: 5%;
 }
 #left {width: 40%; text-align: left;}
 #right {width: 40%;}
 
 #up, #down {
-  font-size: 14pt;
-  text-align: left;
-  margin-bottom: 2%;
+font-size: 14pt;
+text-align: left;
+margin-bottom: 2%;
 }
 #up {height: 40%;}
 #down {height: 40%;}
@@ -54,149 +54,149 @@ h1 { text-align: center;}
 
 
 .grid-container {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  padding: 0 35%;
+display: grid;
+grid-template-columns: repeat(3, 1fr);
+padding: 0 35%;
 }
 
 .quiz_question {
-  text-align-last: left;
-  margin-left: 35%;
-  margin-top: 1%;
+text-align-last: left;
+margin-left: 35%;
+margin-top: 1%;
 }
 
 /* The survey (background) */
 .survey {
-    /* display: none; Hidden by default */
-    position: fixed; /* Stay in place */
-    z-index: 1; /* Sit on top */
-    left: 0;
-    top: 0;
-    bottom: 0;
-    right: 0;
-    width: 100vw; /* Full width */
-    height: 100vh; /* Full height */
-    overflow: auto; /* Enable scroll if needed */
-    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
-  }
-  
-  /* Survey Content */
-  .survey-content {
-    bottom: 0;
-    background-color: #fefefe;
-    width: 100%;
-    height: 100%;;
-    height: fit-content;
-    align-content: center;
-    text-align: center;
-  }
-  
-  /* The Close Button */
-  .close {
-    color: white;
-    float: right;
-    font-weight: bold;
-  }
-  
-  .close:hover, .close:focus {
-    color: #000;
-    text-decoration: none;
-    cursor: pointer;
-  }
-  
-  .survey-header {
-    padding: 2px 16px;
-    background-color: #0B5862;
-    color: white;
-  }
-  
-  .survey-body {
-    height: 100%;
-    padding: 20px;
-    border-radius: 5px;
-    background-color: #f2f2f2;
-    color: black
-  }
-  
-  .survey-footer {
-    padding: 2px 16px;
-    background-color: #0B5862;
-    color: white;
-  }
+  /* display: none; Hidden by default */
+  position: fixed; /* Stay in place */
+  z-index: 1; /* Sit on top */
+  left: 0;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  width: 100vw; /* Full width */
+  height: 100vh; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+
+/* Survey Content */
+.survey-content {
+  bottom: 0;
+  background-color: #fefefe;
+  width: 100%;
+  height: 100%;;
+  height: fit-content;
+  align-content: center;
+  text-align: center;
+}
+
+/* The Close Button */
+.close {
+  color: white;
+  float: right;
+  font-weight: bold;
+}
+
+.close:hover, .close:focus {
+  color: #000;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.survey-header {
+  padding: 2px 16px;
+  background-color: #0B5862;
+  color: white;
+}
+
+.survey-body {
+  height: 100%;
+  padding: 20px;
+  border-radius: 5px;
+  background-color: #f2f2f2;
+  color: black
+}
+
+.survey-footer {
+  padding: 2px 16px;
+  background-color: #0B5862;
+  color: white;
+}
 
 select {
-  width: fit-content;
-  height: 30px;
-  border: 3px black #ccc;
-  border-radius: 3px;
-  box-sizing: border-box;
-  margin-top: 6px;
-  margin-bottom: 16px;
-  resize: vertical;
+width: fit-content;
+height: 30px;
+border: 3px black #ccc;
+border-radius: 3px;
+box-sizing: border-box;
+margin-top: 6px;
+margin-bottom: 16px;
+resize: vertical;
 }
 
 input[type=text], input[type=number] {
-  width: fit-content;
-  height: 30px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  box-sizing: border-box;
-  margin-top: 6px;
-  margin-bottom: 16px;
-  resize: vertical;
+width: fit-content;
+height: 30px;
+border: 1px solid #ccc;
+border-radius: 4px;
+box-sizing: border-box;
+margin-top: 6px;
+margin-bottom: 16px;
+resize: vertical;
 }
 
 textarea {
-  width: 90%;
-  margin-top: 0.5%;
+width: 90%;
+margin-top: 0.5%;
 }
 
 input[type='radio'] {
-  transform: scale(1.5);
+transform: scale(1.5);
 }
 
 .td-title {
-  width: 250px;
+width: 250px;
 }
 
 td,tr {
-  border: 1px black solid;
-  width: 120px;
-  height: 35px;
+border: 1px black solid;
+width: 120px;
+height: 35px;
 }
 
 .tooltip {
-  position: relative;
-  display: inline-block;
+position: relative;
+display: inline-block;
 }
 
 .tooltip .tooltiptext {
-  visibility: hidden;
-  background-color: #555;
-  color: #fff;
-  text-align: center;
-  padding: 5px;
-  position: absolute;
-  z-index: 1;
-  bottom: 100%;
-  left: 50%;
-  margin-left: -110px;
-  opacity: 0;
-  transition: opacity 0.3s;
+visibility: hidden;
+background-color: #555;
+color: #fff;
+text-align: center;
+padding: 5px;
+position: absolute;
+z-index: 1;
+bottom: 100%;
+left: 50%;
+margin-left: -110px;
+opacity: 0;
+transition: opacity 0.3s;
 }
 
 .tooltip .tooltiptext::after {
-  content: "";
-  position: absolute;
-  top: 100%;
-  left: 50%;
-  margin-left: -5px;
-  border-width: 5px;
-  border-style: solid;
-  border-color: #555 transparent transparent transparent;
+content: "";
+position: absolute;
+top: 100%;
+left: 50%;
+margin-left: -5px;
+border-width: 5px;
+border-style: solid;
+border-color: #555 transparent transparent transparent;
 }
 
 .tooltip:hover .tooltiptext {
-  visibility: visible;
-  opacity: 1;
+visibility: visible;
+opacity: 1;
 }

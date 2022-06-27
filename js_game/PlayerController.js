@@ -14,7 +14,10 @@ class PlayerController{
         "sarl ppo": false,
 
         "ddqn distribution": false,
-        "sarl ddqn distribution": false
+        "sarl ddqn distribution": false,
+
+        "ddqn distribution v1": false, // Empathy Human Model
+        "ddqn distribution v4": false, // Pessimistic DQN Agent
     }
 
     toIndex = {
@@ -71,7 +74,7 @@ class PlayerController{
 
         this.TYPES[type] = true;
         this.type = type;
-        // console.log(this.type)
+        console.log(this.type)
         this.player_controlled = player;
 
         this.loadAgent();
@@ -96,6 +99,7 @@ class PlayerController{
             case "ddqn": case "sarl ddqn":
             case "ppo": case "sarl ppo":
             case "ddqn distribution": case "sarl ddqn distribution":
+            case "ddqn distribution v1": case "ddqn distribution v4":
                 return this.predict(state);
             default:
                 throw "move(state): not a valid baseline"
@@ -296,7 +300,14 @@ class PlayerController{
             case "ddqn distribution":
                 path += 'ddqn_agent_distribution';
                 break;
-
+            
+            case "ddqn distribution v1":
+                path += 'ddqn_agent_distribution_v1';
+                break;
+            case "ddqn distribution v4":
+                path += 'ddqn_agent_distribution_v4';
+                break;
+            
             case "sarl ddqn distribution":
                 path += 'SARL_ddqn_agent_0.615_distribution';
                 break;
@@ -314,8 +325,15 @@ class PlayerController{
         }
         if(deepRL) {
             (async () => {
-                // this.model = await tf.loadLayersModel(path + '/model.json');
-                this.model = await tf.loadGraphModel(path + '/model.json');
+                if (this.type == "ddqn distribution" || this.type == "sarl ddqn distribution") {
+                    this.model = await tf.loadGraphModel(path + '/model.json');
+                }
+                else if (this.type == "ddqn distribution v1" || this.type == "ddqn distribution v2" || this.type == "ddqn distribution v4") {
+                    this.model = await tf.loadLayersModel(path + '/model.json');
+                }
+                else {
+                    console.error(path + '/model.json not found');
+                }
             })()
         }
     }
