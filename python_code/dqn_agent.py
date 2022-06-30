@@ -267,7 +267,7 @@ class DQNAgent:
                 ep_SARL_rewards += SARL_reward
                 
                 print(info)  
-                time.sleep(0.5)
+                # time.sleep(0.5)
                 
                 if done:
                     print("episode: {}/{}, steps: {}, score: {}, SARL score: {}".format(e, test_episodes, i, ep_rewards, ep_SARL_rewards))
@@ -275,8 +275,8 @@ class DQNAgent:
 
 if __name__ == "__main__":
     env_name = 'gym_packman:Packman-v0'
-    dir_map = 'map 4'
-    humanModel_version = 'v4'
+    dir_map = 'map 5'
+    humanModel_version = 'v0'
 
     beta = 0.615
     agent = DQNAgent(env_name, dir_map, beta, humanModel_version)

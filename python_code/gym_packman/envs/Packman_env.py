@@ -44,7 +44,7 @@ class PackmanEnv(Env):
 
     def __init__(self):
         super(PackmanEnv, self).__init__()
-        self.map_dir = 'map 4'
+        self.map_dir = 'map 5'
         
         # Actions we can take, left, down, stay, up, right
         self.action_space = Discrete(5)
@@ -66,7 +66,7 @@ class PackmanEnv(Env):
         # for i in range(self.num_of_models):
         #     self.human_models.append(tf.keras.models.load_model('./data/'+self.map_dir+'/humanModel_'+str(i)+'_v1.h5'))
 
-        self.human_model = tf.keras.models.load_model('./data/'+self.map_dir+'/humanModel_v0_dropout.h5')
+        self.human_model = tf.keras.models.load_model('./data/'+self.map_dir+'/humanModel_v0.h5')
         
         self.sample_from_distribution = True
 
@@ -385,7 +385,7 @@ class PackmanEnv(Env):
                     del dict_scores[action]
                     action = max(dict_scores, key=dict_scores.get)
 
-        # return action
+        return action
 
         # actions = []
         # for model in self.human_models:
@@ -414,12 +414,12 @@ class PackmanEnv(Env):
 
         # # print("actions: ", actions)
 
-        Q = self.agent_model.predict(img_array)[0]
-        choose_Q = np.zeros_like(Q)
-        for i in range(len(choose_Q)):
-            choose_Q[i] = Q[i] if i == action else np.inf
+        # Q = self.agent_model.predict(img_array)[0]
+        # choose_Q = np.zeros_like(Q)
+        # for i in range(len(choose_Q)):
+        #     choose_Q[i] = Q[i] if i == action else np.inf
 
-        # print("choose_Q: ", choose_Q)
-        # print("action: ", np.argmin(choose_Q))
+        # # print("choose_Q: ", choose_Q)
+        # # print("action: ", np.argmin(choose_Q))
 
-        return np.argmin(choose_Q)
+        # return np.argmin(choose_Q)
