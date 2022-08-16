@@ -275,7 +275,7 @@ class DQNAgent:
 
 if __name__ == "__main__":
     env_name = 'gym_packman:Packman-v0'
-    dir_map = 'map 5'
+    dir_map = 'map 3'
     humanModel_version = 'v0'
 
     beta = 0.615

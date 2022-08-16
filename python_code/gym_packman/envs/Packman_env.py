@@ -72,6 +72,25 @@ class PackmanEnv(Env):
 
         self.agent_model = None
 
+    def get_board(self):
+        return self.state[::, ::, self.toIndex['Board']]
+
+    def get_computer_position(self):
+        pos = np.where(self.state[::, ::, self.toIndex['Computer trace']] == 1)
+        return (pos[0][0], pos[1][0])
+
+    def get_human_position(self):
+        pos = np.where(self.state[::, ::, self.toIndex['Human trace']] == 1)
+        return (pos[0][0], pos[1][0])
+
+    def get_dirts_position(self):
+        result = []
+        dirts_pos_raw = np.where(self.state[::, ::, self.toIndex['All awards']] == 1)
+        for i in range(0, len(dirts_pos_raw[0])):
+            dirt_pos = (dirts_pos_raw[0][i], dirts_pos_raw[1][i])
+            result.append(dirt_pos)
+        return result
+
     def set_agent_model(self, model):
         self.agent_model = model
 
